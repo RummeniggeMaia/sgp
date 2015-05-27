@@ -1,0 +1,31 @@
+{# empty Twig template #}
+{% extends "../templates/base.twig"%}
+
+{% block body %}
+    <br/>
+    <div class="html ui top attached segment" style="width: 80%">
+        {% include '../fragmentos/frag_titulo.html.twig' with {'titulo' : 'Funcionário', 'sub_titulo' : 'Cadastro de funcionários no sistema'}%}
+        <form class="ui form" method="post" action="funcionario">
+            <div class="field">
+                <label>Nome:</label>
+                <input type="text" name="campo_nome" placeholder="nome">
+            </div>
+            <div class="field">
+                <label>CPF:</label>
+                <input type="text" name="campo_cpf" placeholder="___.___.___-__">
+            </div>
+            <div class="field">
+                <label>RG:</label>
+                <input type="text" name="campo_rg" placeholder="___.___.___">
+            </div>
+            <div class="fields">
+                <div class="field">
+                    <div class="ui submit black button"><i class="save icon"></i>Cadastrar</div>
+                </div>
+                <div class="field">
+                    <div class="ui submit black button"><i class="search icon"></i>Pesquisar</div>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

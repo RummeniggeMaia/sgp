@@ -1,0 +1,9 @@
+/*
+!/src/
+!/web/
+!.gitignore
+!composer.json
+!index.php
+!bootstrap.php
+!cli-config.php
+!index.php

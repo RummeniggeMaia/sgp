@@ -6,7 +6,12 @@
 {% block body %}
     <br/>
     <div class="html ui top attached segment" style="width: 80%">
-        {% include 'fragmentos/frag_titulo.twig' with {'titulo' : 'Funcionário', 'sub_titulo' : 'Cadastro de funcionários no sistema'}%}
+        {% include 'fragmentos/frag_titulo.twig' 
+            with {
+                'titulo' : 'Gerenciamento de funcionários', 
+                'sub_titulo' : 'Cadastro de funcionários no sistema'
+            }
+        %}
         <form class="ui form" method="post" action="funcionario">
             <div class="field">
                 <label>Nome:</label>

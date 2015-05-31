@@ -1,11 +1,16 @@
 {# empty Twig template #}
-{% extends "../templates/base.twig"%}
+{% extends "templates/base.twig"%}
 
 {% block body %}
     <br/>
     <div class="html ui top attached segment" style="width: 80%">
-        {% include '../fragmentos/frag_titulo.html.twig' with {'titulo' : 'Departamento', 'sub_titulo' : 'Cadastro de departamento no sistema'}%}
-        <form class="ui form" method="post" action="departamento">
+        {% include 'fragmentos/frag_titulo.twig' 
+            with {
+                'titulo' : 'Gerenciamento de assuntos', 
+                'sub_titulo' : 'Cadastro de assuntos no sistema'
+            }
+        %}
+        <form class="ui form" method="post" action="assunto">
             <div class="field">
                 <label>Descrição:</label>
                 <input type="text" name="campo_descricao" placeholder="descricao">

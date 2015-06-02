@@ -10,7 +10,9 @@ session_start();
 $visoes_navegacao = array(
     'visao_gerenciar_funcionario' => 'forms/form_funcionario.twig',
     'visao_gerenciar_assunto' => 'forms/form_assunto.twig',
-    'visao_gerenciar_departamento' => 'forms/form_departamento.twig',
+    'visao_gerenciar_departamento' => 'forms/form_departamento.twig',    
+    'visao_gerenciar_movimentacao' => 'forms/form_movimentacao.twig',       
+    'visao_gerenciar_processo' => 'forms/form_processo.twig',
     'visao_home' => 'home.twig'
 );
 
@@ -27,7 +29,7 @@ $twig = new Twig_Environment($loader);
 //Gera a interface home de acordo com o template home.twig
 $template = $twig->loadTemplate($visoes_navegacao['visao_home']);
 //Renderiza a pagina home de acordo com o template. O vetor serve para passar
-//os diretorios dos aquivos web.
+//os diretorios dos arquivos web.
 print $template->render(
         array(
             'semantic_js' => 'web/semantic_ui/semantic.min.js',

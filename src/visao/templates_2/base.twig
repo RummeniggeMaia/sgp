@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>{% block title %}Home{% endblock %}</title>
+        <link href="{{semantic_css|default('../../web/semantic_ui/semantic.min.css')}}" rel="stylesheet" type="text/css"/>
+        <script src="{{semantic_js|default('../../web/semantic_ui/semantic.min.js')}}"></script>
+        <script src="{{jquerylib|default('../../web/jquery.min.js')}}"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('a').click(function(event) {
+                    var form = $('<form method="post" action="{{front_ctrl|default('front_controller.php')}}"></form>');
+                    var campo = document.createElement('input');
+                    campo.type = "hidden";
+                    campo.name = $(this).attr('name');
+                    campo.value = $(this).attr('name');
+                    form.append(campo);
+                    form.submit();
+                });
+            });
+        </script>
+    </head>
+    <body class="pushable">
+        <div class="ui fixed main menu">
+            <div class="container">
+                <div class="ui menu inverted" style="padding-left: 260px">
+                    <a class="item">
+                        <i class="home icon"></i> Home
+                    </a>
+                    <a class="item">
+                        <i class="info circle icon"></i> Sobre
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="ui vertical sidebar inverted menu left visible">
+            <div class="item">
+                <img src="{{logo|default('../../web/imagens/icon-process-white.png')}}" width="100px" />
+            </div>
+            <a class="item" name="navegador_visao_gerenciar_funcionario"><i class="user icon"></i>Funcionários</a>
+            <a class="item" name="navegador_visao_gerenciar_assunto"><i class="archive icon"></i>Assuntos</a>
+            <a class="item" name="navegador_visao_gerenciar_departamento"><i class="building icon"></i>Departamentos</a>
+            <a class="item" name="navegador_visao_gerenciar_movimentacao"><i class="exchange icon"></i>Movimentações</a>
+            <a class="item" name="navegador_visao_gerenciar_processo"><i class="flag icon"></i>Processos</a>
+            
+        </div>
+        <div class="pusher">
+            {% block body %}
+
+            {% endblock %}
+        </div>
+    </body>
+</html>

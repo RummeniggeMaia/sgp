@@ -5,34 +5,60 @@
 
 {% block body %}
     <br/>
-    <div class="html ui top attached segment" style="width: 80%">
+    <div class="html ui top right attached segment">
+        <br/>
         {% include 'fragmentos/frag_titulo.twig' 
             with {
                 'titulo' : 'Gerenciamento de funcionários', 
                 'sub_titulo' : 'Cadastro de funcionários no sistema'
             }
         %}
-        <form class="ui form" method="post" action="funcionario">
-            <div class="field">
-                <label>Nome:</label>
-                <input type="text" name="campo_nome" placeholder="nome">
-            </div>
-            <div class="field">
-                <label>CPF:</label>
-                <input type="text" name="campo_cpf" placeholder="___.___.___-__">
-            </div>
-            <div class="field">
-                <label>RG:</label>
-                <input type="text" name="campo_rg" placeholder="___.___.___">
-            </div>
-            <div class="fields">
+        <div class="ui top attached tabular menu">
+            <div class="item active" data-tab="first">Formulário</div>
+            <div class="item" data-tab="second">Tabela</div>
+        </div>
+        <div class="ui bottom attached active tab segment" data-tab="first">
+            <form class="ui form" method="post" action="funcionario">
                 <div class="field">
-                    <div class="ui submit black button"><i class="save icon"></i>Cadastrar</div>
+                    <label>Nome:</label>
+                    <input type="text" name="campo_nome" placeholder="nome">
                 </div>
                 <div class="field">
-                    <div class="ui submit black button"><i class="search icon"></i>Pesquisar</div>
+                    <label>CPF:</label>
+                    <input type="text" name="campo_cpf" placeholder="___.___.___-__">
                 </div>
-            </div>
-        </form>
+                <div class="field">
+                    <label>RG:</label>
+                    <input type="text" name="campo_rg" placeholder="___.___.___">
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        <div class="ui submit black button"><i class="save icon"></i>Cadastrar</div>
+                    </div>
+                    <div class="field">
+                        <div class="ui submit black button"><i class="search icon"></i>Pesquisar</div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="ui bottom attached tab segment" data-tab="second">
+            ok
+            <table>
+                <thead>
+                    <tr>
+                        <td>Nome</td>
+                        <td>RG</td>
+                        <td>CPF</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>132</td>
+                        <td>465</td>
+                        <td>789</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 {% endblock %}

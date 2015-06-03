@@ -3,9 +3,9 @@
     <head>
         <meta charset="UTF-8" />
         <title>{% block title %}Home{% endblock %}</title>
+        <script type="text/javascript" src="{{jquerylib|default('../../web/jquery.min.js')}}"></script>
+        <script type="text/javascript" src="{{semantic_js|default('../../web/semantic_ui/semantic.min.js')}}"></script>
         <link href="{{semantic_css|default('../../web/semantic_ui/semantic.min.css')}}" rel="stylesheet" type="text/css"/>
-        <script src="{{semantic_js|default('../../web/semantic_ui/semantic.min.js')}}"></script>
-        <script src="{{jquerylib|default('../../web/jquery.min.js')}}"></script>
         <script type="text/javascript">
             $(document).ready(function() {
                 $('a').click(function(event) {
@@ -17,6 +17,7 @@
                     form.append(campo);
                     form.submit();
                 });
+                $('.menu .item').tab();
             });
         </script>
     </head>
@@ -43,7 +44,7 @@
             <a class="item" name="navegador_visao_gerenciar_movimentacao"><i class="exchange icon"></i>Movimentações</a>
             <a class="item" name="navegador_visao_gerenciar_processo"><i class="flag icon"></i>Processos</a>
         </div>
-        <div class="pusher">
+        <div class="pusher" style="padding-right: 20%">
             {% block body %}
 
             {% endblock %}

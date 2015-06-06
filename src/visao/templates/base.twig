@@ -18,6 +18,12 @@
                     form.submit();
                 });
                 $('.menu .item').tab();
+                $('.dropdown')
+                        .dropdown({
+                            // you can use any ui transition
+                            transition: 'drop'
+                        })
+                        ;
             });
             function submeterForm(form, funcao) {
                 var funcionalidade = document.createElement('input');

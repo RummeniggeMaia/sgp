@@ -15,6 +15,8 @@ $visoes_navegacao = array(
     'visao_gerenciar_processo' => 'forms/form_processo.twig',
     'visao_home' => 'home.twig'
 );
+$controladores = array();
+$funcionarioCtrl = new \modelo\Funcionario();
 
 //Pra inserir qualquer objeto na sessao é necessario serializa-lo, 
 //visoes_navegacao é a chave de mapeamento pra esse vetor, as variaveis de

@@ -14,11 +14,12 @@
             }
         %}
         <div class="ui top attached tabular menu">
-            <div class="item active" data-tab="first">Formulário</div>
-            <div class="item" data-tab="second">Tabela</div>
+            <div class="item" data-tab="form">Formulário</div>
+            <div class="item active" data-tab="tabela">Tabela</div>
         </div>
-        <div class="ui bottom attached active tab segment" data-tab="first">
-            <form class="ui form" method="post" action="funcionario">
+        <div class="ui bottom attached tab segment" data-tab="form">
+            <form id="form_funcionario" class="ui form" method="post" 
+                  action="front_controller.php">
                 <div class="field">
                     <label>Nome:</label>
                     <input type="text" name="campo_nome" placeholder="nome">
@@ -33,16 +34,21 @@
                 </div>
                 <div class="fields">
                     <div class="field">
-                        <div class="ui submit black button"><i class="save icon"></i>Cadastrar</div>
+                        <div class="ui submit black button" 
+                             onclick="submeterForm('form_funcionario', 'funcao_cadastrar_funcionarioctrl');">
+                            <i class="save icon"></i>Cadastrar
+                        </div>
                     </div>
                     <div class="field">
-                        <div class="ui submit black button"><i class="search icon"></i>Pesquisar</div>
+                        <div class="ui submit black button"
+                             onclick="submeterForm('form_funcionario', 'funcao_pesquisar_funcionarioctrl');">
+                            <i class="search icon"></i>Pesquisar
+                        </div>
                     </div>
                 </div>
             </form>
         </div>
-        <div class="ui bottom attached tab segment" data-tab="second">
-            ok
+        <div class="ui bottom attached tab segment active" data-tab="tabela">
             <table>
                 <thead>
                     <tr>

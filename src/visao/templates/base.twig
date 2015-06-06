@@ -19,6 +19,15 @@
                 });
                 $('.menu .item').tab();
             });
+            function submeterForm(form, funcao) {
+                var funcionalidade = document.createElement('input');
+                funcionalidade.name = funcao;
+                funcionalidade.value = funcao;
+                funcionalidade.type = "hidden";
+                $('#' + form).append(funcionalidade);
+                $('#' + form).submit();
+            }
+
         </script>
     </head>
     <body class="pushable">

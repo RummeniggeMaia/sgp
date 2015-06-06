@@ -29,6 +29,8 @@ foreach ($_POST as $requisicao) {
                 print $template->render(array());
                 return;
             }
+        } else if (Util::starsWithString($requisicao, "funcao_")) {
+            $funcionalidade = str_replace("funcao_", "", $requisicao);
         }
     }
 }

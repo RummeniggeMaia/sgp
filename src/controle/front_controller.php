@@ -7,18 +7,21 @@ require_once("$_SERVER[DOCUMENT_ROOT]/sgp/src/util/Util.php");
 session_start();
 //Acessa o vetor de navegacao criado no index.php
 $visoes_navegacao = unserialize($_SESSION["visoes_navegacao"]);
+$controladores = unserialize($_SESSION["controladores"]);
 
+//Inicia o twig engine
 Twig_Autoloader::register();
 
 $loader = new Twig_Loader_Filesystem("$_SERVER[DOCUMENT_ROOT]/sgp/src/visao");
 $twig = new Twig_Environment($loader);
+
 //Para cada requisicao feita a esse script, é necessario saber se trata de um 
 //link ou um comando de controle
 foreach ($_POST as $requisicao) {
     if (is_string($requisicao)) {
         //Os link do sistema tem que começar com 'navegador_' seguido da visao 
         // a ser acessada
-        if (Util::starsWithString($requisicao, "navegador_")) {
+        if (Util::startsWithString($requisicao, "navegador_")) {
             //remove a palavra navegador_
             $visao = str_replace("navegador_", "", $requisicao);
             //Verifica se essa visao existe no sistema, nesse caso no vetor
@@ -26,11 +29,20 @@ foreach ($_POST as $requisicao) {
             if (isset($visoes_navegacao[$visao])) {
                 //Gera o template e manda renderizar a visao .twig
                 $template = $twig->loadTemplate($visoes_navegacao[$visao]);
-                print $template->render(array());
+                if (isset($controladores[$visao])) {
+                    print $template->render(array($controladores[$visao]));
+                } else {
+                    print $template->render(array());
+                }
                 return;
             }
-        } else if (Util::starsWithString($requisicao, "funcao_")) {
-            $funcionalidade = str_replace("funcao_", "", $requisicao);
+        } else if (Util::startsWithString($requisicao, "funcao_")) {
+            $ctrl = str_replace("funcao_", "", $requisicao);
+            $funcao = $_POST[$requisicao];
+            if (isset($controladores[$ctrl])) {
+                $controlador = $controladores[$ctrl];
+                $controlador->executarFuncao($funcao);
+            }
         }
     }
 }

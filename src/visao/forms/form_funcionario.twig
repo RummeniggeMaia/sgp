@@ -20,6 +20,7 @@
         <div class="ui bottom attached tab segment" data-tab="form">
             <form id="form_funcionario" class="ui form" method="post" 
                   action="front_controller.php">
+                <input type="hidden" />
                 <div class="field">
                     <label>Nome:</label>
                     <input type="text" name="campo_nome" placeholder="nome">
@@ -35,13 +36,13 @@
                 <div class="fields">
                     <div class="field">
                         <div class="ui submit black button" 
-                             onclick="submeterForm('form_funcionario', 'funcao_cadastrar_funcionarioctrl');">
+                             onclick="submeterForm('form_funcionario', 'funcao_gerenciar_funcionario', 'cadastrar');">
                             <i class="save icon"></i>Cadastrar
                         </div>
                     </div>
                     <div class="field">
                         <div class="ui submit black button"
-                             onclick="submeterForm('form_funcionario', 'funcao_pesquisar_funcionarioctrl');">
+                             onclick="submeterForm('form_funcionario', 'funcao_gerenciar_funcionario', 'pesquisar');">
                             <i class="search icon"></i>Pesquisar
                         </div>
                     </div>

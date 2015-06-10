@@ -25,7 +25,7 @@ class Departamento extends Entidade {
         parent::__construct();
         $this->constante = $constante;
         $this->descricao = $descricao;
-        $this->processos = new ArrayCollection();
+        $this->processos = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     public function getId() {

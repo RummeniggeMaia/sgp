@@ -1,9 +1,9 @@
 <?php
 
-namespace modelo;
-
 use modelo\Entidade;
 use modelo\Processo;
+
+namespace modelo;
 
 
 /**
@@ -23,14 +23,14 @@ class Funcionario extends Entidade {
     /** @Column(type="string") */
     protected $rg;
 
-    /** OneToMany(targetEntity=Processo", mappedBy="funcionario") */
+    /** @OneToMany(targetEntity=Processo", mappedBy="funcionario") */
     protected $processos;
 
     function __construct($nome, $cpf, $rg) {
         $this->nome = $nome;
         $this->cpf = $cpf;
         $this->rg = $rg;
-        $this->processos = new ArrayCollection();
+        $this->processos = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     public function getId() {

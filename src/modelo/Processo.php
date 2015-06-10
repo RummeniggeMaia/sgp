@@ -33,7 +33,7 @@ class Processo extends Entidade {
 
     function __construct($numeroProcesso) {
         $this->numeroProcesso = $numeroProcesso;
-        $this->movimentacoes = new ArrayCollection();
+        $this->movimentacoes = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     public function getNumeroProcesso() {

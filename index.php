@@ -6,18 +6,20 @@ require_once './vendor/twig/twig/lib/Twig/Autoloader.php';
 //Função utilizada pra iniciar a sessão em scripts no php
 session_start();
 
+$controladores = array();
+$funcionarioCtrl = new controle\FuncionarioCtrl();
+$controladores['gerenciar_funcionario'] = $funcionarioCtrl;
+$_SESSION['controladores'] = serialize($controladores);
+
 //Nesse vetor sao colocas as páginas de navegacao do sitema
 $visoes_navegacao = array(
-    'visao_gerenciar_funcionario' => 'forms/form_funcionario.twig',
-    'visao_gerenciar_assunto' => 'forms/form_assunto.twig',
-    'visao_gerenciar_departamento' => 'forms/form_departamento.twig',    
-    'visao_gerenciar_movimentacao' => 'forms/form_movimentacao.twig',       
-    'visao_gerenciar_processo' => 'forms/form_processo.twig',
-    'visao_home' => 'home.twig'
+    'gerenciar_funcionario' => 'forms/form_funcionario.twig',
+    'gerenciar_assunto' => 'forms/form_assunto.twig',
+    'gerenciar_departamento' => 'forms/form_departamento.twig',    
+    'gerenciar_movimentacao' => 'forms/form_movimentacao.twig',       
+    'gerenciar_processo' => 'forms/form_processo.twig',
+    'home' => 'home.twig'
 );
-$controladores = array();
-$funcionarioCtrl = new \modelo\Funcionario();
-
 //Pra inserir qualquer objeto na sessao é necessario serializa-lo, 
 //visoes_navegacao é a chave de mapeamento pra esse vetor, as variaveis de
 //sessao sao acessadas de todos os locais do sitema

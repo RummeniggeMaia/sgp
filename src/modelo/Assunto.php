@@ -1,6 +1,5 @@
 <?php
 
-use Doctrine\Common\Collections\ArrayCollection;
 use modelo\Entidade;
 use modelo\Processo;
 
@@ -27,7 +26,7 @@ class Assunto extends Entidade {
         parent::__construct();
         $this->constante = $constante;
         $this->descricao = $descricao;
-        $this->processos = new ArrayCollection();
+        $this->processos = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     public function getConstante() {

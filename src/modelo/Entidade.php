@@ -1,5 +1,9 @@
 <?php
 
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\MappedSuperclass;
+
 namespace modelo;
 
 /**
@@ -16,7 +20,7 @@ abstract class Entidade {
      */
     protected $id;
 
-    /** @ORM\Column(type="boolean") */
+    /** @Column(type="boolean") */
     protected $ativo = true;
 
     /** Esse campo é transiente, por isso não tem anotação */

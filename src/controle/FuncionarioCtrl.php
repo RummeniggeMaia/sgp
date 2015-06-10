@@ -2,13 +2,13 @@
 
 namespace controle;
 use modelo\Funcionario;
-
+use controle\Controlador;
 /**
  * Description of FuncionarioCtrl
  *
  * @author Rummenigge
  */
-class FuncionarioCtrl {
+class FuncionarioCtrl implements Controlador {
 
     private $funcionario;
     private $aux;
@@ -59,4 +59,7 @@ class FuncionarioCtrl {
         }
     }
 
+    public function executarFuncao($funcao) {
+        
+    }
 }

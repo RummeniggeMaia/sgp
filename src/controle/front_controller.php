@@ -2,7 +2,7 @@
 //Este script é utilizado para fazer a navegacao do 
 require_once("$_SERVER[DOCUMENT_ROOT]/sgp/vendor/autoload.php");
 require_once("$_SERVER[DOCUMENT_ROOT]/sgp/vendor/twig/twig/lib/Twig/Autoloader.php");
-require_once("$_SERVER[DOCUMENT_ROOT]/sgp/src/util/Util.php");
+use util\Util;
 //Inicia a sessao novamente
 session_start();
 //Acessa o vetor de navegacao criado no index.php

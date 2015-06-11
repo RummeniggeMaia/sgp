@@ -31,7 +31,7 @@ Twig_Autoloader::register();
 $loader = new Twig_Loader_Filesystem('src/visao/');
 $twig = new Twig_Environment($loader);
 //Gera a interface home de acordo com o template home.twig
-$template = $twig->loadTemplate($visoes_navegacao['visao_home']);
+$template = $twig->loadTemplate($visoes_navegacao['home']);
 //Renderiza a pagina home de acordo com o template. O vetor serve para passar
 //os diretorios dos arquivos web.
 print $template->render(

@@ -19,5 +19,5 @@ $conn = array(
     'host' => 'localhost',
 );
 
-// A ideia aqui é importar esse script nas classes Dao.
+// A ideia aqui é importar esse script nas classes no script de controle.
 $entityManager = EntityManager::create($conn, $config);

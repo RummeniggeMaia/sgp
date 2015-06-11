@@ -1,7 +1,6 @@
 <?php
 
 namespace dao;
-use dao\Assunto;
 
 /**
  *
@@ -13,7 +12,6 @@ class Dao {
 
     public function __construct($entityManager) {
         $this->entityManager = $entityManager;
-        $s = new Assunto();
     }
 
     public function criar($entidade) {

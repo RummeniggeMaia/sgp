@@ -2,7 +2,11 @@
 //Este script é utilizado para fazer a navegacao do 
 require_once("$_SERVER[DOCUMENT_ROOT]/sgp/vendor/autoload.php");
 require_once("$_SERVER[DOCUMENT_ROOT]/sgp/vendor/twig/twig/lib/Twig/Autoloader.php");
+require_once("$_SERVER[DOCUMENT_ROOT]/sgp/bootstrap.php");
 use util\Util;
+use dao\Dao;
+use controle\FuncionarioCtrl;
+
 //Inicia a sessao novamente
 session_start();
 //Acessa o vetor de navegacao criado no index.php
@@ -17,7 +21,8 @@ $twig = new Twig_Environment($loader);
 
 //Para cada requisicao feita a esse script, é necessario saber se trata de um 
 //link ou um comando de controle
-foreach ($_POST as $requisicao) {
+$chaves = array_keys($_POST);
+foreach ($chaves as $requisicao) {
     if (is_string($requisicao)) {
         //Os link do sistema tem que começar com 'navegador_' seguido da visao 
         // a ser acessada
@@ -41,7 +46,8 @@ foreach ($_POST as $requisicao) {
             $funcao = $_POST[$requisicao];
             if (isset($controladores[$ctrl])) {
                 $controlador = $controladores[$ctrl];
-                $controlador->executarFuncao($funcao);
+                $controlador->setDao(new Dao($entityManager));
+                $controlador->executarFuncao($_POST, $funcao);
             }
         }
     }

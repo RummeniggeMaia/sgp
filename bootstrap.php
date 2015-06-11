@@ -9,7 +9,7 @@ use Doctrine\ORM\EntityManager;
 require_once "vendor/autoload.php";
 
 $isDevMode = true;
-$config = Setup::createAnnotationMetadataConfiguration(array(__DIR__ . "/src"), $isDevMode);
+$config = Setup::createAnnotationMetadataConfiguration(array(__DIR__ . "/src/modelo"), $isDevMode);
 
 $conn = array(
     'driver' => 'pdo_mysql',

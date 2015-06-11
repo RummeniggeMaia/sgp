@@ -1,5 +1,6 @@
 <?php
-//Este script é utilizado para fazer a navegacao do 
+//Este script é utilizado para fazer a navegacao nas paginas de controle do 
+//sistema
 require_once("$_SERVER[DOCUMENT_ROOT]/sgp/vendor/autoload.php");
 require_once("$_SERVER[DOCUMENT_ROOT]/sgp/vendor/twig/twig/lib/Twig/Autoloader.php");
 require_once("$_SERVER[DOCUMENT_ROOT]/sgp/bootstrap.php");

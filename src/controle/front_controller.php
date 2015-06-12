@@ -7,6 +7,7 @@ require_once("$_SERVER[DOCUMENT_ROOT]/sgp/bootstrap.php");
 use util\Util;
 use dao\Dao;
 use controle\FuncionarioCtrl;
+use controle\AssuntoCtrl;
 
 //Inicia a sessao novamente
 session_start();

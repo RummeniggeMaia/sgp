@@ -7,7 +7,7 @@ use dao\Dao;
 use modelo\Assunto;
 
 /**
- * Description of FuncionarioCtrl
+ * Description of AssuntoCtrl
  *
  * @author Rummenigge
  */

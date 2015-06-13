@@ -9,4 +9,6 @@ namespace controle;
 interface Controlador {
     
     public function executarFuncao($post, $funcao);
+    
+    public function getDao();
 }

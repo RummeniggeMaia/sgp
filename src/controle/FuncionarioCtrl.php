@@ -48,12 +48,8 @@ class FuncionarioCtrl implements Controlador {
         $this->aux = $aux;
     }
 
-    public function adicionarFuncionario($funcionario) {
-        $this->funcionarios[$funcionario->getId()] = $funcionario;
-    }
-
-    public function removerFuncionario($funcionario) {
-        unset($this->funcionarios[$funcionario->getId()]);
+    public function getFuncionarios() {
+        return $this->funcionarios;
     }
 
     /**
@@ -76,6 +72,8 @@ class FuncionarioCtrl implements Controlador {
         if ($funcao == "cadastrar") {
             $this->dao->criar($this->funcionario);
             $this->funcionario = new Funcionario("", "", "");
+        } else {
+            return false;
         }
     }
 

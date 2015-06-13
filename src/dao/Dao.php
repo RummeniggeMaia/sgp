@@ -13,6 +13,14 @@ class Dao {
     public function __construct($entityManager) {
         $this->entityManager = $entityManager;
     }
+    
+    public function getEntityManager() {
+        return $this->entityManager;
+    }
+
+    public function setEntityManager($entityManager) {
+        $this->entityManager = $entityManager;
+    }
 
     public function criar($entidade) {
         $this->entityManager->persist($entidade);

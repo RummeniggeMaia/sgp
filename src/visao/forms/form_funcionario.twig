@@ -20,18 +20,18 @@
         <div class="ui bottom attached tab segment" data-tab="form">
             <form id="form_funcionario" class="ui form" method="post" 
                   action="front_controller.php">
-                <input type="hidden" />
+                <input type="hidden" name="campo_id" value="{{ctrl.funcionario.id}}"/>
                 <div class="field">
                     <label>Nome:</label>
-                    <input type="text" name="campo_nome" placeholder="nome">
+                    <input type="text" name="campo_nome" placeholder="nome" value="{{ctrl.funcionario.nome}}">
                 </div>
                 <div class="field">
                     <label>CPF:</label>
-                    <input type="text" name="campo_cpf" placeholder="___.___.___-__">
+                    <input type="text" name="campo_cpf" placeholder="___.___.___-__" value="{{ctrl.funcionario.cpf}}">
                 </div>
                 <div class="field">
                     <label>RG:</label>
-                    <input type="text" name="campo_rg" placeholder="___.___.___">
+                    <input type="text" name="campo_rg" placeholder="___.___.___" value="{{ctrl.funcionario.rg}}">
                 </div>
                 <div class="fields">
                     <div class="field">

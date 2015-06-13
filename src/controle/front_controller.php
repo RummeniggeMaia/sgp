@@ -49,6 +49,10 @@ foreach ($chaves as $requisicao) {
                 $controlador = $controladores[$ctrl];
                 $controlador->setDao(new Dao($entityManager));
                 $controlador->executarFuncao($_POST, $funcao);
+                $controlador->getDao()->getEntityManager()->close();
+                $controlador->getDao()->setEntityManager(null);
+                $_SESSION['controladores'] = serialize($controladores);
+                return;
             }
         }
     }

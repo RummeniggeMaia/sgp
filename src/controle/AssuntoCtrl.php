@@ -53,7 +53,7 @@ class AssuntoCtrl implements Controlador {
     }
 
     public function removerAssunto($assunto) {
-        unset($this->assunto[$assunto->getId()]);
+        $this->dao.excluir($this->assunto);
     }
 
     /**

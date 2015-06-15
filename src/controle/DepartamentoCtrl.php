@@ -53,7 +53,7 @@ class DepartamentoCtrl implements Controlador {
     }
 
     public function removerDepartamento($departamento) {
-        unset($this->departamento[$departamento->getId()]);
+        $this->dao.excluir($this->departamento);
     }
 
     /**

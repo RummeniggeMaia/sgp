@@ -53,7 +53,7 @@ class MovimentacaoCtrl implements Controlador {
     }
 
     public function removerMovimentacao($movimentacao) {
-        unset($this->$movimentacaos[$movimentacao->getId()]);
+        $this->dao.excluir($this->movimentacao);
     }
 
     /**

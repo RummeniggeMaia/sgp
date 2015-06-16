@@ -8,6 +8,8 @@ use util\Util;
 use dao\Dao;
 use controle\FuncionarioCtrl;
 use controle\AssuntoCtrl;
+use controle\DepartamentoCtrl;
+use controle\MovimentacaoCtrl;
 
 //Inicia a sessao novamente
 session_start();

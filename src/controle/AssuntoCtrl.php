@@ -48,12 +48,8 @@ class AssuntoCtrl implements Controlador {
         $this->aux = $aux;
     }
 
-    public function adicionarAssunto($assunto) {
-        $this->assunto[$assunto->getId()] = $assunto;
-    }
-
-    public function removerAssunto($assunto) {
-        $this->dao.excluir($this->assunto);
+    public function getAssuntos() {
+        return $this->assuntos;
     }
 
     /**
@@ -73,8 +69,9 @@ class AssuntoCtrl implements Controlador {
         if ($funcao == "cadastrar") {
             $this->dao->criar($this->assunto);
             $this->assunto = new Assunto("", "");
+        }else{
+            return false;
         }
     }
 
 }
-

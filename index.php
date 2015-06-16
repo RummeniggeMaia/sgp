@@ -13,6 +13,10 @@ if (isset($_SESSION['controladores'])) {
     $controladores = array();
     $funcionarioCtrl = new controle\FuncionarioCtrl();
     $controladores['gerenciar_funcionario'] = $funcionarioCtrl;
+    $controladores['gerenciar_assunto'] = $assuntoCtrl;
+    $controladores['gerenciar_departamento'] = $departamentoCtrl;
+    $controladores['gerenciar_movimentacao'] = $movimentacaoCtrl;
+    $controladores['gerenciar_processo'] = $processoCtrl;
     $_SESSION['controladores'] = serialize($controladores);
 }
 

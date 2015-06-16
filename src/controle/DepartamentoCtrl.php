@@ -48,14 +48,10 @@ class DepartamentoCtrl implements Controlador {
         $this->aux = $aux;
     }
 
-    public function adicionarDepartamento($departamento) {
-        $this->departamento[$departamento->getId()] = $departamento;
+    public function getDepartamentos() {
+        return $this->departamentos;
     }
-
-    public function removerDepartamento($departamento) {
-        $this->dao.excluir($this->departamento);
-    }
-
+    
     /**
      * Factory method para gerar departamentos baseado a partir do POST
      */
@@ -73,6 +69,8 @@ class DepartamentoCtrl implements Controlador {
         if ($funcao == "cadastrar") {
             $this->dao->criar($this->departamento);
             $this->departamento = new Departamento("", "");
+        }else{
+            return false;
         }
     }
 

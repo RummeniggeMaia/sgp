@@ -48,12 +48,8 @@ class MovimentacaoCtrl implements Controlador {
         $this->aux = $aux;
     }
 
-    public function adicionarMovimentacao($movimentacao) {
-        $this->$movimentacaos[$movimentacao->getId()] = $movimentacao;
-    }
-
-    public function removerMovimentacao($movimentacao) {
-        $this->dao.excluir($this->movimentacao);
+    public function getMovimentacaos() {
+        return $this->movimentacaos;
     }
 
     /**
@@ -73,6 +69,8 @@ class MovimentacaoCtrl implements Controlador {
         if ($funcao == "cadastrar") {
             $this->dao->criar($this->movimentacao);
             $this->movimentacao = new Movimentacao("", "");
+        } else {
+            return false;
         }
     }
 

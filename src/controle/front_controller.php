@@ -37,7 +37,7 @@ foreach ($chaves as $requisicao) {
                 //Gera o template e manda renderizar a visao .twig
                 $template = $twig->loadTemplate($visoes_navegacao[$visao]);
                 if (isset($controladores[$visao])) {
-                    print $template->render(array($controladores[$visao]));
+                    print $template->render(array("ctrl" => $controladores[$visao]));
                 } else {
                     print $template->render(array());
                 }

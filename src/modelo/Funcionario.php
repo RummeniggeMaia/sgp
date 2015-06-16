@@ -15,7 +15,7 @@ namespace modelo;
 class Funcionario extends Entidade {
 
     /** @Column(type="string") */
-    protected $nome;
+    protected $nome = "teste";
 
     /** @Column(type="string") */
     protected $cpf;

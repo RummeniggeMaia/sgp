@@ -5,6 +5,7 @@ namespace controle;
 use controle\Controlador;
 use dao\Dao;
 use modelo\Funcionario;
+use controle\Mensagem;
 
 /**
  * Description of FuncionarioCtrl
@@ -17,11 +18,21 @@ class FuncionarioCtrl implements Controlador {
     private $aux;
     private $funcionarios;
     private $dao;
+    private $mensagem;
 
     public function __construct() {
         $this->funcionario = new Funcionario("", "", "");
         $this->aux = new Funcionario("", "", "");
         $this->funcionarios = array();
+        $this->mensagem = false;
+    }
+
+    public function getMensagem() {
+        return $this->mensagem;
+    }
+
+    public function setMensagem($mensagem) {
+        $this->mensagem = $mensagem;
     }
 
     public function getDao() {
@@ -72,6 +83,11 @@ class FuncionarioCtrl implements Controlador {
         if ($funcao == "cadastrar") {
             $this->dao->criar($this->funcionario);
             $this->funcionario = new Funcionario("", "", "");
+            $this->mensagem = new Mensagem(
+                    "Cadastro de funcionários"
+                    , "msg_tipo_ok"
+                    , "Funcionário cadastrado com sucesso.");
+            return 'gerenciar_funcionario';
         } else {
             return false;
         }

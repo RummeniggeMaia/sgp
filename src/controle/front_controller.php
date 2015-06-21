@@ -1,9 +1,11 @@
 <?php
+
 //Este script é utilizado para fazer a navegacao nas paginas de controle do 
 //sistema
 require_once("$_SERVER[DOCUMENT_ROOT]/sgp/vendor/autoload.php");
 require_once("$_SERVER[DOCUMENT_ROOT]/sgp/vendor/twig/twig/lib/Twig/Autoloader.php");
 require_once("$_SERVER[DOCUMENT_ROOT]/sgp/bootstrap.php");
+
 use util\Util;
 use dao\Dao;
 use controle\FuncionarioCtrl;
@@ -37,12 +39,12 @@ foreach ($chaves as $requisicao) {
             //de visões
             if (isset($visoes_navegacao[$visao])) {
                 //Gera o template e manda renderizar a visao .twig
-                $template = $twig->loadTemplate($visoes_navegacao[$visao]);
-                if (isset($controladores[$visao])) {
-                    print $template->render(array("ctrl" => $controladores[$visao]));
-                } else {
-                    print $template->render(array());
-                }
+                redirecionar(
+                        $visoes_navegacao[$visao]
+                        , $twig
+                        , isset($controladores[$visao]) ?
+                                $controladores[$visao] :
+                                null);
                 return;
             }
         } else if (Util::startsWithString($requisicao, "funcao_")) {
@@ -51,14 +53,25 @@ foreach ($chaves as $requisicao) {
             if (isset($controladores[$ctrl])) {
                 $controlador = $controladores[$ctrl];
                 $controlador->setDao(new Dao($entityManager));
-                $controlador->executarFuncao($_POST, $funcao);
+                $redirecionamento = $controlador->executarFuncao($_POST, $funcao);
                 $controlador->getDao()->getEntityManager()->close();
                 $controlador->getDao()->setEntityManager(null);
                 $_SESSION['controladores'] = serialize($controladores);
+                redirecionar(
+                        $visoes_navegacao[$redirecionamento]
+                        , $twig
+                        , $controlador);
                 return;
             }
         }
     }
 }
-print "Navegação incorreta";
-return;
+
+function redirecionar($visao, $twig, $ctrl) {
+    $template = $twig->loadTemplate($visao);
+    if ($ctrl != null) {
+        print $template->render(array("ctrl" => $ctrl));
+    } else {
+        print $template->render(array());
+    }
+}

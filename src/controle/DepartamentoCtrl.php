@@ -5,6 +5,7 @@ namespace controle;
 use controle\Controlador;
 use dao\Dao;
 use modelo\Departamento;
+use controle\Mensagem;
 
 /**
  * Description of DepartamentoCtrl
@@ -17,11 +18,21 @@ class DepartamentoCtrl implements Controlador {
     private $aux;
     private $departamentos;
     private $dao;
+    private $mensagem;
 
     public function __construct() {
         $this->departamento = new Departamento("", "");
         $this->aux = new Departamento("", "");
         $this->departamentos = array();
+        $mensagem = false;
+    }
+
+    public function getMensagem() {
+        return $this->mensagem;
+    }
+
+    public function setMensagem($mensagem) {
+        $this->mensagem = $mensagem;
     }
 
     public function getDao() {
@@ -51,7 +62,7 @@ class DepartamentoCtrl implements Controlador {
     public function getDepartamentos() {
         return $this->departamentos;
     }
-    
+
     /**
      * Factory method para gerar departamentos baseado a partir do POST
      */
@@ -69,10 +80,14 @@ class DepartamentoCtrl implements Controlador {
         if ($funcao == "cadastrar") {
             $this->dao->criar($this->departamento);
             $this->departamento = new Departamento("", "");
-        }else{
+            $this->mensagem = new Mensagem(
+                    "Cadastro de Departamentos"
+                    , "msg_tipo_ok"
+                    , "Departamento cadastrado com sucesso.");
+            return 'gerenciar_departamento';
+        } else {
             return false;
         }
     }
 
 }
-

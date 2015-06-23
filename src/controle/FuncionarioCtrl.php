@@ -28,6 +28,7 @@ class FuncionarioCtrl implements Controlador {
     }
 
     public function getMensagem() {
+        $this->mensagem->setFoiExibida(true);
         return $this->mensagem;
     }
 

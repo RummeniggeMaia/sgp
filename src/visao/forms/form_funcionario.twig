@@ -13,7 +13,7 @@
                 'sub_titulo' : 'Cadastro de funcionários no sistema'
             }
         %}
-        {% if ctrl.mensagem %}
+        {% if ctrl.mensagem and (not ctrl.mensagem.foiExibida) %}
             {% include 'fragmentos/frag_mensagem.twig'
                 with {
                     'cabecalho' : ctrl.mensagem.cabecalho,
@@ -21,8 +21,6 @@
                     'descricao' : ctrl.mensagem.descricao
                 }
             %}
-        {% else %}
-            {{'erroooooooo'}}
         {% endif %}
         <div class="ui top attached tabular menu">
             <div class="item" data-tab="form">Formulário</div>

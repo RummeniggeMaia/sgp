@@ -12,11 +12,13 @@ class Mensagem {
     private $cabecalho;
     private $tipo;
     private $descricao;
+    private $foiExibida;
 
     function __construct($cabecalho, $tipo, $descricao) {
         $this->cabecalho = $cabecalho;
         $this->tipo = $tipo;
         $this->descricao = $descricao;
+        $this->foiExibida = false;
     }
 
     public function getCabecalho() {
@@ -42,5 +44,12 @@ class Mensagem {
     public function setDescricao($descricao) {
         $this->descricao = $descricao;
     }
+    
+    public function getFoiExibida() {
+        return $this->foiExibida;
+    }
 
+    public function setFoiExibida($foiExibida) {
+        $this->foiExibida = $foiExibida;
+    }
 }

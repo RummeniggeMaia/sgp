@@ -56,11 +56,11 @@ foreach ($chaves as $requisicao) {
                 $redirecionamento = $controlador->executarFuncao($_POST, $funcao);
                 $controlador->getDao()->getEntityManager()->close();
                 $controlador->getDao()->setEntityManager(null);
-                $_SESSION['controladores'] = serialize($controladores);
                 redirecionar(
                         $visoes_navegacao[$redirecionamento]
                         , $twig
                         , $controlador);
+                $_SESSION['controladores'] = serialize($controladores);
                 return;
             }
         }
@@ -71,6 +71,9 @@ function redirecionar($visao, $twig, $ctrl) {
     $template = $twig->loadTemplate($visao);
     if ($ctrl != null) {
         print $template->render(array("ctrl" => $ctrl));
+        //Apos o template ser renderizado com as informacoes do ctrl, a mensagem
+        //é apaga, pos so serve para exibida apenas uma vez
+        $ctrl->setMensagem(null);
     } else {
         print $template->render(array());
     }

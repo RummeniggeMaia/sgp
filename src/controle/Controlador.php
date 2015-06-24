@@ -11,4 +11,8 @@ interface Controlador {
     public function executarFuncao($post, $funcao);
     
     public function getDao();
+    
+    public function getMensagem();
+    
+    public function setMensagem($mensagem);
 }

@@ -5,6 +5,7 @@ namespace controle;
 use controle\Controlador;
 use dao\Dao;
 use modelo\Assunto;
+use controle\Mensagem;
 
 /**
  * Description of AssuntoCtrl
@@ -17,13 +18,23 @@ class AssuntoCtrl implements Controlador {
     private $aux;
     private $assuntos;
     private $dao;
+    private $mensagem;
 
     public function __construct() {
         $this->assunto = new Assunto("", "");
         $this->aux = new Assunto("", "");
         $this->assuntos = array();
+        $this->mensagem = false;
     }
 
+    public function getMensagem() {
+        return $this->mensagem;
+    }
+
+    public function setMensagem($mensagem) {
+        $this->mensagem = $mensagem;
+    }
+     
     public function getDao() {
         return $this->dao;
     }
@@ -48,12 +59,8 @@ class AssuntoCtrl implements Controlador {
         $this->aux = $aux;
     }
 
-    public function adicionarAssunto($assunto) {
-        $this->assunto[$assunto->getId()] = $assunto;
-    }
-
-    public function removerAssunto($assunto) {
-        $this->dao.excluir($this->assunto);
+    public function getAssuntos() {
+        return $this->assuntos;
     }
 
     /**
@@ -73,8 +80,14 @@ class AssuntoCtrl implements Controlador {
         if ($funcao == "cadastrar") {
             $this->dao->criar($this->assunto);
             $this->assunto = new Assunto("", "");
+            $this->mensagem = new Mensagem(
+                    "Cadastro de Assuntos"
+                    , "msg_tipo_ok"
+                    , "Assunto cadastrado com sucesso.");
+            return 'gerenciar_assunto';
+        }else{
+            return false;
         }
     }
 
 }
-

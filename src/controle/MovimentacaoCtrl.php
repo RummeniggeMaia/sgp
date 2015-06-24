@@ -5,6 +5,7 @@ namespace controle;
 use controle\Controlador;
 use dao\Dao;
 use modelo\Movimentacao;
+use controle\Mensagem;
 
 /**
  * Description of MovimentacaoCtrl
@@ -17,11 +18,21 @@ class MovimentacaoCtrl implements Controlador {
     private $aux;
     private $movimentacaos;
     private $dao;
+    private $mensagem;
 
     public function __construct() {
         $this->movimentacao = new Movimentacao("", "");
         $this->aux = new Movimentacao("", "");
         $this->movimentacaos = array();
+        $mensagem = false;
+    }
+
+    public function getMensagem() {
+        return $this->mensagem;
+    }
+
+    public function setMensagem($mensagem) {
+        $this->mensagem = $mensagem;
     }
 
     public function getDao() {
@@ -48,12 +59,8 @@ class MovimentacaoCtrl implements Controlador {
         $this->aux = $aux;
     }
 
-    public function adicionarMovimentacao($movimentacao) {
-        $this->$movimentacaos[$movimentacao->getId()] = $movimentacao;
-    }
-
-    public function removerMovimentacao($movimentacao) {
-        $this->dao.excluir($this->movimentacao);
+    public function getMovimentacaos() {
+        return $this->movimentacaos;
     }
 
     /**
@@ -73,6 +80,13 @@ class MovimentacaoCtrl implements Controlador {
         if ($funcao == "cadastrar") {
             $this->dao->criar($this->movimentacao);
             $this->movimentacao = new Movimentacao("", "");
+            $this->mensagem = new Mensagem(
+                    "Cadastro de Movimentações"
+                    , "msg_tipo_ok"
+                    , "Movimentação cadastrada com sucesso.");
+            return 'gerenciar_movimentacao';
+        } else {
+            return false;
         }
     }
 

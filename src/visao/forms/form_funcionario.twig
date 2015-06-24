@@ -13,7 +13,7 @@
                 'sub_titulo' : 'Cadastro de funcionários no sistema'
             }
         %}
-        {% if ctrl.mensagem and (not ctrl.mensagem.foiExibida) %}
+        {% if ctrl.mensagem != null %}
             {% include 'fragmentos/frag_mensagem.twig'
                 with {
                     'cabecalho' : ctrl.mensagem.cabecalho,

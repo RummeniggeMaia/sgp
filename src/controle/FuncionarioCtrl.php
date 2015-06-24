@@ -24,11 +24,10 @@ class FuncionarioCtrl implements Controlador {
         $this->funcionario = new Funcionario("", "", "");
         $this->aux = new Funcionario("", "", "");
         $this->funcionarios = array();
-        $this->mensagem = false;
+        $this->mensagem = null;
     }
 
     public function getMensagem() {
-        $this->mensagem->setFoiExibida(true);
         return $this->mensagem;
     }
 

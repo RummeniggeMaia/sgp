@@ -24,7 +24,7 @@ class MovimentacaoCtrl implements Controlador {
         $this->movimentacao = new Movimentacao("", "");
         $this->aux = new Movimentacao("", "");
         $this->movimentacaos = array();
-        $mensagem = false;
+        $mensagem = null;
     }
 
     public function getMensagem() {
@@ -76,7 +76,7 @@ class MovimentacaoCtrl implements Controlador {
     }
 
     public function executarFuncao($post, $funcao) {
-        $this->gerarMovimentatcao($post);
+        $this->gerarMovimentacao($post);
         if ($funcao == "cadastrar") {
             $this->dao->criar($this->movimentacao);
             $this->movimentacao = new Movimentacao("", "");

@@ -11,7 +11,10 @@ if (isset($_SESSION['controladores'])) {
     $controladores = unserialize($_SESSION['controladores']);
 } else {
     $controladores = array();
-    $funcionarioCtrl = new controle\FuncionarioCtrl();
+    $funcionarioCtrl = new controle\FuncionarioCtrl();    
+    $assuntoCtrl = new controle\AssuntoCtrl();
+    $departamentoCtrl = new controle\DepartamentoCtrl();
+    $movimentacaoCtrl = new controle\MovimentacaoCtrl();
     $controladores['gerenciar_funcionario'] = $funcionarioCtrl;
     $controladores['gerenciar_assunto'] = $assuntoCtrl;
     $controladores['gerenciar_departamento'] = $departamentoCtrl;

@@ -11,7 +11,7 @@
                 'sub_titulo' : 'Cadastro de departamentos no sistema'
             }
         %} 
-        {% if ctrl.mensagem %}
+        {% if ctrl.mensagem != null %}
             {% include 'fragmentos/frag_mensagem.twig'
                 with {
                     'cabecalho' : ctrl.mensagem.cabecalho,
@@ -19,8 +19,6 @@
                     'descricao' : ctrl.mensagem.descricao
                 }
             %}
-        {% else %}
-            {{'erroooooooo'}}
         {% endif %}
         <div class="ui top attached tabular menu">
             <div class="item active" data-tab="first">Formulário</div>

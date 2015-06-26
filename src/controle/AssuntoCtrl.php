@@ -24,7 +24,7 @@ class AssuntoCtrl implements Controlador {
         $this->assunto = new Assunto("", "");
         $this->aux = new Assunto("", "");
         $this->assuntos = array();
-        $this->mensagem = false;
+        $this->mensagem = null;
     }
 
     public function getMensagem() {
@@ -67,9 +67,6 @@ class AssuntoCtrl implements Controlador {
      * Factory method para gerar assuntos baseado a partir do POST
      */
     public function gerarAssunto($post) {
-        if (isset($post['campo_constante'])) {
-            $this->assunto->setConstante($post['campo_constante']);
-        }
         if (isset($post['campo_descricao'])) {
             $this->assunto->setDescricao($post['campo_descricao']);
         }

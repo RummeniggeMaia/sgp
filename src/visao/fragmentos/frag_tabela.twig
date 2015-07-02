@@ -1,28 +1,38 @@
 {# empty Twig template #}
-<table>
+<table border="1">
     <thead>
         <tr>
-            {% if ctrl.modoBusca %}
-                <td></td>
+            {% if modelo.modoBusca %}
+                <td>ok</td>
             {% endif %}
-            {% for coluna in ctrl.colunasDaTabela %}
-                <td>{{ coluna }}</td>
+            {% for cabecalho in modelo.cabecalhos %}
+                <td>{{ cabecalho}}</td>
             {% endfor %}
-            {% if not ctrl.modoBusca %}
+            {% if not modelo.modoBusca %}
                 <td>editar</td>
                 <td>excluir</td>
             {% endif %}
         </tr>
     </thead>
     <tbody>
-        {% for funcionario in ctrl.funcionarios %} 
+        {% for linha in modelo.linhas %} 
             <tr>
-                {% if ctrl.modoBusca %}
+                {% if modelo.modoBusca %}
                     <td>
                         <input type="checkbox"/>
                     </td>
                 {% endif %}
-                <td></td>
+                {% for valor in linha.valores %}
+                    <td>{{ valor }}</td>
+                {% endfor %}
+                {% if not modelo.modoBusca %}
+                    <td>
+                        <input type="button" value="editar"/>
+                    </td>
+                    <td>
+                        <input type="button" value="excluir"/>
+                    </td>
+                {% endif %}
             </tr>
         {% endfor %}
     </tbody>

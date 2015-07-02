@@ -59,30 +59,11 @@
             </form>
         </div>
         <div class="ui bottom attached tab segment active" data-tab="tabela">
-            <table>
-                <thead>
-                    <tr><th>Nome</th>
-                        <th>CPF</th>
-                        <th>RG</th>
-                    </tr></thead>
-                <tbody>
-                    <tr>
-                        <td>John</td>
-                        <td>459.321.252-58</td>
-                        <td>5.245.658 SSP/RN</td>
-                    </tr>
-                    <tr>
-                        <td>Rummenigge</td>
-                        <td>459.322.441-03</td>
-                        <td>2.245.658 SSP/RN</td>
-                    </tr>
-                    <tr>
-                        <td>John</td>
-                        <td>459.551.252-58</td>
-                        <td>0.245.658 SSP/RN</td>
-                    </tr>
-                </tbody>
-            </table>
+            {% include 'fragmentos/frag_tabela.twig' 
+            with {
+                'modelo' : ctrl.modeloTabela
+            }
+            %}
         </div>
     </div>
 {% endblock %}

@@ -13,7 +13,7 @@ class Dao {
     public function __construct($entityManager) {
         $this->entityManager = $entityManager;
     }
-    
+
     public function getEntityManager() {
         return $this->entityManager;
     }
@@ -36,10 +36,12 @@ class Dao {
     }
 
     public function pesquisarTodos($entidade, $limit, $offset) {
-        return $this->entityManager->findAll($entidade->getClassName());
+        return $this->entityManager->getRepository($entidade->getClassName())
+                        ->findAll();
     }
-    
+
     public function pesquisar($entidade, $limit, $offset) {
         
     }
+
 }

@@ -1,5 +1,5 @@
 {# empty Twig template #}
-<div class="ui modal" id="modal_mensagem">
+<div class="ui small modal" id="modal_mensagem">
     <i class="close icon"></i>
     <div class="header">
         {{cabecalho}}
@@ -7,13 +7,15 @@
     <div class="content">
         <div class="image">
             {% if tipo_msg == 'msg_tipo_ok' %}
-                <i class="ok sign icon"></i>
+                <i class="checkmark icon"></i>
             {% elseif tipo_msg == 'msg_tipo_info' %}
                 <i class="info icon"></i>
             {% elseif tipo_msg == 'msg_tipo_aviso' %}
                 <i class="warning icon"></i>
             {% elseif tipo_msg == 'msg_tipo_erro' %}
                 <i class="remove sign icon"></i>
+                {#            {% else %}
+                                <i class="recycle sign icon"></i>#}
             {% endif %}
         </div>
         <div class="description">

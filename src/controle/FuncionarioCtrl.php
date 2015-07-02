@@ -3,11 +3,10 @@
 namespace controle;
 
 use controle\Controlador;
-use dao\Dao;
-use modelo\Funcionario;
 use controle\Mensagem;
-use controle\tabela\ModeloDeTabela;
 use controle\tabela\Linha;
+use controle\tabela\ModeloDeTabela;
+use modelo\Funcionario;
 
 /**
  * Description of FuncionarioCtrl
@@ -68,7 +67,11 @@ class FuncionarioCtrl implements Controlador {
     public function getFuncionarios() {
         return $this->funcionarios;
     }
-
+    
+    public function getModeloTabela() {
+        return $this->modeloTabela;
+    }
+    
     /**
      * Factory method para gerar funcionarios baseado a partir do POST
      */
@@ -95,7 +98,8 @@ class FuncionarioCtrl implements Controlador {
                     , "Funcionário cadastrado com sucesso.");
             return 'gerenciar_funcionario';
         } else if ($funcao == "pesquisar") {
-            $return = $this->dao->pesquisarTodos($this->funcionario, 0, 0);
+            $this->funcionarios = $this->dao->pesquisarTodos($this->funcionario, 0, 0);
+            $this->gerarLinhas();
             return 'gerenciar_funcionario';
         } else {
             return false;
@@ -113,6 +117,6 @@ class FuncionarioCtrl implements Controlador {
             $linha->setValores($valores);
             $linhas[] = $linha;
         }
-        $this->modeloTabela->setModoBusca($linhas);
+        $this->modeloTabela->setLinhas($linhas);
     }
 }

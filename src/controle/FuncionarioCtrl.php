@@ -6,6 +6,8 @@ use controle\Controlador;
 use dao\Dao;
 use modelo\Funcionario;
 use controle\Mensagem;
+use controle\tabela\ModeloDeTabela;
+use controle\tabela\Linha;
 
 /**
  * Description of FuncionarioCtrl
@@ -19,12 +21,16 @@ class FuncionarioCtrl implements Controlador {
     private $funcionarios;
     private $dao;
     private $mensagem;
+    private $modeloTabela;
 
     public function __construct() {
         $this->funcionario = new Funcionario("", "", "");
         $this->aux = new Funcionario("", "", "");
         $this->funcionarios = array();
         $this->mensagem = null;
+        $this->modeloTabela = new ModeloDeTabela;
+        $this->modeloTabela->setCabecalhos(array("Nome", "RG", "CPF"));
+        $this->modeloTabela->setModoBusca(false);
     }
 
     public function getMensagem() {
@@ -88,9 +94,25 @@ class FuncionarioCtrl implements Controlador {
                     , "msg_tipo_ok"
                     , "Funcionário cadastrado com sucesso.");
             return 'gerenciar_funcionario';
+        } else if ($funcao == "pesquisar") {
+            $return = $this->dao->pesquisarTodos($this->funcionario, 0, 0);
+            return 'gerenciar_funcionario';
         } else {
             return false;
         }
     }
-
+    
+    private function gerarLinhas() {
+        $linhas = array();
+        foreach ($this->funcionarios as $funcionario ) {
+            $linha = new Linha();
+            $valores = array();
+            $valores[] = $funcionario->getNome();
+            $valores[] = $funcionario->getRg();
+            $valores[] = $funcionario->getCpf();
+            $linha->setValores($valores);
+            $linhas[] = $linha;
+        }
+        $this->modeloTabela->setModoBusca($linhas);
+    }
 }

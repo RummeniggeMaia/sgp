@@ -1,16 +1,16 @@
 {# empty Twig template #}
-<table border="1">
+<table border="1" width="100%">
     <thead>
         <tr>
             {% if modelo.modoBusca %}
                 <td>ok</td>
             {% endif %}
             {% for cabecalho in modelo.cabecalhos %}
-                <td>{{ cabecalho}}</td>
+                <td><b><center>{{ cabecalho}}</center></b></td>
             {% endfor %}
             {% if not modelo.modoBusca %}
-                <td>editar</td>
-                <td>excluir</td>
+                <td align="center"><b>Editar</b></td>
+                <td align="center"><b>Excluir</b></td>
             {% endif %}
         </tr>
     </thead>
@@ -26,11 +26,11 @@
                     <td>{{ valor }}</td>
                 {% endfor %}
                 {% if not modelo.modoBusca %}
-                    <td>
-                        <input type="button" value="editar"/>
+                    <td align="center">
+                        <input type="button" value="Editar"/>
                     </td>
-                    <td>
-                        <input type="button" value="excluir"/>
+                    <td align="center">
+                        <input type="button" value="Excluir"/>
                     </td>
                 {% endif %}
             </tr>

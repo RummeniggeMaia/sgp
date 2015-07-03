@@ -20,7 +20,6 @@ class Usuario extends Entidade {
     protected $senha;
 
     function __construct($login, $senha) {
-        parent::__construct();
         $this->login = $login;
         $this->senha = $senha;
     }

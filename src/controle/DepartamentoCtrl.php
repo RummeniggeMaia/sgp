@@ -24,7 +24,7 @@ class DepartamentoCtrl implements Controlador {
         $this->departamento = new Departamento("", "");
         $this->aux = new Departamento("", "");
         $this->departamentos = array();
-        $mensagem = false;
+        $mensagem = null;
     }
 
     public function getMensagem() {
@@ -67,9 +67,6 @@ class DepartamentoCtrl implements Controlador {
      * Factory method para gerar departamentos baseado a partir do POST
      */
     public function gerarDepartamento($post) {
-        if (isset($post['campo_constante'])) {
-            $this->departamento->setConstante($post['campo_constante']);
-        }
         if (isset($post['campo_descricao'])) {
             $this->departamento->setDescricao($post['campo_descricao']);
         }

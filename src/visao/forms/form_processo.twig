@@ -11,55 +11,64 @@
                 'sub_titulo' : 'Cadastro de processos no sistema '
             }
         %}
+        {% if ctrl.mensagem != null %}
+            {% include 'fragmentos/frag_mensagem.twig'
+                with {
+                    'cabecalho' : ctrl.mensagem.cabecalho,
+                    'tipo_msg' : ctrl.mensagem.tipo,
+                    'descricao' : ctrl.mensagem.descricao
+                }
+            %}
+        {% endif %}
         <div class="ui top attached tabular menu">
             <div class="item active" data-tab="first">Formulário</div>
             <div class="item" data-tab="second">Tabela de Processos</div>
         </div>
         <div class="ui bottom attached active tab segment" data-tab="first">
-        <form class="ui form" method="post" action="assunto">
-            <div class="field">
-                <label>Nº Processo:</label>
-                <input type="text" name="campo_numeroProcesso" placeholder="Número do Processo">
-            </div>
-            <div class="field">
-                <label>Assunto:</label>
-                <div class="ui fluid search selection dropdown">
-                    <input type="hidden" name="assunto">
-                    <i class="dropdown icon"></i>
-                    <div class="default text">Selecione o Assunto</div>
-                    <div class="menu">
-                        <div class="item" data-value="ad"><i class="ad flag"></i>Andorra</div>
-                        <div class="item" data-value="ae"><i class="ae flag"></i>United Arab Emirates</div>
-                        <div class="item" data-value="af"><i class="af flag"></i>Afghanistan</div>
-                    </div>
-                </div>
-            </div>
-            <div class="field">
-                <label>Departamento:</label>
-                <div class="ui fluid search selection dropdown">
-                    <input type="hidden" name="departamento">
-                    <i class="dropdown icon"></i>
-                    <div class="default text">Selecione o Departamento</div>
-                    <div class="menu">
-                        <div class="item" data-value="ad"><i class="ad flag"></i>Andorra</div>
-                        <div class="item" data-value="ae"><i class="ae flag"></i>United Arab Emirates</div>
-                        <div class="item" data-value="af"><i class="af flag"></i>Afghanistan</div>
-                        <div class="item" data-value="af"><i class="br flag"></i>Brasil</div>
-                    </div>
-                </div>
-            </div>
-            <div class="fields">
+            <form class="ui form" method="post" action="assunto">
                 <div class="field">
-                    <div class="ui submit black button"><i class="save icon"></i>Cadastrar</div>
+                    <label>Nº Processo:</label>
+                    <input type="text" name="campo_numeroProcesso" placeholder="Número do Processo">
                 </div>
                 <div class="field">
-                    <div class="ui submit black button"><i class="search icon"></i>Pesquisar</div>
+                    <label>Assunto:</label>
+                    <div class="ui fluid search selection dropdown">
+                        <input type="hidden" name="assunto">
+                        <i class="dropdown icon"></i>
+                        <div class="default text">Selecione o Assunto</div>
+                        <div class="menu">
+                            <div class="item" data-value="ad"><i class="ad flag"></i>Andorra</div>
+                            <div class="item" data-value="ae"><i class="ae flag"></i>United Arab Emirates</div>
+                            <div class="item" data-value="af"><i class="af flag"></i>Afghanistan</div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </form>
+                <div class="field">
+                    <label>Departamento:</label>
+                    <div class="ui fluid search selection dropdown">
+                        <input type="hidden" name="departamento">
+                        <i class="dropdown icon"></i>
+                        <div class="default text">Selecione o Departamento</div>
+                        <div class="menu">
+                            <div class="item" data-value="ad"><i class="ad flag"></i>Andorra</div>
+                            <div class="item" data-value="ae"><i class="ae flag"></i>United Arab Emirates</div>
+                            <div class="item" data-value="af"><i class="af flag"></i>Afghanistan</div>
+                            <div class="item" data-value="af"><i class="br flag"></i>Brasil</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        <div class="ui submit black button"><i class="save icon"></i>Cadastrar</div>
+                    </div>
+                    <div class="field">
+                        <div class="ui submit black button"><i class="search icon"></i>Pesquisar</div>
+                    </div>
+                </div>
+            </form>
         </div>
         <div class="ui bottom attached tab segment" data-tab="second">
-            
+
             <table class="ui basic table">
                 <thead>
                     <tr><th>Nº Processo</th>

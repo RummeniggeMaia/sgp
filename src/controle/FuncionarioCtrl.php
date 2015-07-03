@@ -100,6 +100,7 @@ class FuncionarioCtrl implements Controlador {
         } else if ($funcao == "pesquisar") {
             $this->funcionarios = $this->dao->pesquisarTodos($this->funcionario, 0, 0);
             $this->gerarLinhas();
+            $this->modeloTabela->setModoBusca(true);
             return 'gerenciar_funcionario';
         } else {
             return false;

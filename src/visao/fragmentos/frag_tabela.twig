@@ -1,39 +1,52 @@
 {# empty Twig template #}
-<table border="1">
+<table class="ui compact celled definition table">
     <thead>
         <tr>
-            {% if modelo.modoBusca %}
-                <td>ok</td>
-            {% endif %}
+            <th>
+            </th>
             {% for cabecalho in modelo.cabecalhos %}
-                <td>{{ cabecalho}}</td>
+                <th>
+                    {{ cabecalho}}
+                </th>
             {% endfor %}
-            {% if not modelo.modoBusca %}
-                <td>editar</td>
-                <td>excluir</td>
-            {% endif %}
+            <th>
+            </th>
+            <th>
+            </th>
         </tr>
     </thead>
     <tbody>
         {% for linha in modelo.linhas %} 
             <tr>
                 {% if modelo.modoBusca %}
-                    <td>
-                        <input type="checkbox"/>
+                    <td class="collapsing">
+                        <div class="ui fitted slider checkbox">
+                            <input type="checkbox"> <label></label>
+                        </div>
                     </td>
+                {% else %}
+                    <td></td>
                 {% endif %}
                 {% for valor in linha.valores %}
                     <td>{{ valor }}</td>
                 {% endfor %}
                 {% if not modelo.modoBusca %}
-                    <td>
+                    <td style="text-align: center">
                         <input type="button" value="editar"/>
                     </td>
-                    <td>
+                    <td style="text-align: center">
                         <input type="button" value="excluir"/>
                     </td>
                 {% endif %}
             </tr>
         {% endfor %}
     </tbody>
+    <tfoot class="full-width">
+        <tr>
+            <th>
+            </th>
+            <th colspan="6">
+            </th>
+        </tr>
+    </tfoot>
 </table>

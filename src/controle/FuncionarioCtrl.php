@@ -67,11 +67,11 @@ class FuncionarioCtrl implements Controlador {
     public function getFuncionarios() {
         return $this->funcionarios;
     }
-    
+
     public function getModeloTabela() {
         return $this->modeloTabela;
     }
-    
+
     /**
      * Factory method para gerar funcionarios baseado a partir do POST
      */
@@ -89,7 +89,12 @@ class FuncionarioCtrl implements Controlador {
 
     public function executarFuncao($post, $funcao) {
         $this->gerarFuncionario($post);
-        if ($funcao == "cadastrar") {
+       $resultado = $this->validacao();
+       if($resultado == "campo_nome_erro"){
+           return 'gerenciar_funcionario';
+       }
+       
+       if ($funcao == "cadastrar") {
             $this->dao->criar($this->funcionario);
             $this->funcionario = new Funcionario("", "", "");
             $this->mensagem = new Mensagem(
@@ -105,10 +110,10 @@ class FuncionarioCtrl implements Controlador {
             return false;
         }
     }
-    
+
     private function gerarLinhas() {
         $linhas = array();
-        foreach ($this->funcionarios as $funcionario ) {
+        foreach ($this->funcionarios as $funcionario) {
             $linha = new Linha();
             $valores = array();
             $valores[] = $funcionario->getNome();
@@ -119,4 +124,15 @@ class FuncionarioCtrl implements Controlador {
         }
         $this->modeloTabela->setLinhas($linhas);
     }
+
+    private function validacao() {
+        if ($this->funcionario->getNome() == null || is_numeric($this->funcionario->setNome())) {
+            $this->mensagem = new Mensagem(
+                    "Cadastro não realizado!"
+                    , "msg_tipo_erro"
+                    , "O campo nome não pode ser vazio ou numérico");
+            return 'campo_nome_erro';
+        }
+    }
+
 }

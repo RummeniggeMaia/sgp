@@ -89,10 +89,12 @@ class FuncionarioCtrl implements Controlador {
 
     public function executarFuncao($post, $funcao) {
         $this->gerarFuncionario($post);
-       $resultado = $this->validacao();
-       if($resultado == "campo_nome_erro"){
-           return 'gerenciar_funcionario';
+        
+       if($funcao == "cadastrar"){
+           $resultado = $this->validacao();           
+           if($resultado == "validacao_erro") return 'gerenciar_funcionario';
        }
+       
        
        if ($funcao == "cadastrar") {
             $this->dao->criar($this->funcionario);
@@ -125,14 +127,31 @@ class FuncionarioCtrl implements Controlador {
         $this->modeloTabela->setLinhas($linhas);
     }
 
+    /*Falta resolver o problema da mascara, pois a mascara tem q ser tirada antes da verificação, para conferir se
+     o CPF e RG é válido e são numéricos realmente.*/
     private function validacao() {
-        if ($this->funcionario->getNome() == null || is_numeric($this->funcionario->setNome())) {
+        if ($this->funcionario->getNome() == null || is_numeric($this->funcionario->getNome())) {
             $this->mensagem = new Mensagem(
                     "Cadastro não realizado!"
                     , "msg_tipo_erro"
                     , "O campo nome não pode ser vazio ou numérico");
-            return 'campo_nome_erro';
+            return 'validacao_erro';
         }
+        if ($this->funcionario->getRg() == null || is_numeric($this->funcionario->getRg())) {
+            $this->mensagem = new Mensagem(
+                    "Cadastro não realizado!"
+                    , "msg_tipo_erro"
+                    , "O campo RG não pode ser vazio");
+            return 'validacao_erro';
+        }
+        if ($this->funcionario->getCpf() == null || is_numeric($this->funcionario->getCpf())) {
+            $this->mensagem = new Mensagem(
+                    "Cadastro não realizado!"
+                    , "msg_tipo_erro"
+                    , "O campo CPF não pode ser vazio");
+            return 'validacao_erro';
+        }         
+        
     }
 
 }

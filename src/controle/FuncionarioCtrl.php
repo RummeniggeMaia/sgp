@@ -89,12 +89,12 @@ class FuncionarioCtrl implements Controlador {
 
     public function executarFuncao($post, $funcao) {
         $this->gerarFuncionario($post);
-       $resultado = $this->validacao();
-       if($resultado == "campo_nome_erro"){
-           return 'gerenciar_funcionario';
-       }
-       
-       if ($funcao == "cadastrar") {
+//        $resultado = $this->validacao();
+//        if ($resultado == "campo_nome_erro") {
+//            return 'gerenciar_funcionario';
+//        }
+
+        if ($funcao == "cadastrar") {
             $this->dao->criar($this->funcionario);
             $this->funcionario = new Funcionario("", "", "");
             $this->mensagem = new Mensagem(

@@ -19,7 +19,7 @@ if (isset($_SESSION['controladores'])) {
     $controladores['gerenciar_assunto'] = $assuntoCtrl;
     $controladores['gerenciar_departamento'] = $departamentoCtrl;
     $controladores['gerenciar_movimentacao'] = $movimentacaoCtrl;
-    $controladores['gerenciar_processo'] = $processoCtrl;
+    //$controladores['gerenciar_processo'] = $processoCtrl;
     $_SESSION['controladores'] = serialize($controladores);
 }
 

@@ -9,9 +9,11 @@ namespace dao;
 class Dao {
 
     private $entityManager;
+    private $dqlBuilder;
 
     public function __construct($entityManager) {
         $this->entityManager = $entityManager;
+        $this->dqlBuilder = new DqlBuilder();
     }
 
     public function getEntityManager() {
@@ -41,7 +43,10 @@ class Dao {
     }
 
     public function pesquisar($entidade, $limit, $offset) {
-        
+        $dql = $this->dqlBuilder->gerarDql($entidade);
+        $query = $this->entityManager->createQuery($dql)
+                ->setFirstResult($offset)->setMaxResult($limit);
+        return $query->getResult();
     }
 
 }

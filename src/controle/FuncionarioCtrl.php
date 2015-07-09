@@ -7,13 +7,14 @@ use controle\Mensagem;
 use controle\tabela\Linha;
 use controle\tabela\ModeloDeTabela;
 use modelo\Funcionario;
+use controle\tabela\Paginador;
 
 /**
  * Description of FuncionarioCtrl
  *
  * @author Rummenigge
  */
-class FuncionarioCtrl implements Controlador {
+class FuncionarioCtrl extends Controlador {
 
     private $funcionario;
     private $aux;
@@ -103,8 +104,10 @@ class FuncionarioCtrl implements Controlador {
                     , "Funcionário cadastrado com sucesso.");
             return 'gerenciar_funcionario';
         } else if ($funcao == "pesquisar") {
-            $this->funcionarios = $this->dao->pesquisarTodos($this->funcionario, 0, 0);
-            $this->gerarLinhas();
+            $this->dao->pesquisar($this->funcionario,
+                    $this->modeloTabela->getPaginador()->getLimit());
+//            $this->funcionarios = $this->dao->pesquisarTodos($this->funcionario, 0, 0);
+//            $this->gerarLinhas();
             //$this->modeloTabela->setModoBusca(true);
             return 'gerenciar_funcionario';
         } else {
@@ -136,4 +139,7 @@ class FuncionarioCtrl implements Controlador {
         }
     }
 
+    private function pesquisar() {
+        
+    }
 }

@@ -1,6 +1,8 @@
 <?php
 
 namespace controle\tabela;
+
+use Paginador;
 /**
  * Description of ModeloDeTabela
  *
@@ -12,11 +14,13 @@ class ModeloDeTabela {
     private $cabecalhos;
     private $linhas;
     private $modoBusca;
+    private $paginador;
     
     public function __construct() {
         $this->cabecalhos = array();
         $this->linhas = array();
         $this->modoBusca = false;
+        $this->paginador = new Paginador();
     }
     
     public function getCabecalhos() {
@@ -41,5 +45,12 @@ class ModeloDeTabela {
 
     public function setModoBusca($modoBusca) {
         $this->modoBusca = $modoBusca;
+    }
+    public function getPaginador() {
+        return $this->paginador;
+    }
+
+    public function setPaginador($paginador) {
+        $this->paginador = $paginador;
     }
 }

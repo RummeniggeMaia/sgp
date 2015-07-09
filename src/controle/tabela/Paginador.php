@@ -1,5 +1,7 @@
 <?php
 
+namespace controle\tabela;
+
 /**
  *
  * @author Rummenigge
@@ -94,7 +96,7 @@ class Paginador {
     public function podeSeguir() {
         return $this->paginaAtual() < $this->totalDePaginas();
     }
-    
+
     public function pular($pagina) {
         if ($pagina > 0 && $pagina <= $this->totalDePaginas()) {
             $this->offset = ($pagina - 1) * $this->limit;

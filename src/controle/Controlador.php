@@ -63,5 +63,16 @@ abstract class Controlador {
         $this->modeloTabela = $modeloTabela;
     }
 
+    public function pesquisar() {
+        $this->funcionarios = $this->dao->pesquisar(
+                $this->modeloTabela->getPaginador()->getPesquisa()
+                , $this->modeloTabela->getPaginador()->getLimit()
+                , $this->modeloTabela->getPaginador()->getOffset());
+    }
+    
+    public function paginar($acao) {
+        
+    }
+
     public abstract function executarFuncao($post, $funcao);
 }

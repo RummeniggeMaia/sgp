@@ -2,6 +2,9 @@
 
 namespace dao;
 
+use dao\Dql;
+use Doctrine\ORM\QueryBuilder;
+use modelo\Entidade;
 use modelo\Funcionario;
 
 /**
@@ -11,24 +14,38 @@ use modelo\Funcionario;
  */
 class DqlBuilder {
 
-    public function gerarDql($entidade) {
+    const FUNCAO_BUSCAR = 1;
+    const FUNCAO_CONTAR = 2;
+
+    public function gerarDql(QueryBuilder $queryBuilder, Entidade $entidade, $funcao) {
+
+        if ($funcao == self::FUNCAO_BUSCAR) {
+            $queryBuilder->select("x");
+        } else if ($funcao == self::FUNCAO_CONTAR) {
+            $queryBuilder->select("count(x)");
+        }
+
+        $queryBuilder->from($entidade->getClassName(), "x");
         if ($entidade->getClassName() == "Funcionario") {
-            return $this->dqlFuncionario($entidade);
+            $this->gerarClausulaWhereFuncionario(
+                    $entidade, $queryBuilder);
         }
     }
-    
-    private function dqlFuncionario(Funcionario $funcionario) {
-        $dql = "select f from Funcionario where 1";
-        if ($funcionario->getNome() != null) {
-            $dql . " and nome = " . $funcionario->getNome();
+
+    private function gerarClausulaWhereFuncionario(Funcionario $funcionario, QueryBuilder $qb) {
+        $qb->where("1 = 1");
+        if ($funcionario->getNome() != null &&
+                preg_match("/.+/i", $funcionario->getNome())) {
+            $qb->andWhere("x.nome = " . $funcionario->getNome());
         }
-        if ($funcionario->getCpf() != null) {
-            $dql . " and nome = " . $funcionario->getCpf();
+        if ($funcionario->getCpf() != null &&
+                preg_match("/.+/i", $funcionario->getCpf())) {
+            $qb->andWhere("x.cpf = " . $funcionario->getCpf());
         }
-        if ($funcionario->getRg() != null) {
-            $dql . " and nome = " . $funcionario->getRg();
+        if ($funcionario->getRg() != null &&
+                preg_match("/.+/i", $funcionario->getRg())) {
+            $qb->andWhere("x.rg = " . $funcionario->getRg());
         }
-        return $dql;
     }
 
 }

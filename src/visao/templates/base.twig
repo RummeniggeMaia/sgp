@@ -5,6 +5,7 @@
         <title>{% block title %}Home{% endblock %}</title>
         <script type="text/javascript" src="{{jquerylib|default('../../web/jquery.min.js')}}"></script>
         <script type="text/javascript" src="{{semantic_js|default('../../web/semantic_ui/semantic.min.js')}}"></script>
+        <script type="text/javascript" src="{{jquerylib|default('../../web/jquery.maskedinput.js')}}"></script>
         <link href="{{semantic_css|default('../../web/semantic_ui/semantic.min.css')}}" rel="stylesheet" type="text/css"/>
         <script type="text/javascript">
             $(document).ready(function() {
@@ -30,6 +31,12 @@
                 $('#' + form).submit();
             }
 
+        </script>
+        <script>
+            jQuery(function($) {
+                $("#campoCpf").mask("999.999.999-99");
+                $("#campoRg").mask("999.999.999");
+            });
         </script>
     </head>
     <body class="pushable">

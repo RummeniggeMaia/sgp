@@ -8,20 +8,12 @@ use controle\tabela\Linha;
 use controle\tabela\ModeloDeTabela;
 use modelo\Funcionario;
 use controle\tabela\Paginador;
-
 /**
  * Description of FuncionarioCtrl
  *
  * @author Rummenigge
  */
 class FuncionarioCtrl extends Controlador {
-
-    private $funcionario;
-    private $aux;
-    private $funcionarios;
-    private $dao;
-    private $mensagem;
-    private $modeloTabela;
 
     public function __construct() {
         $this->funcionario = new Funcionario("", "", "");
@@ -31,46 +23,6 @@ class FuncionarioCtrl extends Controlador {
         $this->modeloTabela = new ModeloDeTabela;
         $this->modeloTabela->setCabecalhos(array("Nome", "RG", "CPF"));
         $this->modeloTabela->setModoBusca(false);
-    }
-
-    public function getMensagem() {
-        return $this->mensagem;
-    }
-
-    public function setMensagem($mensagem) {
-        $this->mensagem = $mensagem;
-    }
-
-    public function getDao() {
-        return $this->dao;
-    }
-
-    public function setDao($dao) {
-        $this->dao = $dao;
-    }
-
-    public function getFuncionario() {
-        return $this->funcionario;
-    }
-
-    public function getAux() {
-        return $this->aux;
-    }
-
-    public function setFuncionario($funcionario) {
-        $this->funcionario = $funcionario;
-    }
-
-    public function setAux($aux) {
-        $this->aux = $aux;
-    }
-
-    public function getFuncionarios() {
-        return $this->funcionarios;
-    }
-
-    public function getModeloTabela() {
-        return $this->modeloTabela;
     }
 
     /**
@@ -104,11 +56,12 @@ class FuncionarioCtrl extends Controlador {
                     , "Funcionário cadastrado com sucesso.");
             return 'gerenciar_funcionario';
         } else if ($funcao == "pesquisar") {
-            $this->dao->pesquisar($this->funcionario,
-                    $this->modeloTabela->getPaginador()->getLimit());
-//            $this->funcionarios = $this->dao->pesquisarTodos($this->funcionario, 0, 0);
-//            $this->gerarLinhas();
-            //$this->modeloTabela->setModoBusca(true);
+            $this->modeloTabela->getPaginador()->setContagem(
+                    $this->dao->contar($this->funcionario));
+            $this->modeloTabela->getPaginador()->setPesquisa(
+                    clone $this->funcionario);
+            $this->pesquisar();
+            $this->gerarLinhas();
             return 'gerenciar_funcionario';
         } else {
             return false;
@@ -129,17 +82,31 @@ class FuncionarioCtrl extends Controlador {
         $this->modeloTabela->setLinhas($linhas);
     }
 
+    /* Falta resolver o problema da mascara, pois a mascara tem q ser tirada antes da verificação, para conferir se
+      o CPF e RG é válido e são numéricos realmente. */
+
     private function validacao() {
-        if ($this->funcionario->getNome() == null || is_numeric($this->funcionario->setNome())) {
+        if ($this->funcionario->getNome() == null || is_numeric($this->funcionario->getNome())) {
             $this->mensagem = new Mensagem(
                     "Cadastro não realizado!"
                     , "msg_tipo_erro"
                     , "O campo nome não pode ser vazio ou numérico");
-            return 'campo_nome_erro';
+            return 'validacao_erro';
+        }
+        if ($this->funcionario->getRg() == null || is_numeric($this->funcionario->getRg())) {
+            $this->mensagem = new Mensagem(
+                    "Cadastro não realizado!"
+                    , "msg_tipo_erro"
+                    , "O campo RG não pode ser vazio");
+            return 'validacao_erro';
+        }
+        if ($this->funcionario->getCpf() == null || is_numeric($this->funcionario->getCpf())) {
+            $this->mensagem = new Mensagem(
+                    "Cadastro não realizado!"
+                    , "msg_tipo_erro"
+                    , "O campo CPF não pode ser vazio");
+            return 'validacao_erro';
         }
     }
 
-    private function pesquisar() {
-        
-    }
 }

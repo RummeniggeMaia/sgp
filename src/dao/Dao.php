@@ -8,6 +8,10 @@ namespace dao;
  */
 class Dao {
 
+    /**
+     *
+     * @var EntityManager
+     */
     private $entityManager;
     private $dqlBuilder;
 
@@ -37,16 +41,20 @@ class Dao {
         $this->entityManager->remove($entidade);
     }
 
-    public function pesquisarTodos($entidade, $limit, $offset) {
-        return $this->entityManager->getRepository($entidade->getClassName())
-                        ->findAll();
+    public function pesquisar($entidade, $limit, $offset) {
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+        $this->dqlBuilder->gerarDql(
+                $queryBuilder, $entidade, DqlBuilder::FUNCAO_BUSCAR);
+        $queryBuilder->setMaxResults($limit);
+        $queryBuilder->setFirstResult($offset);
+        return $queryBuilder->getQuery()->getResult();
     }
 
-    public function pesquisar($entidade, $limit, $offset) {
-        $dql = $this->dqlBuilder->gerarDql($entidade);
-        $query = $this->entityManager->createQuery($dql)
-                ->setFirstResult($offset)->setMaxResult($limit);
-        return $query->getResult();
+    public function contar($entidade) {
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+        $this->dqlBuilder->gerarDql(
+                $queryBuilder, $entidade, DqlBuilder::FUNCAO_CONTAR);
+        return $queryBuilder->getQuery()->getSingleScalarResult();
     }
 
 }

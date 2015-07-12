@@ -12,19 +12,13 @@ use controle\Mensagem;
  *
  * @author Rummenigge
  */
-class MovimentacaoCtrl implements Controlador {
-
-    private $movimentacao;
-    private $aux;
-    private $movimentacaos;
-    private $dao;
-    private $mensagem;
+class MovimentacaoCtrl extends Controlador {
 
     public function __construct() {
         $this->movimentacao = new Movimentacao("", "");
         $this->aux = new Movimentacao("", "");
         $this->movimentacaos = array();
-        $mensagem = null;
+        $this->mensagem = null;
     }
 
     public function getMensagem() {

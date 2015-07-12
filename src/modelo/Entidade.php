@@ -47,7 +47,9 @@ abstract class Entidade {
     }
 
     public function getClassName() {
-        return get_class($this);
+        $func = new \ReflectionClass($this);
+        return $func->getName();
+        //return get_class();
     }
 
 }

@@ -12,13 +12,7 @@ use controle\Mensagem;
  *
  * @author Rummenigge
  */
-class AssuntoCtrl implements Controlador {
-
-    private $assunto;
-    private $aux;
-    private $assuntos;
-    private $dao;
-    private $mensagem;
+class AssuntoCtrl extends Controlador {
 
     public function __construct() {
         $this->assunto = new Assunto("", "");

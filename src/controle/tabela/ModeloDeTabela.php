@@ -2,7 +2,7 @@
 
 namespace controle\tabela;
 
-use Paginador;
+use controle\tabela\Paginador;
 /**
  * Description of ModeloDeTabela
  *

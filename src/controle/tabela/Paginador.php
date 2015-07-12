@@ -8,6 +8,12 @@ namespace controle\tabela;
  */
 class Paginador {
 
+    const ACAO_PRIMEIRA = 1;
+    const ACAO_ANTERIOR = 2;
+    const ACAO_PROXIMA = 3;
+    const ACAO_ULTIMA = 4;
+    const ACAO_PULAR = 5;
+
     private $contagem;
     private $offset;
     private $limit;

@@ -12,19 +12,13 @@ use controle\Mensagem;
  *
  * @author Rummenigge
  */
-class DepartamentoCtrl implements Controlador {
-
-    private $departamento;
-    private $aux;
-    private $departamentos;
-    private $dao;
-    private $mensagem;
+class DepartamentoCtrl extends Controlador {
 
     public function __construct() {
         $this->departamento = new Departamento("", "");
         $this->aux = new Departamento("", "");
         $this->departamentos = array();
-        $mensagem = null;
+        $this->mensagem = null;
     }
 
     public function getMensagem() {

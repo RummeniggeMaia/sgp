@@ -9,6 +9,7 @@ namespace controle;
 abstract class Controlador {
 
     protected $funcionario;
+    protected $assunto;
     protected $aux;
     protected $funcionarios;
     protected $dao;
@@ -17,6 +18,10 @@ abstract class Controlador {
 
     public function getFuncionario() {
         return $this->funcionario;
+    }
+    
+    public function getAssunto(){
+        return $this->assunto;
     }
 
     public function getAux() {
@@ -41,6 +46,10 @@ abstract class Controlador {
 
     public function setFuncionario($funcionario) {
         $this->funcionario = $funcionario;
+    }
+    
+    public function setAssunto($assunto){
+        $this->assunto = $assunto;
     }
 
     public function setAux($aux) {

@@ -3,9 +3,11 @@
 namespace controle;
 
 use controle\Controlador;
-use dao\Dao;
-use modelo\Assunto;
 use controle\Mensagem;
+use controle\tabela\Linha;
+use controle\tabela\ModeloDeTabela;
+use modelo\Assunto;
+use util\Util;
 
 /**
  * Description of AssuntoCtrl
@@ -15,46 +17,13 @@ use controle\Mensagem;
 class AssuntoCtrl extends Controlador {
 
     public function __construct() {
-        $this->assunto = new Assunto("", "");
-        $this->aux = new Assunto("", "");
+        $this->assunto = new Assunto("");
+        $this->aux = new Assunto("");
         $this->assuntos = array();
         $this->mensagem = null;
-    }
-
-    public function getMensagem() {
-        return $this->mensagem;
-    }
-
-    public function setMensagem($mensagem) {
-        $this->mensagem = $mensagem;
-    }
-     
-    public function getDao() {
-        return $this->dao;
-    }
-
-    public function setDao($dao) {
-        $this->dao = $dao;
-    }
-
-    public function getAssunto() {
-        return $this->assunto;
-    }
-
-    public function getAux() {
-        return $this->aux;
-    }
-
-    public function setAssunto($assunto) {
-        $this->assunto = $assunto;
-    }
-
-    public function setAux($aux) {
-        $this->aux = $aux;
-    }
-
-    public function getAssuntos() {
-        return $this->assuntos;
+        $this->modeloTabela = new ModeloDeTabela;
+        $this->modeloTabela->setCabecalhos(array("Descrição"));
+        $this->modeloTabela->setModoBusca(false);
     }
 
     /**
@@ -70,15 +39,38 @@ class AssuntoCtrl extends Controlador {
         $this->gerarAssunto($post);
         if ($funcao == "cadastrar") {
             $this->dao->criar($this->assunto);
-            $this->assunto = new Assunto("", "");
+            $this->assunto = new Assunto("");
             $this->mensagem = new Mensagem(
                     "Cadastro de Assuntos"
                     , "msg_tipo_ok"
                     , "Assunto cadastrado com sucesso.");
             return 'gerenciar_assunto';
-        }else{
+        } else if ($funcao == "pesquisar") {
+            $this->modeloTabela->getPaginador()->setContagem(
+                    $this->dao->contar($this->assunto));
+            $this->modeloTabela->getPaginador()->setPesquisa(
+                    clone $this->assunto);
+            $this->pesquisar();
+            $this->gerarLinhas();
+            return 'gerenciar_assunto';
+            return false;
+        } else if (Util::startsWithString($funcao, "paginador_")) {
+            parent::paginar($funcao);
+        } else {
             return false;
         }
+    }
+
+    private function gerarLinhas() {
+        $linhas = array();
+        foreach ($this->assuntos as $assunto) {
+            $linha = new Linha();
+            $valores = array();
+            $valores[] = $assunto->getDescricao();
+            $linha->setValores($valores);
+            $linhas[] = $linha;
+        }
+        $this->modeloTabela->setLinhas($linhas);
     }
 
 }

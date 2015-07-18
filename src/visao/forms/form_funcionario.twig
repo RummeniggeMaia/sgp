@@ -60,9 +60,11 @@
         </div>
         <div class="ui bottom attached tab segment active" data-tab="tabela">
             {% include 'fragmentos/frag_tabela.twig' 
-            with {
-                'modelo' : ctrl.modeloTabela
-            }
+                with {
+                    'modelo' : ctrl.modeloTabela,
+                    'formulario' : 'form_funcionario',
+                    'funcao' : 'funcao_gerenciar_funcionario'
+                }
             %}
         </div>
     </div>

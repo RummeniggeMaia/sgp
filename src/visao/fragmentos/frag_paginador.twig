@@ -1,33 +1,47 @@
 {# empty Twig template #}
-<span class="ui icon button negative">
+<script type="text/javascript">
+
+    $(document).ready(function() {
+        $("#drop_limit").dropdown({
+            onChange: function(val) {
+                alert('ok');
+                submeterForm('{{ formulario}}', '{{ funcao }}', 'paginador_limit_' + val);
+            }});
+    });
+</script>
+
+<span class="ui icon button negative {{ paginador.podeVoltar() ? '' : 'disabled'}}"
+      onclick="submeterForm('{{ formulario}}', '{{ funcao }}', 'paginador_primeiro');">
     <i class="step backward icon"></i>
 </span>
-<span class="ui icon button negative">
+<span class="ui icon button negative {{ paginador.podeVoltar() ? '' : 'disabled'}}"
+      onclick="submeterForm('{{ formulario}}', '{{ funcao }}', 'paginador_anterior');">
     <i class="backward icon"></i>
 </span>
 <label style="padding-left: 15px">Página</label>
 <span class="ui input" style="width: 75px">
-    <input type="text" style="text-align: center"/>
+    <input type="text" style="text-align: center" value="{{ paginador.paginaAtual() }}"/>
 </span>
-<label style="padding-right: 15px">de 9999</label>
-<span class="ui icon button negative">
+<label style="padding-right: 15px">de {{ paginador.totalDePaginas() }}</label>
+<span class="ui icon button negative {{ paginador.podeSeguir() ? '' : 'disabled'}}"
+      onclick="submeterForm('{{ formulario}}', '{{ funcao }}', 'paginador_proximo');">
     <i class="forward icon"></i>
 </span>
-<span class="ui icon button negative">
+<span class="ui icon button negative {{ paginador.podeSeguir() ? '' : 'disabled'}}"
+      onclick="submeterForm('{{ formulario}}', '{{ funcao }}', 'paginador_ultimo');">
     <i class="step forward icon"></i>
 </span>
 <span style="padding-left: 15px">
     Limite:
-    <span class="ui inline dropdown">
+    <span class="ui inline dropdown" id="drop_limit">
         <div class="text">
-            5
+            {{ paginador.limit }}
         </div>
         <i class="dropdown icon"></i>
         <div class="menu">
-            <div class="item" data-value="5">5</div>
-            <div class="item" data-value="10">10</div>
-            <div class="item" data-value="15">15</div>
-            <div class="item" data-value="15">30</div>
+            {% for i in paginador.limites %}
+                <div class="item" data-value="{{ i }}">{{ i }}</div>
+            {% endfor %}
         </div>
     </span>
 </span>

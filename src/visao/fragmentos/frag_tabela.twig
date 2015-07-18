@@ -5,7 +5,13 @@
             <th>    
             </th>
             <th colspan="999" style="text-align: center">
-            {% include 'fragmentos/frag_paginador.twig' %}
+                {% include 'fragmentos/frag_paginador.twig' 
+                    with {
+                        'paginador' : modelo.paginador,
+                        'formulario' : formulario,
+                        'funcao' : funcao
+                    }
+                %}
             </th>
         </tr>
         <tr>

@@ -18,12 +18,14 @@ class Paginador {
     private $offset;
     private $limit;
     private $pesquisa;
+    private $limites;
 
     function __construct() {
         $this->limit = 5;
         $this->offset = 0;
         $this->contagem = 0;
         $this->pesquisa = null;
+        $this->limites = array('5', '10', '15', '20');
     }
 
     public function getContagem() {
@@ -114,6 +116,10 @@ class Paginador {
         $this->offset = 0;
         $this->limit = 5;
         $this->pesquisa = null;
+    }
+
+    public function getLimites() {
+        return $this->limites;
     }
 
 }

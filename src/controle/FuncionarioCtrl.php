@@ -7,7 +7,8 @@ use controle\Mensagem;
 use controle\tabela\Linha;
 use controle\tabela\ModeloDeTabela;
 use modelo\Funcionario;
-use controle\tabela\Paginador;
+use util\Util;
+
 /**
  * Description of FuncionarioCtrl
  *
@@ -42,10 +43,6 @@ class FuncionarioCtrl extends Controlador {
 
     public function executarFuncao($post, $funcao) {
         $this->gerarFuncionario($post);
-//        $resultado = $this->validacao();
-//        if ($resultado == "campo_nome_erro") {
-//            return 'gerenciar_funcionario';
-//        }
 
         if ($funcao == "cadastrar") {
             $this->dao->criar($this->funcionario);
@@ -63,6 +60,8 @@ class FuncionarioCtrl extends Controlador {
             $this->pesquisar();
             $this->gerarLinhas();
             return 'gerenciar_funcionario';
+        } else if (Util::startsWithString($funcao, "paginador_")) {
+            parent::paginar($funcao);
         } else {
             return false;
         }

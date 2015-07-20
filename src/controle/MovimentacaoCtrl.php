@@ -84,4 +84,8 @@ class MovimentacaoCtrl extends Controlador {
         }
     }
 
+    public function gerarLinhas() {
+        
+    }
+
 }

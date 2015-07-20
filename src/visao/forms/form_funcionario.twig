@@ -29,14 +29,14 @@
         <div class="ui bottom attached tab segment" data-tab="form">
             <form id="form_funcionario" class="ui form" method="post" 
                   action="front_controller.php">
-                <input type="hidden" name="campo_id" value="{{ctrl.funcionario.id}}"/>              
+                <input type="hidden" name="campo_id" value="{{ctrl.entidade.id}}"/>              
                 <div class="field">
                     <label>Nome:</label>
-                    <input type="text" name="campo_nome" placeholder="nome" value="{{ctrl.funcionario.nome}}">
+                    <input type="text" name="campo_nome" placeholder="nome" value="{{ctrl.entidade.nome}}">
                 </div>
                 <div class="field">
                     <label>CPF:</label>
-                    <input type="text" id="campoCpf" name="campo_cpf" placeholder="___.___.___-__" value="{{ctrl.funcionario.cpf}}">
+                    <input type="text" id="campoCpf" name="campo_cpf" placeholder="___.___.___-__" value="{{ctrl.entidade.cpf}}">
                 </div>
                 <div class="field">
                     <label>RG:</label>

@@ -8,12 +8,6 @@ namespace controle\tabela;
  */
 class Paginador {
 
-    const ACAO_PRIMEIRA = 1;
-    const ACAO_ANTERIOR = 2;
-    const ACAO_PROXIMA = 3;
-    const ACAO_ULTIMA = 4;
-    const ACAO_PULAR = 5;
-
     private $contagem;
     private $offset;
     private $limit;
@@ -25,7 +19,7 @@ class Paginador {
         $this->offset = 0;
         $this->contagem = 0;
         $this->pesquisa = null;
-        $this->limites = array('5', '10', '15', '20');
+        $this->limites = array('5', '10', '15', '30');
     }
 
     public function getContagem() {

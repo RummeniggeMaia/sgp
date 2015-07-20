@@ -4,14 +4,13 @@
     $(document).ready(function() {
         $("#drop_limit").dropdown({
             onChange: function(val) {
-                alert('ok');
                 submeterForm('{{ formulario}}', '{{ funcao }}', 'paginador_limit_' + val);
             }});
     });
 </script>
 
 <span class="ui icon button negative {{ paginador.podeVoltar() ? '' : 'disabled'}}"
-      onclick="submeterForm('{{ formulario}}', '{{ funcao }}', 'paginador_primeiro');">
+      onclick="submeterForm('{{ formulario}}', '{{ funcao }}', 'paginador_primeira');">
     <i class="step backward icon"></i>
 </span>
 <span class="ui icon button negative {{ paginador.podeVoltar() ? '' : 'disabled'}}"
@@ -24,11 +23,11 @@
 </span>
 <label style="padding-right: 15px">de {{ paginador.totalDePaginas() }}</label>
 <span class="ui icon button negative {{ paginador.podeSeguir() ? '' : 'disabled'}}"
-      onclick="submeterForm('{{ formulario}}', '{{ funcao }}', 'paginador_proximo');">
+      onclick="submeterForm('{{ formulario}}', '{{ funcao }}', 'paginador_proxima');">
     <i class="forward icon"></i>
 </span>
 <span class="ui icon button negative {{ paginador.podeSeguir() ? '' : 'disabled'}}"
-      onclick="submeterForm('{{ formulario}}', '{{ funcao }}', 'paginador_ultimo');">
+      onclick="submeterForm('{{ formulario}}', '{{ funcao }}', 'paginador_ultima');">
     <i class="step forward icon"></i>
 </span>
 <span style="padding-left: 15px">

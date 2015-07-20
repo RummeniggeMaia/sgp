@@ -81,4 +81,8 @@ class AssuntoCtrl extends Controlador {
         }
     }
 
+    public function gerarLinhas() {
+        
+    }
+
 }

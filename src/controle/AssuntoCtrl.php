@@ -32,6 +32,7 @@ class AssuntoCtrl extends Controlador {
     public function gerarAssunto($post) {
         if (isset($post['campo_descricao'])) {
             $this->assunto->setDescricao($post['campo_descricao']);
+            $this->assunto->setConstante(false);
         }
     }
 
@@ -53,7 +54,6 @@ class AssuntoCtrl extends Controlador {
             $this->pesquisar();
             $this->gerarLinhas();
             return 'gerenciar_assunto';
-            return false;
         } else if (Util::startsWithString($funcao, "paginador_")) {
             parent::paginar($funcao);
         } else {

@@ -73,7 +73,7 @@ abstract class Controlador {
     }
 
     public function pesquisar() {
-        $this->funcionarios = $this->dao->pesquisar(
+        $this->assunto = $this->dao->pesquisar(
                 $this->modeloTabela->getPaginador()->getPesquisa()
                 , $this->modeloTabela->getPaginador()->getLimit()
                 , $this->modeloTabela->getPaginador()->getOffset());

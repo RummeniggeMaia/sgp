@@ -26,7 +26,15 @@ class Assunto extends Entidade {
         $this->descricao = $descricao;
         $this->processos = new \Doctrine\Common\Collections\ArrayCollection();
     }
-
+    
+    public function getId(){
+        return $this->id;
+    }
+    
+    public function setId($id){
+        $this->id = $id;
+    }
+    
     public function getConstante() {
         return $this->constante;
     }

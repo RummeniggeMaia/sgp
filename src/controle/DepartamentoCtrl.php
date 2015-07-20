@@ -81,4 +81,8 @@ class DepartamentoCtrl extends Controlador {
         }
     }
 
+    public function gerarLinhas() {
+        
+    }
+
 }

@@ -25,16 +25,18 @@ class Assunto extends Entidade {
     function __construct($descricao) {
         $this->descricao = $descricao;
         $this->processos = new \Doctrine\Common\Collections\ArrayCollection();
+        $rc = new \ReflectionClass($this);
+        $this->className = $rc->getName();
     }
-    
-    public function getId(){
+
+    public function getId() {
         return $this->id;
     }
-    
-    public function setId($id){
+
+    public function setId($id) {
         $this->id = $id;
     }
-    
+
     public function getConstante() {
         return $this->constante;
     }
@@ -58,4 +60,5 @@ class Assunto extends Entidade {
     public function setProcessos($processos) {
         $this->processos = $processos;
     }
+
 }

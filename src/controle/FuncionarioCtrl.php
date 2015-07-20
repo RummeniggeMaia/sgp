@@ -6,9 +6,9 @@ use controle\Controlador;
 use controle\Mensagem;
 use controle\tabela\Linha;
 use controle\tabela\ModeloDeTabela;
+use controle\tabela\Paginador;
 use modelo\Funcionario;
 use util\Util;
-use controle\tabela\Paginador;
 
 /**
  * Description of FuncionarioCtrl
@@ -18,9 +18,9 @@ use controle\tabela\Paginador;
 class FuncionarioCtrl extends Controlador {
 
     public function __construct() {
-        $this->funcionario = new Funcionario("", "", "");
+        $this->entidade = new Funcionario("", "", "");
         $this->aux = new Funcionario("", "", "");
-        $this->funcionarios = array();
+        $this->entidades = array();
         $this->mensagem = null;
         $this->modeloTabela = new ModeloDeTabela;
         $this->modeloTabela->setCabecalhos(array("Nome", "RG", "CPF"));
@@ -32,13 +32,13 @@ class FuncionarioCtrl extends Controlador {
      */
     public function gerarFuncionario($post) {
         if (isset($post['campo_nome'])) {
-            $this->funcionario->setNome($post['campo_nome']);
+            $this->entidade->setNome($post['campo_nome']);
         }
         if (isset($post['campo_cpf'])) {
-            $this->funcionario->setCpf($post['campo_cpf']);
+            $this->entidade->setCpf($post['campo_cpf']);
         }
         if (isset($post['campo_rg'])) {
-            $this->funcionario->setRg($post['campo_rg']);
+            $this->entidade->setRg($post['campo_rg']);
         }
     }
 
@@ -47,43 +47,32 @@ class FuncionarioCtrl extends Controlador {
 
         if ($funcao == "cadastrar") {
 
-            $resultado = $this->validarCampos();
-            if ($resultado == "validacao_erro") {
-                return 'gerenciar_funcionario';
-            }
-
-            $this->dao->criar($this->funcionario);
-            $this->funcionario = new Funcionario("", "", "");
+            $this->dao->criar($this->entidade);
+            //$this->entidade = new Funcionario("", "", "");
             $this->mensagem = new Mensagem(
                     "Cadastro de funcionários"
                     , "msg_tipo_ok"
                     , "Funcionário cadastrado com sucesso.");
             return 'gerenciar_funcionario';
         } else if ($funcao == "pesquisar") {
+            $this->modeloTabela->setPaginador(new Paginador());
             $this->modeloTabela->getPaginador()->setContagem(
-                    $this->dao->contar($this->funcionario));
+                    $this->dao->contar($this->entidade));
             $this->modeloTabela->getPaginador()->setPesquisa(
-                    clone $this->funcionario);
+                    clone $this->entidade);
             $this->pesquisar();
             $this->gerarLinhas();
             return 'gerenciar_funcionario';
         } else if (Util::startsWithString($funcao, "paginador_")) {
-            parent::paginar($funcao);
-        } else if ($funcao == "editar") {
-
-            $resultado = $this->validacao();
-            if ($resultado == "campo_nome_erro") {
-                return 'gerenciar_funcionario';
-            }
-            return false;
+            return parent::paginar($funcao);
         } else {
             return false;
         }
     }
 
-    private function gerarLinhas() {
+    public function gerarLinhas() {
         $linhas = array();
-        foreach ($this->funcionarios as $funcionario) {
+        foreach ($this->entidades as $funcionario) {
             $linha = new Linha();
             $valores = array();
             $valores[] = $funcionario->getNome();
@@ -98,28 +87,24 @@ class FuncionarioCtrl extends Controlador {
     /* Falta resolver o problema da mascara, pois a mascara tem q ser tirada antes da verificação, para conferir se
       o CPF e RG é válido e são numéricos realmente. */
 
-    private function validarCampos() {
-        if ($this->funcionario->getNome() == null) {
+    private function validacao() {
+        if ($this->entidade->getNome() == null || is_numeric($this->entidade->getNome())) {
             $this->mensagem = new Mensagem(
                     "Cadastro não realizado!"
                     , "msg_tipo_erro"
                     , "O campo NOME não pode está vazio");
             return 'validacao_erro';
         }
-        if ($this->funcionario->getRg() == null) {
+
+        if ($this->entidade->getRg() == null || is_numeric($this->entidade->getRg())) {
             $this->mensagem = new Mensagem(
                     "Cadastro não realizado!"
                     , "msg_tipo_erro"
                     , "O campo RG não pode está vazio");
             return 'validacao_erro';
         }
-        if ($this->funcionario->getCpf() == null) {
-            $this->mensagem = new Mensagem(
-                    "Cadastro não realizado!"
-                    , "msg_tipo_erro"
-                    , "O campo CPF não pode está vazio");
-            return 'validacao_erro';
-        }else if (!$this->validarCPF($this->funcionario->getCpf())) {
+
+        if ($this->entidade->getCpf() == null || is_numeric($this->entidade->getCpf())) {
             $this->mensagem = new Mensagem(
                     "Cadastro não realizado!"
                     , "msg_tipo_erro"

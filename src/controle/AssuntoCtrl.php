@@ -17,9 +17,9 @@ use util\Util;
 class AssuntoCtrl extends Controlador {
 
     public function __construct() {
-        $this->assunto = new Assunto("");
+        $this->entidade = new Assunto("");
         $this->aux = new Assunto("");
-        $this->assuntos = array();
+        $this->entidades = array();
         $this->mensagem = null;
         $this->modeloTabela = new ModeloDeTabela;
         $this->modeloTabela->setCabecalhos(array("Descrição"));
@@ -31,15 +31,14 @@ class AssuntoCtrl extends Controlador {
      */
     public function gerarAssunto($post) {
         if (isset($post['campo_descricao'])) {
-            $this->assunto->setDescricao($post['campo_descricao']);
-            $this->assunto->setConstante(false);
+            $this->entidade->setDescricao($post['campo_descricao']);
         }
     }
 
     public function executarFuncao($post, $funcao) {
         $this->gerarAssunto($post);
         if ($funcao == "cadastrar") {
-            $this->dao->criar($this->assunto);
+            $this->dao->criar($this->entidade);
             $this->assunto = new Assunto("");
             $this->mensagem = new Mensagem(
                     "Cadastro de Assuntos"
@@ -48,9 +47,9 @@ class AssuntoCtrl extends Controlador {
             return 'gerenciar_assunto';
         } else if ($funcao == "pesquisar") {
             $this->modeloTabela->getPaginador()->setContagem(
-                    $this->dao->contar($this->assunto));
+                    $this->dao->contar($this->entidade));
             $this->modeloTabela->getPaginador()->setPesquisa(
-                    clone $this->assunto);
+                    clone $this->entidade);
             $this->pesquisar();
             $this->gerarLinhas();
             return 'gerenciar_assunto';
@@ -61,9 +60,9 @@ class AssuntoCtrl extends Controlador {
         }
     }
 
-    private function gerarLinhas() {
+    public function gerarLinhas() {
         $linhas = array();
-        foreach ($this->assuntos as $assunto) {
+        foreach ($this->entidades as $assunto) {
             $linha = new Linha();
             $valores = array();
             $valores[] = $assunto->getDescricao();

@@ -23,32 +23,42 @@
             %}
         {% endif %}
         <div class="ui top attached tabular menu">
-            <div class="item" data-tab="form">Formulário</div>
-            <div class="item active" data-tab="tabela">Tabela</div>
+            <div class="item {{ ctrl.modoEditar ? 'active' : ''}}" data-tab="form">Formulário</div>
+            <div class="item {{ ctrl.modoEditar ? '' : 'active'}}" data-tab="tabela">Tabela</div>
         </div>        
-        <div class="ui bottom attached tab segment" data-tab="form">
+        <div class="ui bottom attached tab segment {{ ctrl.modoEditar ? 'active' : ''}}" data-tab="form">
             <form id="form_funcionario" class="ui form" method="post" 
-                  action="front_controller.php">
-                <input type="hidden" name="campo_id" value="{{ctrl.entidade.id}}"/>              
+                  action="front_controller.php">   
                 <div class="field">
                     <label>Nome:</label>
-                    <input type="text" name="campo_nome" placeholder="nome" value="{{ctrl.entidade.nome}}">
+                    <input type="text" name="campo_nome" 
+                           placeholder="nome" value="{{ ctrl.entidade.nome }}">
                 </div>
                 <div class="field">
                     <label>CPF:</label>
-                    <input type="text" id="campoCpf" name="campo_cpf" placeholder="___.___.___-__" value="{{ctrl.entidade.cpf}}">
+                    <input type="text" id="campoCpf" name="campo_cpf" 
+                           placeholder="___.___.___-__" value="{{ ctrl.entidade.cpf }}">
                 </div>
                 <div class="field">
                     <label>RG:</label>
-                    <input type="text" id="campoRg" name="campo_rg" placeholder="___.___.___" value="{{ctrl.funcionario.rg}}">
+                    <input type="text" id="campoRg" name="campo_rg" 
+                           placeholder="___.___.___" value="{{ ctrl.entidade.rg }}">
                 </div>
                 <div class="fields">
                     <div class="field">
                         <div class="ui submit black button" 
-                             onclick="submeterForm('form_funcionario', 'funcao_gerenciar_funcionario', 'cadastrar');">
-                            <i class="save icon"></i>Cadastrar
+                             onclick="submeterForm('form_funcionario', 'funcao_gerenciar_funcionario', 'salvar');">
+                            <i class="save icon"></i>Salvar
                         </div>
                     </div>
+                    {% if ctrl.modoEditar%}
+                        <div class="field">
+                            <div class="ui submit black button" 
+                                 onclick="submeterForm('form_funcionario', 'funcao_gerenciar_funcionario', 'cancelar_edicao');">
+                                <i class="remove circle outline icon"></i>Cancelar Edição
+                            </div>
+                        </div>
+                    {% endif %}
                     <div class="field">
                         <div class="ui submit black button"
                              onclick="submeterForm('form_funcionario', 'funcao_gerenciar_funcionario', 'pesquisar');">
@@ -58,7 +68,7 @@
                 </div>
             </form>
         </div>
-        <div class="ui bottom attached tab segment active" data-tab="tabela">
+        <div class="ui bottom attached tab segment {{ ctrl.modoEditar ? '' : 'active'}}" data-tab="tabela">
             {% include 'fragmentos/frag_tabela.twig' 
                 with {
                     'modelo' : ctrl.modeloTabela,

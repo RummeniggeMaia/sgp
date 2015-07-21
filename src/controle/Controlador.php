@@ -11,18 +11,14 @@ use util\Util;
 abstract class Controlador {
 
     protected $entidade;
-    protected $aux;
     protected $entidades;
     protected $dao;
     protected $mensagem;
     protected $modeloTabela;
+    protected $modoEditar;
 
     public function getEntidade() {
         return $this->entidade;
-    }
-
-    public function getAux() {
-        return $this->aux;
     }
 
     public function getEntidades() {
@@ -45,10 +41,6 @@ abstract class Controlador {
         $this->entidade = $entidade;
     }
 
-    public function setAux($aux) {
-        $this->aux = $aux;
-    }
-
     public function setEntidades($entidades) {
         $this->entidades = $entidades;
     }
@@ -64,7 +56,15 @@ abstract class Controlador {
     public function setModeloTabela($modeloTabela) {
         $this->modeloTabela = $modeloTabela;
     }
+    
+    public function getModoEditar() {
+        return $this->modoEditar;
+    }
 
+    public function setModoEditar($modoEditar) {
+        $this->modoEditar = $modoEditar;
+    }
+    
     public function pesquisar() {
         $this->entidades = $this->dao->pesquisar(
                 $this->modeloTabela->getPaginador()->getPesquisa()

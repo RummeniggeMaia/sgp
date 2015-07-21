@@ -34,11 +34,13 @@ class Dao {
     }
 
     public function editar($entidade) {
-        $this->entityManager->update($entidade);
+        $this->entityManager->merge($entidade);
+        $this->entityManager->flush();
     }
 
     public function excluir($entidade) {
-        $this->entityManager->remove($entidade);
+        $entidade->setAtivo(false);
+        $this->editar($entidade);
     }
 
     public function pesquisar($entidade, $limit, $offset) {

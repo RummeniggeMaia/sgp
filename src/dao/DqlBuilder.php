@@ -6,6 +6,7 @@ use dao\Dql;
 use Doctrine\ORM\QueryBuilder;
 use modelo\Entidade;
 use modelo\Funcionario;
+use modelo\Assunto;
 
 /**
  * Description of DqlBuilder
@@ -29,6 +30,10 @@ class DqlBuilder {
             $this->gerarClausulaWhereFuncionario(
                     $entidade, $queryBuilder);
         }
+        if ($entidade->getClassName() == "modelo\Assunto") {
+            $this->gerarClausulaWhereAssunto(
+                    $entidade, $queryBuilder);
+        }
     }
 
     private function gerarClausulaWhereFuncionario(Funcionario $funcionario, QueryBuilder $qb) {
@@ -44,6 +49,14 @@ class DqlBuilder {
         if ($funcionario->getRg() != null &&
                 preg_match("/.+/i", $funcionario->getRg())) {
             $qb->andWhere("x.rg = '" . $funcionario->getRg() . "'");
+        }
+    }
+
+    private function gerarClausulaWhereAssunto(Assunto $assunto, QueryBuilder $qb) {
+        $qb->where("x.ativo = true");
+        if ($assunto->getDescricao() != null &&
+                preg_match("/.+/i", $assunto->getDescricao())) {
+            $qb->andWhere("x.descricao like '%" . $assunto->getDescricao() . "%'");
         }
     }
 

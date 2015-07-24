@@ -22,8 +22,9 @@ class Assunto extends Entidade {
     /** @OneToMany(targetEntity="Processo", mappedBy="assunto") */
     protected $processos;
 
-    function __construct($descricao) {
+    function __construct($descricao, $constante) {
         $this->descricao = $descricao;
+        $this->constante = $constante;
         $this->processos = new \Doctrine\Common\Collections\ArrayCollection();
         $rc = new \ReflectionClass($this);
         $this->className = $rc->getName();

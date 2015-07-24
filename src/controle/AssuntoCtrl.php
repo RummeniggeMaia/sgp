@@ -6,6 +6,7 @@ use controle\Controlador;
 use controle\Mensagem;
 use controle\tabela\Linha;
 use controle\tabela\ModeloDeTabela;
+use controle\tabela\Paginador;
 use modelo\Assunto;
 use util\Util;
 
@@ -17,8 +18,7 @@ use util\Util;
 class AssuntoCtrl extends Controlador {
 
     public function __construct() {
-        $this->entidade = new Assunto("");
-        $this->aux = new Assunto("");
+        $this->entidade = new Assunto("","");
         $this->entidades = array();
         $this->mensagem = null;
         $this->modeloTabela = new ModeloDeTabela;
@@ -32,32 +32,57 @@ class AssuntoCtrl extends Controlador {
     public function gerarAssunto($post) {
         if (isset($post['campo_descricao'])) {
             $this->entidade->setDescricao($post['campo_descricao']);
+            $this->entidade->setConstante(false);
         }
     }
 
-    public function executarFuncao($post, $funcao) {
+ public function executarFuncao($post, $funcao) {
         $this->gerarAssunto($post);
-        if ($funcao == "cadastrar") {
-            $this->dao->criar($this->entidade);
-            $this->assunto = new Assunto("");
+
+        if ($funcao == "salvar") {
+            if ($this->modoEditar) {
+                $this->dao->editar($this->entidade);
+            } else {
+                $this->dao->criar($this->entidade);
+            }
+            $this->entidade = new Assunto("", "");
+            $this->modoEditar = false;
             $this->mensagem = new Mensagem(
-                    "Cadastro de Assuntos"
+                    "Cadastro de assuntos"
                     , "msg_tipo_ok"
-                    , "Assunto cadastrado com sucesso.");
-            return 'gerenciar_assunto';
+                    , "Dados do Assunto salvo com sucesso.");
         } else if ($funcao == "pesquisar") {
+            $this->modeloTabela->setPaginador(new Paginador());
             $this->modeloTabela->getPaginador()->setContagem(
                     $this->dao->contar($this->entidade));
             $this->modeloTabela->getPaginador()->setPesquisa(
                     clone $this->entidade);
-            $this->pesquisar();
-            $this->gerarLinhas();
-            return 'gerenciar_assunto';
+            $this->pesquisar();      
+        } else if ($funcao == "cancelar_edicao") {
+            $this->modoEditar = false;
+            $this->entidade = new Assunto("", "");
+        } else if (Util::startsWithString($funcao, "editar_")) {
+            $index = intval(str_replace("editar_", "", $funcao));
+            if ($index != 0) {
+                $this->entidade = $this->entidades[$index - 1];
+                $this->modoEditar = true;
+            }
+        } else if (Util::startsWithString($funcao, "excluir_")) {
+            $index = intval(str_replace("excluir_", "", $funcao));
+            if ($index != 0) {
+                $aux = $this->entidades[$index - 1];
+                $this->dao->excluir($aux);
+                $p = $this->modeloTabela->getPaginador();
+                if ($p->getOffset() == $p->getContagem()) {
+                    $p->anterior();
+                }
+                $p->setContagem($p->getContagem() - 1);
+                $this->pesquisar();
+            }
         } else if (Util::startsWithString($funcao, "paginador_")) {
-            parent::paginar($funcao);
-        } else {
-            return false;
+            return parent::paginar($funcao, "gerenciar_assunto");
         }
+        return 'gerenciar_assunto';
     }
 
     public function gerarLinhas() {

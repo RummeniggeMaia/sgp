@@ -82,7 +82,7 @@ abstract class Controlador {
         $this->gerarLinhas();
     }
 
-    public function paginar($acao) {
+    public function paginar($acao, $result) {
         $paginador = $this->modeloTabela->getPaginador();
         if ($acao == "paginador_primeira") {
             $paginador->primeira();
@@ -105,7 +105,7 @@ abstract class Controlador {
             }
         }
         $this->pesquisar();
-        return 'gerenciar_funcionario';
+        return $result;
     }
 
     public abstract function executarFuncao($post, $funcao);

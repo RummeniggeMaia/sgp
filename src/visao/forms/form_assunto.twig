@@ -1,7 +1,7 @@
 {# empty Twig template #}
 {% extends "templates/base.twig"%}
 
-{% block title %}Gerencimanto de assunto{% endblock %}
+{% block title %}Gerenciamento de assunto{% endblock %}
 
 {% block body %}
     <br/>
@@ -23,24 +23,32 @@
             %}
         {% endif %}
         <div class="ui top attached tabular menu">
-            <div class="item" data-tab="form">Formulário</div>
-            <div class="item active" data-tab="tabela">Tabela de Assuntos</div>
-        </div>
-        <div class="ui bottom attached tab segment" data-tab="form">
+            <div class="item {{ ctrl.modoEditar ? 'active' : ''}}" data-tab="form">Formulário</div>
+            <div class="item {{ ctrl.modoEditar ? '' : 'active'}}" data-tab="tabela">Tabela</div>
+        </div>      
+        <div class="ui bottom attached tab segment {{ ctrl.modoEditar ? 'active' : ''}}" data-tab="form">
             <form id="form_assunto" class="ui form" method="post" 
                   action="front_controller.php">                
-                <input type="hidden" name="campo_id" value="{{ctrl.entidade.id}}"/>
                 <div class="field">
                     <label>Descrição:</label>
-                    <input type="text" name="campo_descricao" placeholder="descricao" value="{{ctrl.entidade.descricao}}">
+                    <input type="text" name="campo_descricao" 
+                           placeholder="descricao" value="{{ctrl.entidade.descricao}}">
                 </div>
                 <div class="fields">
                     <div class="field">
                         <div class="ui submit black button"
-                             onClick="submeterForm('form_assunto', 'funcao_gerenciar_assunto', 'cadastrar');">
-                            <i class="save icon"></i>Cadastrar
+                             onClick="submeterForm('form_assunto', 'funcao_gerenciar_assunto', 'salvar');">
+                            <i class="save icon"></i>Salvar
                         </div>
                     </div>
+                    {% if ctrl.modoEditar%}
+                        <div class="field">
+                            <div class="ui submit black button" 
+                                 onclick="submeterForm('form_assunto', 'funcao_gerenciar_assunto', 'cancelar_edicao');">
+                                <i class="remove circle outline icon"></i>Cancelar Edição
+                            </div>
+                        </div>
+                    {% endif %}
                     <div class="field">
                         <div class="ui submit black button"
                              onClick="submeterForm('form_assunto', 'funcao_gerenciar_assunto', 'pesquisar');">
@@ -50,7 +58,7 @@
                 </div>
             </form>
         </div>
-        <div class="ui bottom attached tab segment active" data-tab="tabela">
+        <div class="ui bottom attached tab segment {{ ctrl.modoEditar ? '' : 'active'}}" data-tab="tabela">
             {% include 'fragmentos/frag_tabela.twig' 
                 with {
                     'modelo' : ctrl.modeloTabela,

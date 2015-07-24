@@ -47,10 +47,22 @@
                 {% endfor %}
                 {% if not modelo.modoBusca %}
                     <td style="text-align: center">
-                        <input type="button" value="Editar"/>
+                        <div class="ui submit black button" 
+                             onclick="submeterForm(
+                                             'form_funcionario',
+                                             'funcao_gerenciar_funcionario',
+                                             'editar_{{ loop.index }}');">
+                            <i class="edit icon"></i>Editar
+                        </div>
                     </td>
                     <td style="text-align: center">
-                        <input type="button" value="Excluir"/>
+                        <div class="ui submit black button" 
+                             onclick="submeterForm(
+                                             'form_funcionario',
+                                             'funcao_gerenciar_funcionario',
+                                             'excluir_{{ loop.index }}');">
+                            <i class="edit icon"></i>Excluir
+                        </div>
                     </td>
                 {% endif %}
             </tr>

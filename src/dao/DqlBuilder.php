@@ -32,7 +32,7 @@ class DqlBuilder {
     }
 
     private function gerarClausulaWhereFuncionario(Funcionario $funcionario, QueryBuilder $qb) {
-        $qb->where("1 = 1");
+        $qb->where("x.ativo = true");
         if ($funcionario->getNome() != null &&
                 preg_match("/.+/i", $funcionario->getNome())) {
             $qb->andWhere("x.nome like '%" . $funcionario->getNome() . "%'");

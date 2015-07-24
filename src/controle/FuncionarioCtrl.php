@@ -19,10 +19,9 @@ class FuncionarioCtrl extends Controlador {
 
     public function __construct() {
         $this->entidade = new Funcionario("", "", "");
-        $this->aux = new Funcionario("", "", "");
         $this->entidades = array();
         $this->mensagem = null;
-        $this->modeloTabela = new ModeloDeTabela;
+        $this->modeloTabela = new ModeloDeTabela();
         $this->modeloTabela->setCabecalhos(array("Nome", "RG", "CPF"));
         $this->modeloTabela->setModoBusca(false);
     }
@@ -45,29 +44,50 @@ class FuncionarioCtrl extends Controlador {
     public function executarFuncao($post, $funcao) {
         $this->gerarFuncionario($post);
 
-        if ($funcao == "cadastrar") {
-
-            $this->dao->criar($this->entidade);
-            //$this->entidade = new Funcionario("", "", "");
+        if ($funcao == "salvar") {
+            if ($this->modoEditar) {
+                $this->dao->editar($this->entidade);
+            } else {
+                $this->dao->criar($this->entidade);
+            }
+            $this->entidade = new Funcionario("", "", "");
+            $this->modoEditar = false;
             $this->mensagem = new Mensagem(
                     "Cadastro de funcionários"
                     , "msg_tipo_ok"
-                    , "Funcionário cadastrado com sucesso.");
-            return 'gerenciar_funcionario';
+                    , "Dados do Funcionário salvo com sucesso.");
         } else if ($funcao == "pesquisar") {
             $this->modeloTabela->setPaginador(new Paginador());
             $this->modeloTabela->getPaginador()->setContagem(
                     $this->dao->contar($this->entidade));
             $this->modeloTabela->getPaginador()->setPesquisa(
                     clone $this->entidade);
-            $this->pesquisar();
-            $this->gerarLinhas();
-            return 'gerenciar_funcionario';
+            $this->pesquisar();      
+        } else if ($funcao == "cancelar_edicao") {
+            $this->modoEditar = false;
+            $this->entidade = new Funcionario("", "", "");
+        } else if (Util::startsWithString($funcao, "editar_")) {
+            $index = intval(str_replace("editar_", "", $funcao));
+            if ($index != 0) {
+                $this->entidade = $this->entidades[$index - 1];
+                $this->modoEditar = true;
+            }
+        } else if (Util::startsWithString($funcao, "excluir_")) {
+            $index = intval(str_replace("excluir_", "", $funcao));
+            if ($index != 0) {
+                $aux = $this->entidades[$index - 1];
+                $this->dao->excluir($aux);
+                $p = $this->modeloTabela->getPaginador();
+                if ($p->getOffset() == $p->getContagem()) {
+                    $p->anterior();
+                }
+                $p->setContagem($p->getContagem() - 1);
+                $this->pesquisar();
+            }
         } else if (Util::startsWithString($funcao, "paginador_")) {
-            return parent::paginar($funcao);
-        } else {
-            return false;
+            return parent::paginar($funcao, "gerenciar_funcionario");
         }
+        return 'gerenciar_funcionario';
     }
 
     public function gerarLinhas() {

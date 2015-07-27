@@ -7,6 +7,7 @@ use Doctrine\ORM\QueryBuilder;
 use modelo\Entidade;
 use modelo\Funcionario;
 use modelo\Assunto;
+use modelo\Departamento;
 
 /**
  * Description of DqlBuilder
@@ -34,6 +35,10 @@ class DqlBuilder {
             $this->gerarClausulaWhereAssunto(
                     $entidade, $queryBuilder);
         }
+        if ($entidade->getClassName() == "modelo\Departamento") {
+            $this->gerarClausulaWhereDepartamento(
+                    $entidade, $queryBuilder);
+        }
     }
 
     private function gerarClausulaWhereFuncionario(Funcionario $funcionario, QueryBuilder $qb) {
@@ -57,6 +62,14 @@ class DqlBuilder {
         if ($assunto->getDescricao() != null &&
                 preg_match("/.+/i", $assunto->getDescricao())) {
             $qb->andWhere("x.descricao like '%" . $assunto->getDescricao() . "%'");
+        }
+    }
+
+    private function gerarClausulaWhereDepartamento(Departamento $departamento, QueryBuilder $qb) {
+        $qb->where("x.ativo = true");
+        if ($departamento->getDescricao() != null &&
+                preg_match("/.+/i", $departamento->getDescricao())) {
+            $qb->andWhere("x.descricao like '%" . $departamento->getDescricao() . "%'");
         }
     }
 

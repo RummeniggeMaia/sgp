@@ -3,9 +3,12 @@
 namespace controle;
 
 use controle\Controlador;
-use dao\Dao;
-use modelo\Departamento;
 use controle\Mensagem;
+use controle\tabela\Linha;
+use controle\tabela\ModeloDeTabela;
+use controle\tabela\Paginador;
+use modelo\Departamento;
+use util\Util;
 
 /**
  * Description of DepartamentoCtrl
@@ -15,46 +18,12 @@ use controle\Mensagem;
 class DepartamentoCtrl extends Controlador {
 
     public function __construct() {
-        $this->departamento = new Departamento("", "");
-        $this->aux = new Departamento("", "");
-        $this->departamentos = array();
+        $this->entidade = new Departamento("", "");
+        $this->entidades = array();
         $this->mensagem = null;
-    }
-
-    public function getMensagem() {
-        return $this->mensagem;
-    }
-
-    public function setMensagem($mensagem) {
-        $this->mensagem = $mensagem;
-    }
-
-    public function getDao() {
-        return $this->dao;
-    }
-
-    public function setDao($dao) {
-        $this->dao = $dao;
-    }
-
-    public function getDepartamento() {
-        return $this->departamento;
-    }
-
-    public function getAux() {
-        return $this->aux;
-    }
-
-    public function setDepartamento($departamento) {
-        $this->departamento = $departamento;
-    }
-
-    public function setAux($aux) {
-        $this->aux = $aux;
-    }
-
-    public function getDepartamentos() {
-        return $this->departamentos;
+        $this->modeloTabela = new ModeloDeTabela();
+        $this->modeloTabela->setCabecalhos(array("Descrição"));
+        $this->modeloTabela->setModoBusca(false);
     }
 
     /**
@@ -62,27 +31,70 @@ class DepartamentoCtrl extends Controlador {
      */
     public function gerarDepartamento($post) {
         if (isset($post['campo_descricao'])) {
-            $this->departamento->setDescricao($post['campo_descricao']);
+            $this->entidade->setDescricao($post['campo_descricao']);
+            $this->entidade->setConstante(false);
         }
     }
 
     public function executarFuncao($post, $funcao) {
         $this->gerarDepartamento($post);
-        if ($funcao == "cadastrar") {
-            $this->dao->criar($this->departamento);
-            $this->departamento = new Departamento("", "");
+
+        if ($funcao == "salvar") {
+            if ($this->modoEditar) {
+                $this->dao->editar($this->entidade);
+            } else {
+                $this->dao->criar($this->entidade);
+            }
+            $this->entidade = new Departamento("", "");
+            $this->modoEditar = false;
             $this->mensagem = new Mensagem(
-                    "Cadastro de Departamentos"
+                    "Cadastro de departamentos"
                     , "msg_tipo_ok"
-                    , "Departamento cadastrado com sucesso.");
-            return 'gerenciar_departamento';
-        } else {
-            return false;
+                    , "Dados do Departamento salvo com sucesso.");
+        } else if ($funcao == "pesquisar") {
+            $this->modeloTabela->setPaginador(new Paginador());
+            $this->modeloTabela->getPaginador()->setContagem(
+                    $this->dao->contar($this->entidade));
+            $this->modeloTabela->getPaginador()->setPesquisa(
+                    clone $this->entidade);
+            $this->pesquisar();
+        } else if ($funcao == "cancelar_edicao") {
+            $this->modoEditar = false;
+            $this->entidade = new Departamento("", "");
+        } else if (Util::startsWithString($funcao, "editar_")) {
+            $index = intval(str_replace("editar_", "", $funcao));
+            if ($index != 0) {
+                $this->entidade = $this->entidades[$index - 1];
+                $this->modoEditar = true;
+            }
+        } else if (Util::startsWithString($funcao, "excluir_")) {
+            $index = intval(str_replace("excluir_", "", $funcao));
+            if ($index != 0) {
+                $aux = $this->entidades[$index - 1];
+                $this->dao->excluir($aux);
+                $p = $this->modeloTabela->getPaginador();
+                if ($p->getOffset() == $p->getContagem()) {
+                    $p->anterior();
+                }
+                $p->setContagem($p->getContagem() - 1);
+                $this->pesquisar();
+            }
+        } else if (Util::startsWithString($funcao, "paginador_")) {
+            return parent::paginar($funcao, "gerenciar_departamento");
         }
+        return 'gerenciar_departamento';
     }
 
     public function gerarLinhas() {
-        
+        $linhas = array();
+        foreach ($this->entidades as $departamento) {
+            $linha = new Linha();
+            $valores = array();
+            $valores[] = $departamento->getDescricao();
+            $linha->setValores($valores);
+            $linhas[] = $linha;
+        }
+        $this->modeloTabela->setLinhas($linhas);
     }
 
 }

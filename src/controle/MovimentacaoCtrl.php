@@ -3,10 +3,12 @@
 namespace controle;
 
 use controle\Controlador;
-use dao\Dao;
-use modelo\Movimentacao;
 use controle\Mensagem;
-
+use controle\tabela\Linha;
+use controle\tabela\ModeloDeTabela;
+use controle\tabela\Paginador;
+use modelo\Movimentacao;
+use util\Util;
 /**
  * Description of MovimentacaoCtrl
  *
@@ -15,46 +17,12 @@ use controle\Mensagem;
 class MovimentacaoCtrl extends Controlador {
 
     public function __construct() {
-        $this->movimentacao = new Movimentacao("", "");
-        $this->aux = new Movimentacao("", "");
-        $this->movimentacaos = array();
+        $this->entidade = new Movimentacao("", "");
+        $this->entidades = array();
         $this->mensagem = null;
-    }
-
-    public function getMensagem() {
-        return $this->mensagem;
-    }
-
-    public function setMensagem($mensagem) {
-        $this->mensagem = $mensagem;
-    }
-
-    public function getDao() {
-        return $this->dao;
-    }
-
-    public function setDao($dao) {
-        $this->dao = $dao;
-    }
-
-    public function getMovimentacao() {
-        return $this->movimentacao;
-    }
-
-    public function getAux() {
-        return $this->aux;
-    }
-
-    public function setMovimentacao($movimentacao) {
-        $this->movimentacao = $movimentacao;
-    }
-
-    public function setAux($aux) {
-        $this->aux = $aux;
-    }
-
-    public function getMovimentacaos() {
-        return $this->movimentacaos;
+        $this->modeloTabela = new ModeloDeTabela();
+        $this->modeloTabela->setCabecalhos(array("Descrição"));
+        $this->modeloTabela->setModoBusca(false);
     }
 
     /**
@@ -62,30 +30,70 @@ class MovimentacaoCtrl extends Controlador {
      */
     public function gerarMovimentacao($post) {
         if (isset($post['campo_descricao'])) {
-            $this->movimentacao->setDescricao($post['campo_descricao']);
-        }
-        if (isset($post['campo_constante'])) {
-            $this->movimentacao->setConstante($post['campo_constante']);
+            $this->entidade->setDescricao($post['campo_descricao']);
+            $this->entidade->setConstante(false);
         }
     }
 
     public function executarFuncao($post, $funcao) {
         $this->gerarMovimentacao($post);
-        if ($funcao == "cadastrar") {
-            $this->dao->criar($this->movimentacao);
-            $this->movimentacao = new Movimentacao("", "");
+
+        if ($funcao == "salvar") {
+            if ($this->modoEditar) {
+                $this->dao->editar($this->entidade);
+            } else {
+                $this->dao->criar($this->entidade);
+            }
+            $this->entidade = new Movimentacao("", "");
+            $this->modoEditar = false;
             $this->mensagem = new Mensagem(
-                    "Cadastro de Movimentações"
+                    "Cadastro de departamentos"
                     , "msg_tipo_ok"
-                    , "Movimentação cadastrada com sucesso.");
-            return 'gerenciar_movimentacao';
-        } else {
-            return false;
+                    , "Dados de Movimentação salvo com sucesso.");
+        } else if ($funcao == "pesquisar") {
+            $this->modeloTabela->setPaginador(new Paginador());
+            $this->modeloTabela->getPaginador()->setContagem(
+                    $this->dao->contar($this->entidade));
+            $this->modeloTabela->getPaginador()->setPesquisa(
+                    clone $this->entidade);
+            $this->pesquisar();
+        } else if ($funcao == "cancelar_edicao") {
+            $this->modoEditar = false;
+            $this->entidade = new Movimentacao("", "");
+        } else if (Util::startsWithString($funcao, "editar_")) {
+            $index = intval(str_replace("editar_", "", $funcao));
+            if ($index != 0) {
+                $this->entidade = $this->entidades[$index - 1];
+                $this->modoEditar = true;
+            }
+        } else if (Util::startsWithString($funcao, "excluir_")) {
+            $index = intval(str_replace("excluir_", "", $funcao));
+            if ($index != 0) {
+                $aux = $this->entidades[$index - 1];
+                $this->dao->excluir($aux);
+                $p = $this->modeloTabela->getPaginador();
+                if ($p->getOffset() == $p->getContagem()) {
+                    $p->anterior();
+                }
+                $p->setContagem($p->getContagem() - 1);
+                $this->pesquisar();
+            }
+        } else if (Util::startsWithString($funcao, "paginador_")) {
+            return parent::paginar($funcao, "gerenciar_movimentacao");
         }
+        return 'gerenciar_movimentacao';
     }
 
     public function gerarLinhas() {
-        
+        $linhas = array();
+        foreach ($this->entidades as $movimentacao) {
+            $linha = new Linha();
+            $valores = array();
+            $valores[] = $movimentacao->getDescricao();
+            $linha->setValores($valores);
+            $linhas[] = $linha;
+        }
+        $this->modeloTabela->setLinhas($linhas);
     }
 
 }

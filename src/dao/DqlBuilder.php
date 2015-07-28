@@ -8,6 +8,7 @@ use modelo\Entidade;
 use modelo\Funcionario;
 use modelo\Assunto;
 use modelo\Departamento;
+use modelo\Movimentacao;
 
 /**
  * Description of DqlBuilder
@@ -37,6 +38,10 @@ class DqlBuilder {
         }
         if ($entidade->getClassName() == "modelo\Departamento") {
             $this->gerarClausulaWhereDepartamento(
+                    $entidade, $queryBuilder);
+        }
+        if ($entidade->getClassName() == "modelo\Movimentacao") {
+            $this->gerarClausulaWhereMovimentacao(
                     $entidade, $queryBuilder);
         }
     }
@@ -70,6 +75,14 @@ class DqlBuilder {
         if ($departamento->getDescricao() != null &&
                 preg_match("/.+/i", $departamento->getDescricao())) {
             $qb->andWhere("x.descricao like '%" . $departamento->getDescricao() . "%'");
+        }
+    }
+    
+        private function gerarClausulaWhereMovimentacao(Movimentacao $movimentacao, QueryBuilder $qb) {
+        $qb->where("x.ativo = true");
+        if ($movimentacao->getDescricao() != null &&
+                preg_match("/.+/i", $movimentacao->getDescricao())) {
+            $qb->andWhere("x.descricao like '%" . $movimentacao->getDescricao() . "%'");
         }
     }
 

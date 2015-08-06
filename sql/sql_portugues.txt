@@ -1,0 +1,113 @@
+﻿/*
+SQL do sistema SGP!
+*/
+
+
+drop table if exists movimentacoes_processos;
+drop table if exists processos;
+drop table if exists movimentacaos;
+drop table if exists funcionarios;
+drop table if exists assuntos;
+drop table if exists departamentos;
+drop table if exists usuarios;
+
+-- employee acho que a tabela deve ser no plural no caso employees
+create table funcionarios (
+    id bigint not null auto_increment,
+    ativo boolean, -- active
+    nome varchar(100),
+    rg varchar(11), -- rg
+    cpf varchar(14), -- cfg
+    primary key(id)
+);
+
+-- Subjects
+create table assuntos (
+    id bigint not null auto_increment,
+    ativo boolean, -- active
+    descricao varchar(255) unique, -- description
+    constante boolean, -- contant
+    primary key(id)
+);
+
+-- departents
+create table departamentos (
+    id bigint not null auto_increment,
+    ativo boolean, -- active
+    nome varchar(100) unique, -- name
+    constante boolean, -- contant
+    primary key(id)
+);
+
+-- process
+create table processos (
+    id bigint not null auto_increment,
+    ativo boolean, -- active
+    numero_processo varchar(30), -- process_numver
+    assunto_id bigint not null, -- subject_id
+    funcionario_id bigint not null, -- employee_id
+    departamento_id bigint not null, -- department_id
+    primary key(id),
+    foreign key (assunto_id) references assuntos(id),
+    foreign key (departamento_id) references departamentos(id),
+    foreign key (funcionario_id) references funcionarios(id)        
+);
+
+-- transactions
+create table movimentacaos (
+    id bigint not null auto_increment,
+    ativo boolean, -- active
+    nome varchar(100), -- name
+    constante boolean, -- contant
+    primary key(id)
+);
+
+create table movimentacoes_processos (
+    id bigint not null auto_increment,
+    processo_id bigint not null,
+    movimentacao_id bigint not null,
+    primary key(id),
+    foreign key (movimentacao_id) references movimentacaos(id),
+    foreign key (processo_id) references processos(id)
+);
+
+create table usuarios (
+    id bigint not null auto_increment,
+    login varchar(20),
+    senha varchar(100),
+    primary key (id)    
+);
+
+
+/*
+    Adicionando os tipos de assuntos.
+*/
+insert into assunto(ativo, descricao, constante) values (true, "ABONO DE PERMANÊNCIA", true);
+insert into assunto(ativo, descricao, constante) values (true, "LICENÇA PRÊMIO POR ASSIDUIDADE", true);
+insert into assunto(ativo, descricao, constante) values (true, "LICENÇA POR INTERESSE PARTICULAR", true);
+insert into assunto(ativo, descricao, constante) values (true, "PROGRESSÃO FUNCIONAL", true);
+insert into assunto(ativo, descricao, constante) values (true, "FERIAS", true);
+insert into assunto(ativo, descricao, constante) values (true, "APOSENTADORIA", true);
+insert into assunto(ativo, descricao, constante) values (true, "LICENÇA MATERNIDADE", true);
+insert into assunto(ativo, descricao, constante) values (true, "INCORPORAÇÃO DE VANTAGEM TRANSITÓIA", true);
+insert into assunto(ativo, descricao, constante) values (true, "HORÁRIO ESPECIAL DE TRABALHO", true);
+insert into assunto(ativo, descricao, constante) values (true, "ADICIONAL", true);
+
+/*
+        Adicionando os tipos de lugares que os processos poderão estar.
+*/
+insert into departamento(ativo, nome, constante) values (true,"RECURSOS HUMANOS", true);
+insert into departamento(ativo, nome, constante) values (true,"SEC. DE ADM. E DE TRIBUTAÇÃO", true);
+insert into departamento(ativo, nome, constante) values (true,"PROCURADORIA", true);
+
+
+/*
+        Adicionando os tipos de movimentações
+*/
+insert into movimentacao(ativo, descricao, constante) values (true, "AGUARDANDO PARECER JURÍDICO", true);
+insert into movimentacao(ativo, descricao, constante) values (true, "AGUARDANDO MANIFESTAÇÃO DA SECRETARIA RESPONSÁVEL", true);
+insert into movimentacao(ativo, descricao, constante) values (true, "AGUARDANDO DOCUMENTAÇÃO DO REQUERENTE", true);
+insert into movimentacao(ativo, descricao, constante) values (true, "REQUERIMENTO DEFERIDO", true);
+insert into movimentacao(ativo, descricao, constante) values (true, "REQUERIMENTO INDEFERIDO", true);
+insert into movimentacao(ativo, descricao, constante) values (true, "AGUARDANDO INTIMAÇÃO DO REQUERENTE", true);
+insert into movimentacao(ativo, descricao, constante) values (true, "PARA ARQUIVAR", true);

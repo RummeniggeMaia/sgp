@@ -16,7 +16,7 @@ class Assunto extends Entidade {
     /** @Column(type="boolean") */
     protected $constante;
 
-    /** @Column(type="string") */
+    /** @Column(type="string", unique=true) */
     protected $descricao;
 
     /** @OneToMany(targetEntity="Processo", mappedBy="assunto") */

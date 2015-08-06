@@ -2,6 +2,9 @@
 
 require_once "vendor/autoload.php";
 require_once './vendor/twig/twig/lib/Twig/Autoloader.php';
+require_once("bootstrap.php");
+
+use dao\Dao;
 
 //Função utilizada pra iniciar a sessão em scripts no php
 session_start();
@@ -10,16 +13,18 @@ $controladores = null;
 if (isset($_SESSION['controladores'])) {
     $controladores = unserialize($_SESSION['controladores']);
 } else {
+    $dao = new Dao($entityManager);
     $controladores = array();
     $funcionarioCtrl = new controle\FuncionarioCtrl();    
     $assuntoCtrl = new controle\AssuntoCtrl();
     $departamentoCtrl = new controle\DepartamentoCtrl();
     $movimentacaoCtrl = new controle\MovimentacaoCtrl();
+    $processoCtrl = new controle\ProcessoCtrl($dao);
     $controladores['gerenciar_funcionario'] = $funcionarioCtrl;
     $controladores['gerenciar_assunto'] = $assuntoCtrl;
     $controladores['gerenciar_departamento'] = $departamentoCtrl;
     $controladores['gerenciar_movimentacao'] = $movimentacaoCtrl;
-    //$controladores['gerenciar_processo'] = $processoCtrl;
+    $controladores['gerenciar_processo'] = $processoCtrl;
     $_SESSION['controladores'] = serialize($controladores);
 }
 

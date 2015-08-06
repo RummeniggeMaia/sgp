@@ -64,6 +64,9 @@ class DqlBuilder {
 
     private function gerarClausulaWhereAssunto(Assunto $assunto, QueryBuilder $qb) {
         $qb->where("x.ativo = true");
+        if ($assunto->getConstante()) {
+            $qb->andWhere("x.constante = true");
+        }
         if ($assunto->getDescricao() != null &&
                 preg_match("/.+/i", $assunto->getDescricao())) {
             $qb->andWhere("x.descricao like '%" . $assunto->getDescricao() . "%'");
@@ -72,6 +75,9 @@ class DqlBuilder {
 
     private function gerarClausulaWhereDepartamento(Departamento $departamento, QueryBuilder $qb) {
         $qb->where("x.ativo = true");
+        if ($departamento->getConstante()) {
+            $qb->andWhere("x.constante = true");
+        }
         if ($departamento->getDescricao() != null &&
                 preg_match("/.+/i", $departamento->getDescricao())) {
             $qb->andWhere("x.descricao like '%" . $departamento->getDescricao() . "%'");

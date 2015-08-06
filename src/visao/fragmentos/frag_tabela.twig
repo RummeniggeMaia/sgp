@@ -31,49 +31,56 @@
         </tr>
     </thead>
     <tbody>
-    {% for linha in modelo.linhas %} 
-        <tr>
-            {% if modelo.modoBusca %}
-                <td class="collapsing">
-                    <div class="ui fitted slider checkbox">
-                        <input type="checkbox"> <label></label>
-                    </div>
-                </td>
-            {% else %}
-                <td></td>
-            {% endif %}
-            {% for valor in linha.valores %}
-                <td>{{ valor }}</td>
-            {% endfor %}
-            {% if not modelo.modoBusca %}
-                <td style="text-align: center">
-                    <div class="ui submit black button" 
-                         onclick="submeterForm(
+        {% for linha in modelo.linhas %} 
+            <tr>
+                {% if modelo.modoBusca %}
+                    <td class="collapsing">
+                        <div class="ui fitted slider checkbox">
+                            <input type="checkbox"> <label></label>
+                        </div>
+                    </td>
+                {% else %}
+                    <td></td>
+                {% endif %}
+                {% for valor in linha.valores %}
+                    <td>{{ valor }}</td>
+                {% endfor %}
+                {% if not modelo.modoBusca %}
+                    <td style="text-align: center">
+                        <div class="ui submit black button" 
+                             onclick="submeterForm(
                                          '{{ formulario }}',
                                          '{{ funcao }}',
                                          'editar_{{ loop.index }}');">
-                        <i class="edit icon"></i>Editar
-                    </div>
-                </td>
-                <td style="text-align: center">
-                    <div class="ui submit black button" 
-                         onclick="submeterForm(
+                            <i class="edit icon"></i>Editar
+                        </div>
+                    </td>
+                    <td style="text-align: center">
+                        <div class="ui submit black button" 
+                             onclick="submeterForm(
                                          '{{ formulario }}',
                                          '{{ funcao }}',
                                          'excluir_{{ loop.index }}');">
-                        <i class="edit icon"></i>Excluir
-                    </div>
-                </td>
-            {% endif %}
+                            <i class="delete icon"></i>Excluir
+                        </div>
+                    </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot class="full-width">
+        <tr>
+            <th>
+            </th>
+            <th colspan="999" style="text-align: center">
+                {% include 'fragmentos/frag_paginador.twig' 
+                    with {
+                        'paginador' : modelo.paginador,
+                        'formulario' : formulario,
+                        'funcao' : funcao
+                    }
+                %}
+            </th>
         </tr>
-    {% endfor %}
-</tbody>
-<tfoot class="full-width">
-    <tr>
-        <th>
-        </th>
-        <th colspan="100">
-        </th>
-    </tr>
-</tfoot>
+    </tfoot>
 </table>

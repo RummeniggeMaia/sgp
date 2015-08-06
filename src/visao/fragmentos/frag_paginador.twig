@@ -7,6 +7,12 @@
                 submeterForm('{{ formulario}}', '{{ funcao }}', 'paginador_limit_' + val);
             }});
     });
+    $(document).keypress(function(e) {
+        if (e.which == 13) {
+            var aux = $("#paginaAtual").val();
+            submeterForm('{{formulario}}', '{{funcao}}', 'paginador_pular_' + aux);
+        }
+    });
 </script>
 
 <span class="ui icon button negative {{ paginador.podeVoltar() ? '' : 'disabled'}}"
@@ -19,7 +25,7 @@
 </span>
 <label style="padding-left: 15px">Página</label>
 <span class="ui input" style="width: 75px">
-    <input type="text" style="text-align: center" value="{{ paginador.paginaAtual() }}"/>
+    <input id="paginaAtual" type="text" style="text-align: center" value="{{ paginador.paginaAtual() }}"/>
 </span>
 <label style="padding-right: 15px">de {{ paginador.totalDePaginas() }}</label>
 <span class="ui icon button negative {{ paginador.podeSeguir() ? '' : 'disabled'}}"

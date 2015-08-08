@@ -3,7 +3,7 @@
 namespace controle;
 
 use controle\Validador;
-use modelo\Assunto;
+use modelo\Movimentacao;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -11,16 +11,15 @@ use modelo\Assunto;
  * and open the template in the editor.
  */
 
-class ValidadorAssunto extends Validador {
+class ValidadorMovimentacao extends Validador {
 
     public function __construct() {
-        $this->entidade = new Assunto("", "");
+        $this->entidade = new Movimentacao("", "");
     }
 
     public function validar($entidade) {
         $this->entidade = $entidade;
         $this->mensagem = null;
-
 
         if ($this->entidade->getDescricao() == null) {
             $this->mensagem = "Campo Descrição obrigatório!";

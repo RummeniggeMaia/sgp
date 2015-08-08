@@ -9,12 +9,15 @@ use controle\tabela\ModeloDeTabela;
 use controle\tabela\Paginador;
 use modelo\Movimentacao;
 use util\Util;
+
 /**
  * Description of MovimentacaoCtrl
  *
  * @author Rummenigge
  */
 class MovimentacaoCtrl extends Controlador {
+
+    public $validadorMovimentacao;
 
     public function __construct() {
         $this->entidade = new Movimentacao("", "");
@@ -23,6 +26,7 @@ class MovimentacaoCtrl extends Controlador {
         $this->modeloTabela = new ModeloDeTabela();
         $this->modeloTabela->setCabecalhos(array("Descrição"));
         $this->modeloTabela->setModoBusca(false);
+        $this->validadorMovimentacao = new ValidadorMovimentacao();
     }
 
     /**
@@ -39,17 +43,25 @@ class MovimentacaoCtrl extends Controlador {
         $this->gerarMovimentacao($post);
 
         if ($funcao == "salvar") {
-            if ($this->modoEditar) {
-                $this->dao->editar($this->entidade);
+            $resultado = $this->validadorMovimentacao->validar($this->entidade);
+            if ($resultado != null) {
+                $this->mensagem = new Mensagem(
+                        "Cadastro de movimentacao"
+                        , "msg_tipo_error"
+                        , $resultado);
             } else {
-                $this->dao->criar($this->entidade);
+                if ($this->modoEditar) {
+                    $this->dao->editar($this->entidade);
+                } else {
+                    $this->dao->criar($this->entidade);
+                }
+                $this->entidade = new Movimentacao("", "");
+                $this->modoEditar = false;
+                $this->mensagem = new Mensagem(
+                        "Cadastro de movimentação"
+                        , "msg_tipo_ok"
+                        , "Dados de Movimentação salvo com sucesso.");
             }
-            $this->entidade = new Movimentacao("", "");
-            $this->modoEditar = false;
-            $this->mensagem = new Mensagem(
-                    "Cadastro de departamentos"
-                    , "msg_tipo_ok"
-                    , "Dados de Movimentação salvo com sucesso.");
         } else if ($funcao == "pesquisar") {
             $this->modeloTabela->setPaginador(new Paginador());
             $this->modeloTabela->getPaginador()->setContagem(

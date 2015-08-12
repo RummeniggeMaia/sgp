@@ -16,12 +16,16 @@ abstract class Controlador {
     protected $mensagem;
     protected $modeloTabela;
     protected $modoEditar;
+    protected $modoBusca;
+    //Controlador que receberá as entidades selecionadas, deve ser String 
+    //apenas pra acessar o controlador de destino no vetor de controladores
+    protected $ctrlDestino;
 
     public function getEntidade() {
         return $this->entidade;
     }
-    
-    public function getAssunto(){
+
+    public function getAssunto() {
         return $this->assunto;
     }
 
@@ -44,8 +48,8 @@ abstract class Controlador {
     public function setEntidade($entidade) {
         $this->entidade = $entidade;
     }
-    
-    public function setAssunto($assunto){
+
+    public function setAssunto($assunto) {
         $this->assunto = $assunto;
     }
 
@@ -64,7 +68,7 @@ abstract class Controlador {
     public function setModeloTabela($modeloTabela) {
         $this->modeloTabela = $modeloTabela;
     }
-    
+
     public function getModoEditar() {
         return $this->modoEditar;
     }
@@ -72,9 +76,24 @@ abstract class Controlador {
     public function setModoEditar($modoEditar) {
         $this->modoEditar = $modoEditar;
     }
-    
-    public function pesquisar() {
 
+    public function getCtrlDestino() {
+        return $this->ctrlDestino;
+    }
+
+    public function setCtrlDestino($ctrlDestino) {
+        $this->ctrlDestino = $ctrlDestino;
+    }
+
+    public function getModoBusca() {
+        return $this->modoBusca;
+    }
+
+    public function setModoBusca($modoBusca) {
+        $this->modoBusca = $modoBusca;
+    }
+
+    public function pesquisar() {
         $this->entidades = $this->dao->pesquisar(
                 $this->modeloTabela->getPaginador()->getPesquisa()
                 , $this->modeloTabela->getPaginador()->getLimit()
@@ -101,14 +120,14 @@ abstract class Controlador {
                 $paginador->setOffset(0);
                 $paginador->setLimit($limit);
                 $paginador->setContagem(
-                    $this->dao->contar($this->entidade));
+                        $this->dao->contar($this->entidade));
             }
         }
         $this->pesquisar();
         return $result;
     }
 
-    public abstract function executarFuncao($post, $funcao);
-    
+    public abstract function executarFuncao($post, $funcao, $controladores);
+
     public abstract function gerarLinhas();
 }

@@ -25,7 +25,8 @@
             <div class="item" data-tab="second">Tabela de Processos</div>
         </div>
         <div class="ui bottom attached active tab segment" data-tab="first">
-            <form class="ui form" method="post" action="assunto">
+            <form id="form_processo" class="ui form" method="post" 
+                  action="front_controller.php">
                 <div class="field">
                     <label>Nº Processo:</label>
                     <input type="text" name="campo_numero_processo" placeholder="Número do Processo">
@@ -67,7 +68,8 @@
                 <div class="field">
                     <div class="ui action input">
                         <input type="text" placeholder="Funcionário">
-                        <div class="ui button">
+                        <div class="ui button" 
+                             onclick="submeterForm('form_processo', 'funcao_gerenciar_processo', 'buscar_funcionario');">
                             <i class="search icon"></i>
                             Buscar
                         </div>

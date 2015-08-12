@@ -36,7 +36,7 @@ class AssuntoCtrl extends Controlador {
         }
     }
 
- public function executarFuncao($post, $funcao) {
+ public function executarFuncao($post, $funcao, $controladores) {
         $this->gerarAssunto($post);
 
         if ($funcao == "salvar") {

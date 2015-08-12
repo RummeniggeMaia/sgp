@@ -35,7 +35,7 @@ class MovimentacaoCtrl extends Controlador {
         }
     }
 
-    public function executarFuncao($post, $funcao) {
+    public function executarFuncao($post, $funcao, $controladores) {
         $this->gerarMovimentacao($post);
 
         if ($funcao == "salvar") {

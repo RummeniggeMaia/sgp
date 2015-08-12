@@ -54,14 +54,16 @@ foreach ($chaves as $requisicao) {
             if (isset($controladores[$ctrl])) {
                 $controlador = $controladores[$ctrl];
                 $controlador->setDao(new Dao($entityManager));
-                $redirecionamento = $controlador->executarFuncao($_POST, $funcao);
+                //passando os controladores pela funcao executar funcao para comunicao entre eles
+                $redirecionamento = $controlador->executarFuncao(
+                        $_POST, $funcao, $controladores);
                 $controlador->getDao()->getEntityManager()->close();
                 $controlador->getDao()->setEntityManager(null);
+                $_SESSION['controladores'] = serialize($controladores);
                 redirecionar(
                         $visoes_navegacao[$redirecionamento]
                         , $twig
                         , $controlador);
-                $_SESSION['controladores'] = serialize($controladores);
                 return;
             }
         }

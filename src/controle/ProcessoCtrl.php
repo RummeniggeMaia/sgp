@@ -3,6 +3,7 @@
 namespace controle;
 
 use controle\Controlador;
+use controle\FuncionarioCtrl;
 use controle\tabela\ModeloDeTabela;
 use modelo\Assunto;
 use modelo\Departamento;
@@ -62,8 +63,13 @@ class ProcessoCtrl extends Controlador {
         $this->funcionario = $funcionario;
     }
 
-    public function executarFuncao($post, $funcao) {
-        
+    public function executarFuncao($post, $funcao, $controladores) {
+        if ($funcao == 'buscar_funcionario') {
+            $funcCtrl = $controladores['gerenciar_funcionario'];
+            $funcCtrl->setModoBusca(true);
+            $funcCtrl->setCtrlDestino('gerenciar_processo');
+            return 'gerenciar_funcionario';
+        }
     }
     
     public function gerarLinhas() {

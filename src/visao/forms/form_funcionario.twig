@@ -25,10 +25,11 @@
         <div class="ui top attached tabular menu">
             <div class="item {{ ctrl.modoEditar ? 'active' : ''}}" data-tab="form">Formulário</div>
             <div class="item {{ ctrl.modoEditar ? '' : 'active'}}" data-tab="tabela">Tabela</div>
-        </div>        
-        <div class="ui bottom attached tab segment {{ ctrl.modoEditar ? 'active' : ''}}" data-tab="form">
-            <form id="form_funcionario" class="ui form" method="post" 
-                  action="front_controller.php">   
+        </div>    
+        <form id="form_funcionario" class="ui form" method="post" 
+              action="front_controller.php"> 
+            <div class="ui bottom attached tab segment {{ ctrl.modoEditar ? 'active' : ''}}" data-tab="form">
+
                 <div class="field">
                     <label>Nome:</label>
                     <input type="text" name="campo_nome" 
@@ -76,16 +77,18 @@
                         </div>
                     </div>
                 </div>
-            </form>
-        </div>
-        <div class="ui bottom attached tab segment {{ ctrl.modoEditar ? '' : 'active'}}" data-tab="tabela">
-            {% include 'fragmentos/frag_tabela.twig' 
+
+            </div>
+            <div class="ui bottom attached tab segment {{ ctrl.modoEditar ? '' : 'active'}}" data-tab="tabela">
+                {% include 'fragmentos/frag_tabela.twig' 
                 with {
                     'modelo' : ctrl.modeloTabela,
                     'formulario' : 'form_funcionario',
-                    'funcao' : 'funcao_gerenciar_funcionario'
+                    'funcao' : 'funcao_gerenciar_funcionario',
+                    'modo_busca' : ctrl.modoBusca
                 }
-            %}
-        </div>
+                %}
+            </div>
+        </form>
     </div>
 {% endblock %}

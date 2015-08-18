@@ -22,7 +22,7 @@
                     {{ cabecalho}}
                 </th>
             {% endfor %}
-            {% if not modelo.modoBusca %}
+            {% if not modo_busca %}
                 <th>
                 </th>
                 <th>
@@ -33,10 +33,11 @@
     <tbody>
         {% for linha in modelo.linhas %} 
             <tr>
-                {% if modelo.modoBusca %}
+                {% if modo_busca %}
                     <td class="collapsing">
-                        <div class="ui fitted slider checkbox">
-                            <input type="checkbox" name="check_{{ loop.index }}" <label></label>
+                        <div class="ui {{ linha.selecionado ? 'checked' : '' }}toggle checkbox">
+                            <input type="checkbox" name="check_{{ loop.index }}" checked=""> 
+                            <label></label>
                         </div>
                     </td>
                 {% else %}
@@ -45,22 +46,22 @@
                 {% for valor in linha.valores %}
                     <td>{{ valor }}</td>
                 {% endfor %}
-                {% if not modelo.modoBusca %}
+                {% if not modo_busca %}
                     <td style="text-align: center">
                         <div class="ui submit black button" 
                              onclick="submeterForm(
-                                         '{{ formulario }}',
-                                         '{{ funcao }}',
-                                         'editar_{{ loop.index }}');">
+                                             '{{ formulario }}',
+                                             '{{ funcao }}',
+                                             'editar_{{ loop.index }}');">
                             <i class="edit icon"></i>Editar
                         </div>
                     </td>
                     <td style="text-align: center">
                         <div class="ui submit black button" 
                              onclick="submeterForm(
-                                         '{{ formulario }}',
-                                         '{{ funcao }}',
-                                         'excluir_{{ loop.index }}');">
+                                             '{{ formulario }}',
+                                             '{{ funcao }}',
+                                             'excluir_{{ loop.index }}');">
                             <i class="delete icon"></i>Excluir
                         </div>
                     </td>

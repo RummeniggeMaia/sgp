@@ -40,7 +40,7 @@ class DepartamentoCtrl extends Controlador {
         }
     }
 
-    public function executarFuncao($post, $funcao) {
+    public function executarFuncao($post, $funcao, $controladores) {
         $this->gerarDepartamento($post);
 
         if ($funcao == "salvar") {

@@ -3,6 +3,7 @@
 namespace controle;
 
 use controle\Controlador;
+use controle\ProcessoCtrl;
 use controle\Mensagem;
 use controle\tabela\Linha;
 use controle\tabela\ModeloDeTabela;
@@ -45,7 +46,7 @@ class FuncionarioCtrl extends Controlador {
         }
     }
 
-    public function executarFuncao($post, $funcao) {
+    public function executarFuncao($post, $funcao, $controladores) {
         $this->gerarFuncionario($post);
 
         if ($funcao == "salvar") {
@@ -78,6 +79,18 @@ class FuncionarioCtrl extends Controlador {
         } else if ($funcao == "cancelar_edicao") {
             $this->modoEditar = false;
             $this->entidade = new Funcionario("", "", "");
+        } else if ($funcao == 'enviar_funcionarios') {
+            $selecionados = array();
+            foreach ($this->entidades as $f) {
+                if ($f->getSelecionado() == true) {
+                    $selecionados[] = clone $f;
+                }
+            }
+            $ctrl = $controladores[$this->ctrlDestino];
+            $ctrl->setFuncionario(
+                    sizeof($selecionados) > 1 ? $selecionados[0] : 1);
+            $this->modoBusca = false;
+            return $this->ctrlDestino;
         } else if (Util::startsWithString($funcao, "editar_")) {
             $index = intval(str_replace("editar_", "", $funcao));
             if ($index != 0) {

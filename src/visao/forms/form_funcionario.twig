@@ -45,17 +45,27 @@
                            placeholder="___.___.___" value="{{ ctrl.entidade.rg }}">
                 </div>
                 <div class="fields">
-                    <div class="field">
-                        <div class="ui submit black button" 
-                             onclick="submeterForm('form_funcionario', 'funcao_gerenciar_funcionario', 'salvar');">
-                            <i class="save icon"></i>Salvar
+                    {% if not ctrl.modoBusca %}
+                        <div class="field">
+                            <div class="ui submit black button" 
+                                 onclick="submeterForm('form_funcionario', 'funcao_gerenciar_funcionario', 'salvar');">
+                                <i class="save icon"></i>Salvar
+                            </div>
                         </div>
-                    </div>
+                    {% endif %}
                     {% if ctrl.modoEditar%}
                         <div class="field">
                             <div class="ui submit black button" 
                                  onclick="submeterForm('form_funcionario', 'funcao_gerenciar_funcionario', 'cancelar_edicao');">
                                 <i class="remove circle outline icon"></i>Cancelar Edição
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if ctrl.modoBusca %}
+                        <div class="field">
+                            <div class="ui submit black button" 
+                                 onclick="submeterForm('form_funcionario', 'funcao_gerenciar_funcionario', 'enviar_funcionarios');">
+                                <i class="reply all icon"></i>Enviar funcionários
                             </div>
                         </div>
                     {% endif %}

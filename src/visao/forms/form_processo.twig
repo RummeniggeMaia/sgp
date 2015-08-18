@@ -25,35 +25,53 @@
             <div class="item" data-tab="second">Tabela de Processos</div>
         </div>
         <div class="ui bottom attached active tab segment" data-tab="first">
-            <form class="ui form" method="post" action="assunto">
+            <form id="form_processo" class="ui form" method="post" 
+                  action="front_controller.php">
                 <div class="field">
                     <label>Nº Processo:</label>
-                    <input type="text" name="campo_numeroProcesso" placeholder="Número do Processo">
+                    <input type="text" name="campo_numero_processo" placeholder="Número do Processo">
                 </div>
-                <div class="field">
-                    <label>Assunto:</label>
-                    <div class="ui fluid search selection dropdown">
-                        <input type="hidden" name="assunto">
-                        <i class="dropdown icon"></i>
-                        <div class="default text">Selecione o Assunto</div>
-                        <div class="menu">
-                            <div class="item" data-value="ad"><i class="ad flag"></i>Andorra</div>
-                            <div class="item" data-value="ae"><i class="ae flag"></i>United Arab Emirates</div>
-                            <div class="item" data-value="af"><i class="af flag"></i>Afghanistan</div>
+                <div class="two fields">
+                    <div class="field">
+                        <label>Assunto:</label>
+                        <div class="ui fluid search selection dropdown">
+                            <input type="hidden" name="assunto">
+                            <i class="dropdown icon"></i>
+                            <div class="default text">Selecione o Assunto</div>
+                            <div class="menu">
+                                {% for assunto in ctrl.assuntos %}
+                                    <div class="item" data-value="{{ loop.index }}">
+                                        <i class="archive icon"></i>
+                                        {{ assunto.descricao }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Departamento:</label>
+                        <div class="ui fluid search selection dropdown">
+                            <input type="hidden" name="departamento">
+                            <i class="dropdown icon"></i>
+                            <div class="default text">Selecione o Departamento</div>
+                            <div class="menu">
+                                {% for departamento in ctrl.departamentos %}
+                                    <div class="item" data-value="{{ loop.index }}">
+                                        <i class="building icon"></i>
+                                        {{ departamento.descricao }}
+                                    </div>
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="field">
-                    <label>Departamento:</label>
-                    <div class="ui fluid search selection dropdown">
-                        <input type="hidden" name="departamento">
-                        <i class="dropdown icon"></i>
-                        <div class="default text">Selecione o Departamento</div>
-                        <div class="menu">
-                            <div class="item" data-value="ad"><i class="ad flag"></i>Andorra</div>
-                            <div class="item" data-value="ae"><i class="ae flag"></i>United Arab Emirates</div>
-                            <div class="item" data-value="af"><i class="af flag"></i>Afghanistan</div>
-                            <div class="item" data-value="af"><i class="br flag"></i>Brasil</div>
+                    <div class="ui action input">
+                        <input type="text" placeholder="Funcionário">
+                        <div class="ui button" 
+                             onclick="submeterForm('form_processo', 'funcao_gerenciar_processo', 'buscar_funcionario');">
+                            <i class="search icon"></i>
+                            Buscar
                         </div>
                     </div>
                 </div>

@@ -12,6 +12,7 @@ use controle\FuncionarioCtrl;
 use controle\AssuntoCtrl;
 use controle\DepartamentoCtrl;
 use controle\MovimentacaoCtrl;
+use controle\ProcessoCtrl;
 
 //Inicia a sessao novamente
 session_start();
@@ -47,20 +48,22 @@ foreach ($chaves as $requisicao) {
                                 null);
                 return;
             }
-        } else if (Util::startsWithString($requisicao, "funcao_")) { //funcao_gerenciar_assunto
-            $ctrl = str_replace("funcao_", "", $requisicao); // gerenciar_assunto
-            $funcao = $_POST[$requisicao];  // cadastrar
+        } else if (Util::startsWithString($requisicao, "funcao_")) {
+            $ctrl = str_replace("funcao_", "", $requisicao);
+            $funcao = $_POST[$requisicao];
             if (isset($controladores[$ctrl])) {
                 $controlador = $controladores[$ctrl];
                 $controlador->setDao(new Dao($entityManager));
-                $redirecionamento = $controlador->executarFuncao($_POST, $funcao);
+                //passando os controladores pela funcao executar funcao para comunicao entre eles
+                $redirecionamento = $controlador->executarFuncao(
+                        $_POST, $funcao, $controladores);
                 $controlador->getDao()->getEntityManager()->close();
                 $controlador->getDao()->setEntityManager(null);
+                $_SESSION['controladores'] = serialize($controladores);
                 redirecionar(
                         $visoes_navegacao[$redirecionamento]
                         , $twig
                         , $controlador);
-                $_SESSION['controladores'] = serialize($controladores);
                 return;
             }
         }

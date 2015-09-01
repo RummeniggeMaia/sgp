@@ -94,14 +94,16 @@ abstract class Controlador {
     }
 
     public function pesquisar() {
-        $this->entidades = $this->dao->pesquisar(
-                $this->modeloTabela->getPaginador()->getPesquisa()
-                , $this->modeloTabela->getPaginador()->getLimit()
-                , $this->modeloTabela->getPaginador()->getOffset());
-        $this->gerarLinhas();
+        if ($this->modeloTabela->getPaginador()->getPesquisa() != null) {
+            $this->entidades = $this->dao->pesquisar(
+                    $this->modeloTabela->getPaginador()->getPesquisa()
+                    , $this->modeloTabela->getPaginador()->getLimit()
+                    , $this->modeloTabela->getPaginador()->getOffset());
+            $this->gerarLinhas();
+        }
     }
 
-    public function paginar($acao, $result) {
+    public function paginar($acao) {
         $paginador = $this->modeloTabela->getPaginador();
         if ($acao == "paginador_primeira") {
             $paginador->primeira();
@@ -124,7 +126,6 @@ abstract class Controlador {
             }
         }
         $this->pesquisar();
-        return $result;
     }
 
     public abstract function executarFuncao($post, $funcao, $controladores);

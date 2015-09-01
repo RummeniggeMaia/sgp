@@ -1,10 +1,12 @@
 {# empty Twig template #}
 {% extends "templates/base.twig"%}
 
+{% block title %}Gerenciamento de processos {% endblock %}
+
 {% block body %}
     <br/>
-    <div class="html ui top attached segment">
-        <br>
+    <div class="html ui top right attached segment">
+        <br/>
         {% include 'fragmentos/frag_titulo.twig' 
             with {
                 'titulo' : 'Gerenciamento de Processos', 
@@ -21,12 +23,13 @@
             %}
         {% endif %}
         <div class="ui top attached tabular menu">
-            <div class="item active" data-tab="first">Formulário</div>
-            <div class="item" data-tab="second">Tabela de Processos</div>
+            <div class="item {{ ctrl.modoEditar ? 'active' : ''}}" data-tab="form">Formulário</div>
+            <div class="item {{ ctrl.modoEditar ? '' : 'active'}}" data-tab="tabela">Tabela</div>
         </div>
-        <div class="ui bottom attached active tab segment" data-tab="first">
-            <form id="form_processo" class="ui form" method="post" 
-                  action="front_controller.php">
+        <form id="form_processo" class="ui form" method="post" 
+              action="front_controller.php">
+            <div class="ui bottom attached tab segment {{ ctrl.modoEditar ? 'active' : ''}}" data-tab="form">
+
                 <div class="field">
                     <label>Nº Processo:</label>
                     <input type="text" name="campo_numero_processo" placeholder="Número do Processo">
@@ -68,7 +71,9 @@
                 <div class="field">
                     <div class="ui action input">
                         <input type="text" placeholder="Funcionário" 
-                               value="{{ ctrl.funcionarios|length > 0 ? ctrl.funcionarios[0].nome : '' }}">
+                               value="{{ ctrl.funcionarios|length > 0 ? ctrl.funcionarios[0].nome : '' }}"
+                               name="campo_funcionario"
+                               data-value="{{ ctrl.funcionarios|length > 0 ? ctrl.funcionarios[0].id : '' }}">
                         <div class="ui button" 
                              onclick="submeterForm('form_processo', 'funcao_gerenciar_processo', 'buscar_funcionario');">
                             <i class="search icon"></i>
@@ -77,41 +82,56 @@
                     </div>
                 </div>
                 <div class="fields">
+                    {% if not ctrl.modoBusca %}
+                        <div class="field">
+                            <div class="ui submit black button" 
+                                 onclick="submeterForm('form_processo', 'funcao_gerenciar_processo', 'salvar');">
+                                <i class="save icon"></i>Salvar
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if ctrl.modoEditar %}
+                        <div class="field">
+                            <div class="ui submit black button" 
+                                 onclick="submeterForm('form_processo', 'funcao_gerenciar_processo', 'cancelar_edicao');">
+                                <i class="remove circle outline icon"></i>Cancelar Edição
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if ctrl.modoBusca %}
+                        <div class="field">
+                            <div class="ui submit black button" 
+                                 onclick="submeterForm('form_processo', 'funcao_gerenciar_processo', 'enviar_processos');">
+                                <i class="reply all icon"></i>Enviar funcionários
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if ctrl.modoBusca %}
+                        <div class="field">
+                            <div class="ui submit black button" 
+                                 onclick="submeterForm('form_processo', 'funcao_gerenciar_processo', 'cancelar_enviar');">
+                                <i class="remove circle outline icon"></i>Cancelar envio
+                            </div>
+                        </div>
+                    {% endif %}
                     <div class="field">
-                        <div class="ui submit black button"><i class="save icon"></i>Cadastrar</div>
-                    </div>
-                    <div class="field">
-                        <div class="ui submit black button"><i class="search icon"></i>Pesquisar</div>
+                        <div class="ui submit black button"
+                             onclick="submeterForm('form_processo', 'funcao_gerenciar_funcionario', 'pesquisar');">
+                            <i class="search icon"></i>Pesquisar
+                        </div>
                     </div>
                 </div>
-            </form>
-        </div>
-        <div class="ui bottom attached tab segment" data-tab="second">
-
-            <table class="ui basic table">
-                <thead>
-                    <tr><th>Nº Processo</th>
-                        <th>Assunto</th>
-                        <th>Departamento</th>
-                    </tr></thead>
-                <tbody>
-                    <tr>
-                        <td>012/2015</td>
-                        <td>Licença Particular</td>
-                        <td>Secretaria de Administração</td>
-                    </tr>
-                    <tr>
-                        <td>015/2015</td>
-                        <td>Licença Prêmio</td>
-                        <td>Procuradoria</td>
-                    </tr>
-                    <tr>
-                        <td>030/2015</td>
-                        <td>Progressão Horizontal</td>
-                        <td>Recursos Humanos</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+            </div>
+            <div class="ui bottom attached tab segment {{ ctrl.modoEditar ? '' : 'active'}}" data-tab="tabela">
+                {% include 'fragmentos/frag_tabela.twig' 
+                with {
+                    'modelo' : ctrl.modeloTabela,
+                    'formulario' : 'form_processo',
+                    'funcao' : 'funcao_gerenciar_processo',
+                    'modo_busca' : ctrl.modoBusca
+                }
+                %}
+            </div>
+        </form>
     </div>
 {% endblock %}

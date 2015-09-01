@@ -59,8 +59,8 @@ foreach ($chaves as $requisicao) {
                         $visoes_navegacao[$redirecionamento->getDestino()]);
                 $controlador->getDao()->getEntityManager()->close();
                 $controlador->getDao()->setEntityManager(null);
-                $_SESSION['controladores'] = serialize($controladores);
                 redirecionar($twig, $redirecionamento);
+                $_SESSION['controladores'] = serialize($controladores);
                 return;
             }
         }

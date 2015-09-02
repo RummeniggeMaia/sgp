@@ -42,9 +42,12 @@ class DepartamentoCtrl extends Controlador {
 
     public function executarFuncao($post, $funcao, $controladores) {
         $this->gerarDepartamento($post);
+        $redirecionamento = new Redirecionamento();
+        $redirecionamento->setDestino('gerenciar_departamento');
+        $redirecionamento->setCtrl($this);
 
         if ($funcao == "salvar") {
-            $resultado = $this->validadorDepartamento->validar($this->entidade);
+            $resultado = $this->validadorDepartamento->validarCadastro($this->entidade);
             if ($resultado != null) {
                 $this->mensagem = new Mensagem(
                         "Cadastro de departamentos"
@@ -73,6 +76,25 @@ class DepartamentoCtrl extends Controlador {
         } else if ($funcao == "cancelar_edicao") {
             $this->modoEditar = false;
             $this->entidade = new Departamento("", "");
+        } else if ($funcao == 'enviar_departamentos') {
+            foreach ($post as $chave => $valor) {
+                if (Util::startsWithString($chave, "check_")) {
+                    $index = str_replace("check_", "", $chave);
+                    $this->entidades[$index - 1]->setSelecionado(true);
+                }
+            }
+            $selecionados = array();
+            foreach ($this->entidades as $f) {
+                if ($f->getSelecionado() == true) {
+                    $selecionados[] = clone $f;
+                }
+            }
+            $ctrl = $controladores[$this->ctrlDestino];
+            $ctrl->setDepartamentos($selecionados);
+            $this->modoBusca = false;
+            $redirecionamento->setDestino($this->getCtrlDestino());
+            $redirecionamento->setCtrl($controladores[$this->getCtrlDestino()]);
+            return $redirecionamento;
         } else if (Util::startsWithString($funcao, "editar_")) {
             $index = intval(str_replace("editar_", "", $funcao));
             if ($index != 0) {
@@ -94,7 +116,7 @@ class DepartamentoCtrl extends Controlador {
         } else if (Util::startsWithString($funcao, "paginador_")) {
             return parent::paginar($funcao, "gerenciar_departamento");
         }
-        return 'gerenciar_departamento';
+        return $redirecionamento;
     }
 
     public function gerarLinhas() {

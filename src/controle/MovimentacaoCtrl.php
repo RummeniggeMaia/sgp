@@ -41,9 +41,13 @@ class MovimentacaoCtrl extends Controlador {
 
     public function executarFuncao($post, $funcao, $controladores) {
         $this->gerarMovimentacao($post);
+        $redirecionamento = new Redirecionamento();
+        $redirecionamento->setDestino('gerenciar_movimentacao');
+        $redirecionamento->setCtrl($this);
+
 
         if ($funcao == "salvar") {
-            $resultado = $this->validadorMovimentacao->validar($this->entidade);
+            $resultado = $this->validadorMovimentacao->validarCadastro($this->entidade);
             if ($resultado != null) {
                 $this->mensagem = new Mensagem(
                         "Cadastro de movimentacao"
@@ -72,6 +76,25 @@ class MovimentacaoCtrl extends Controlador {
         } else if ($funcao == "cancelar_edicao") {
             $this->modoEditar = false;
             $this->entidade = new Movimentacao("", "");
+        } else if ($funcao == 'enviar_movimentacaos') {
+            foreach ($post as $chave => $valor) {
+                if (Util::startsWithString($chave, "check_")) {
+                    $index = str_replace("check_", "", $chave);
+                    $this->entidades[$index - 1]->setSelecionado(true);
+                }
+            }
+            $selecionados = array();
+            foreach ($this->entidades as $f) {
+                if ($f->getSelecionado() == true) {
+                    $selecionados[] = clone $f;
+                }
+            }
+            $ctrl = $controladores[$this->ctrlDestino];
+            $ctrl->setMovimentacoes($selecionados);
+            $this->modoBusca = false;
+            $redirecionamento->setDestino($this->getCtrlDestino());
+            $redirecionamento->setCtrl($controladores[$this->getCtrlDestino()]);
+            return $redirecionamento;
         } else if (Util::startsWithString($funcao, "editar_")) {
             $index = intval(str_replace("editar_", "", $funcao));
             if ($index != 0) {
@@ -93,7 +116,7 @@ class MovimentacaoCtrl extends Controlador {
         } else if (Util::startsWithString($funcao, "paginador_")) {
             return parent::paginar($funcao, "gerenciar_movimentacao");
         }
-        return 'gerenciar_movimentacao';
+        return $redirecionamento;
     }
 
     public function gerarLinhas() {

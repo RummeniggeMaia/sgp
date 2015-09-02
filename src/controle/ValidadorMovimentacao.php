@@ -17,7 +17,7 @@ class ValidadorMovimentacao extends Validador {
         $this->entidade = new Movimentacao("", "");
     }
 
-    public function validar($entidade) {
+    public function validarCadastro($entidade) {
         $this->entidade = $entidade;
         $this->mensagem = null;
 
@@ -27,6 +27,10 @@ class ValidadorMovimentacao extends Validador {
 
 
         return $this->mensagem;
+    }
+
+    public function validarEdicao($funcao) {
+        
     }
 
 }

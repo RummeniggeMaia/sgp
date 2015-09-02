@@ -67,7 +67,8 @@
                 </div>
                 <div class="field">
                     <div class="ui action input">
-                        <input type="text" placeholder="Funcionário">
+                        <input type="text" placeholder="Funcionário" 
+                               value="{{ ctrl.funcionarios|length > 0 ? ctrl.funcionarios[0].nome : '' }}">
                         <div class="ui button" 
                              onclick="submeterForm('form_processo', 'funcao_gerenciar_processo', 'buscar_funcionario');">
                             <i class="search icon"></i>

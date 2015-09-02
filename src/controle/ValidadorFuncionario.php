@@ -14,10 +14,10 @@ use modelo\Funcionario;
 class ValidadorFuncionario extends Validador {
 
     public function __construct() {
-        $this->entidade = new Funcionario("", "", "");        
+        $this->entidade = new Funcionario("", "", "");
     }
 
-    public function validar($entidade) {
+    public function validarCadastro($entidade) {
         $this->entidade = $entidade;
         $this->mensagem = null;
 
@@ -51,6 +51,10 @@ class ValidadorFuncionario extends Validador {
         }
 
         return $this->mensagem;
+    }
+
+    public function validarEdicao($funcao) {
+        
     }
 
 }

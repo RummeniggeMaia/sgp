@@ -6,13 +6,9 @@ require_once("$_SERVER[DOCUMENT_ROOT]/sgp/vendor/autoload.php");
 require_once("$_SERVER[DOCUMENT_ROOT]/sgp/vendor/twig/twig/lib/Twig/Autoloader.php");
 require_once("$_SERVER[DOCUMENT_ROOT]/sgp/bootstrap.php");
 
-use util\Util;
+use controle\Redirecionamento;
 use dao\Dao;
-use controle\FuncionarioCtrl;
-use controle\AssuntoCtrl;
-use controle\DepartamentoCtrl;
-use controle\MovimentacaoCtrl;
-use controle\ProcessoCtrl;
+use util\Util;
 
 //Inicia a sessao novamente
 session_start();
@@ -33,19 +29,21 @@ foreach ($chaves as $requisicao) {
     if (is_string($requisicao)) {
         //Os link do sistema tem que começar com 'navegador_' seguido da visao 
         // a ser acessada
+        $redirecionamento = new Redirecionamento();
         if (Util::startsWithString($requisicao, "navegador_")) {
             //remove a palavra navegador_
             $visao = str_replace("navegador_", "", $requisicao);
             //Verifica se essa visao existe no sistema, nesse caso no vetor
             //de visões
             if (isset($visoes_navegacao[$visao])) {
-                //Gera o template e manda renderizar a visao .twig
-                redirecionar(
-                        $visoes_navegacao[$visao]
-                        , $twig
-                        , isset($controladores[$visao]) ?
+                $redirecionamento->setDestino($visoes_navegacao[$visao]);
+                $redirecionamento->setCtrl(
+                        isset($controladores[$visao]) ?
                                 $controladores[$visao] :
-                                null);
+                                null
+                );
+                //Gera o template e manda renderizar a visao .twig
+                redirecionar($twig, $redirecionamento);
                 return;
             }
         } else if (Util::startsWithString($requisicao, "funcao_")) {
@@ -57,26 +55,25 @@ foreach ($chaves as $requisicao) {
                 //passando os controladores pela funcao executar funcao para comunicao entre eles
                 $redirecionamento = $controlador->executarFuncao(
                         $_POST, $funcao, $controladores);
+                $redirecionamento->setDestino(
+                        $visoes_navegacao[$redirecionamento->getDestino()]);
                 $controlador->getDao()->getEntityManager()->close();
                 $controlador->getDao()->setEntityManager(null);
                 $_SESSION['controladores'] = serialize($controladores);
-                redirecionar(
-                        $visoes_navegacao[$redirecionamento]
-                        , $twig
-                        , $controlador);
+                redirecionar($twig, $redirecionamento);
                 return;
             }
         }
     }
 }
 
-function redirecionar($visao, $twig, $ctrl) {
-    $template = $twig->loadTemplate($visao);
-    if ($ctrl != null) {
-        print $template->render(array("ctrl" => $ctrl));
+function redirecionar($twig, $redirecionamento) {
+    $template = $twig->loadTemplate($redirecionamento->getDestino());
+    if ($redirecionamento->getCtrl() != null) {
+        print $template->render(array("ctrl" => $redirecionamento->getCtrl()));
         //Apos o template ser renderizado com as informacoes do ctrl, a mensagem
-        //é apaga, pos so serve para exibida apenas uma vez
-        $ctrl->setMensagem(null);
+        //é apagada, pois so serve para exibida apenas uma vez
+        $redirecionamento->getCtrl()->setMensagem(null);
     } else {
         print $template->render(array());
     }

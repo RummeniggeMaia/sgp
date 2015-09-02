@@ -48,9 +48,12 @@ class FuncionarioCtrl extends Controlador {
 
     public function executarFuncao($post, $funcao, $controladores) {
         $this->gerarFuncionario($post);
-
+        $redirecionamento = new Redirecionamento();
+        $redirecionamento->setDestino('gerenciar_funcionario');
+        $redirecionamento->setCtrl($this);
+        
         if ($funcao == "salvar") {
-            $resultado = $this->validadorFuncionario->validar($this->entidade);
+            $resultado = $this->validadorFuncionario->validarCadastro($this->entidade);
             if ($resultado != null) {
                 $this->mensagem = new Mensagem(
                         "Cadastro de funcionários"
@@ -80,6 +83,12 @@ class FuncionarioCtrl extends Controlador {
             $this->modoEditar = false;
             $this->entidade = new Funcionario("", "", "");
         } else if ($funcao == 'enviar_funcionarios') {
+            foreach ($post as $chave => $valor) {
+                if (Util::startsWithString($chave, "check_")) {
+                    $index = str_replace("check_", "", $chave);
+                    $this->entidades[$index - 1]->setSelecionado(true);
+                }
+            }
             $selecionados = array();
             foreach ($this->entidades as $f) {
                 if ($f->getSelecionado() == true) {
@@ -87,10 +96,11 @@ class FuncionarioCtrl extends Controlador {
                 }
             }
             $ctrl = $controladores[$this->ctrlDestino];
-            $ctrl->setFuncionario(
-                    sizeof($selecionados) > 1 ? $selecionados[0] : 1);
+            $ctrl->setFuncionarios($selecionados);
             $this->modoBusca = false;
-            return $this->ctrlDestino;
+            $redirecionamento->setDestino($this->getCtrlDestino());
+            $redirecionamento->setCtrl($controladores[$this->getCtrlDestino()]);
+            return $redirecionamento;
         } else if (Util::startsWithString($funcao, "editar_")) {
             $index = intval(str_replace("editar_", "", $funcao));
             if ($index != 0) {
@@ -112,7 +122,7 @@ class FuncionarioCtrl extends Controlador {
         } else if (Util::startsWithString($funcao, "paginador_")) {
             return parent::paginar($funcao, "gerenciar_funcionario");
         }
-        return 'gerenciar_funcionario';
+        return $redirecionamento;
     }
 
     public function gerarLinhas() {

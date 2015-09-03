@@ -30,8 +30,6 @@ class Funcionario extends Entidade {
         $this->cpf = $cpf;
         $this->rg = $rg;
         $this->processos = new \Doctrine\Common\Collections\ArrayCollection();
-        $rc = new \ReflectionClass($this);
-        $this->className = $rc->getName();
     }
 
     public function getId() {
@@ -78,4 +76,8 @@ class Funcionario extends Entidade {
         $this->processos = $processos;
     }
 
+    public function getClassName() {
+        $rc = new \ReflectionClass($this);
+        return $rc->getName();
+    }
 }

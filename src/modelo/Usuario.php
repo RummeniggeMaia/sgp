@@ -39,4 +39,10 @@ class Usuario extends Entidade {
     public function setSenha($senha) {
         $this->senha = $senha;
     }
+
+    public function getClassName() {
+        $rc = new \ReflectionClass($this);
+        return $rc->getName();
+    }
+
 }

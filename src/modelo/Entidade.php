@@ -25,7 +25,6 @@ abstract class Entidade {
 
     /** Esse campo é transiente, por isso não tem anotação */
     private $selecionado;
-    protected $className;
 
     public function getId() {
         return $this->id;
@@ -47,8 +46,6 @@ abstract class Entidade {
         $this->selecionado = $selecionado;
     }
 
-    public function getClassName() {
-        return $this->className;
-    }
+    public abstract function getClassName();
 
 }

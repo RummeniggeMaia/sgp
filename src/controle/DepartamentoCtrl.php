@@ -95,6 +95,9 @@ class DepartamentoCtrl extends Controlador {
             $redirecionamento->setDestino($this->getCtrlDestino());
             $redirecionamento->setCtrl($controladores[$this->getCtrlDestino()]);
             return $redirecionamento;
+        } else if ($funcao == 'cancelar_enviar') {
+            $this->setCtrlDestino("");
+            $this->setModoBusca(false);
         } else if (Util::startsWithString($funcao, "editar_")) {
             $index = intval(str_replace("editar_", "", $funcao));
             if ($index != 0) {
@@ -114,7 +117,7 @@ class DepartamentoCtrl extends Controlador {
                 $this->pesquisar();
             }
         } else if (Util::startsWithString($funcao, "paginador_")) {
-            return parent::paginar($funcao, "gerenciar_departamento");
+            parent::paginar($funcao);
         }
         return $redirecionamento;
     }

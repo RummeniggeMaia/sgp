@@ -16,7 +16,7 @@ use modelo\Movimentacao;
  */
 class Processo extends Entidade {
 
-    /** @Column(type="integer") */
+    /** @Column(type="string", unique=true) */
     protected $numeroProcesso;
 
     /** @ManyToOne(targetEntity="Funcionario", inversedBy="processos") */

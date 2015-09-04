@@ -30,10 +30,6 @@ class Departamento extends Entidade {
         $this->className = $rc->getName();
     }
 
-    public function getId() {
-        $this->id;
-    }
-
     public function getConstante() {
         return $this->constante;
     }
@@ -48,14 +44,6 @@ class Departamento extends Entidade {
 
     public function setDescricao($descricao) {
         $this->descricao = $descricao;
-    }
-
-    public function getAtivo() {
-        return $this->ativo;
-    }
-
-    public function setAtivo($ativo) {
-        $this->ativo = $ativo;
     }
 
     public function getProcessos() {

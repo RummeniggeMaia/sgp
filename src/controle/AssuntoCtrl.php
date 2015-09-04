@@ -78,7 +78,7 @@ class AssuntoCtrl extends Controlador {
         } else if ($funcao == "cancelar_edicao") {
             $this->modoEditar = false;
             $this->entidade = new Assunto("", "");
-        } else if ($funcao == 'enviar_assunto') {
+        } else if ($funcao == 'enviar_assuntos') {
             foreach ($post as $chave => $valor) {
                 if (Util::startsWithString($chave, "check_")) {
                     $index = str_replace("check_", "", $chave);
@@ -96,9 +96,11 @@ class AssuntoCtrl extends Controlador {
             $this->modoBusca = false;
             $redirecionamento->setDestino($this->getCtrlDestino());
             $redirecionamento->setCtrl($controladores[$this->getCtrlDestino()]);
-            return $redirecionamento;
-            
-        } else if (Util::startsWithString($funcao, "editar_")) {
+            return $redirecionamento;            
+        } else if ($funcao == 'cancelar_enviar') {
+            $this->setCtrlDestino("");
+            $this->setModoBusca(false);
+        }else if (Util::startsWithString($funcao, "editar_")) {
             $resultado = $this->validadorAssunto->validarEdicao($funcao);
             if ($resultado != 0) {
                 $this->entidade = $this->entidades[$resultado - 1];
@@ -117,7 +119,7 @@ class AssuntoCtrl extends Controlador {
                 $this->pesquisar();
             }
         } else if (Util::startsWithString($funcao, "paginador_")) {
-            return parent::paginar($funcao, "gerenciar_assunto");
+            parent::paginar($funcao);
         }
         return $redirecionamento;
     }

@@ -51,7 +51,7 @@ class FuncionarioCtrl extends Controlador {
         $redirecionamento = new Redirecionamento();
         $redirecionamento->setDestino('gerenciar_funcionario');
         $redirecionamento->setCtrl($this);
-        
+
         if ($funcao == "salvar") {
             $resultado = $this->validadorFuncionario->validarCadastro($this->entidade);
             if ($resultado != null) {
@@ -72,6 +72,12 @@ class FuncionarioCtrl extends Controlador {
                         , "msg_tipo_ok"
                         , "Dados do Funcionário salvo com sucesso.");
             }
+            $this->entidade = new Funcionario("", "", "");
+            $this->modoEditar = false;
+            $this->mensagem = new Mensagem(
+                    "Cadastro de funcionários"
+                    , "msg_tipo_ok"
+                    , "Dados do Funcionário salvos com sucesso.");
         } else if ($funcao == "pesquisar") {
             $this->modeloTabela->setPaginador(new Paginador());
             $this->modeloTabela->getPaginador()->setContagem(
@@ -101,6 +107,9 @@ class FuncionarioCtrl extends Controlador {
             $redirecionamento->setDestino($this->getCtrlDestino());
             $redirecionamento->setCtrl($controladores[$this->getCtrlDestino()]);
             return $redirecionamento;
+        } else if ($funcao == 'cancelar_enviar') {
+            $this->setCtrlDestino("");
+            $this->setModoBusca(false);
         } else if (Util::startsWithString($funcao, "editar_")) {
             $index = intval(str_replace("editar_", "", $funcao));
             if ($index != 0) {
@@ -120,7 +129,7 @@ class FuncionarioCtrl extends Controlador {
                 $this->pesquisar();
             }
         } else if (Util::startsWithString($funcao, "paginador_")) {
-            return parent::paginar($funcao, "gerenciar_funcionario");
+            parent::paginar($funcao);
         }
         return $redirecionamento;
     }

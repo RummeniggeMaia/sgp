@@ -10,7 +10,7 @@
         {% include 'fragmentos/frag_titulo.twig' 
             with {
                 'titulo' : 'Gerenciamento de departamentos', 
-                'sub_titulo' : 'Cadastro de departamentos no sistema'
+                'sub_titulo' : 'Interface para gerenciar os departamentos no sistema'
             }
         %} 
         {% if ctrl.mensagem != null %}
@@ -44,7 +44,7 @@
                     {% if ctrl.modoEditar%}
                         <div class="field">
                             <div class="ui submit black button" 
-                                 onclick="submeterForm('form_departamento', 'funcao_gerenciar_departamento', 'cancelar_departamento');">
+                                 onclick="submeterForm('form_departamento', 'funcao_gerenciar_departamento', 'cancelar_edicao');">
                                 <i class="remove circle outline icon"></i>Cancelar Edição
                             </div>
                         </div>

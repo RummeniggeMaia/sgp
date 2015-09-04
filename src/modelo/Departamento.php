@@ -26,8 +26,6 @@ class Departamento extends Entidade {
         $this->constante = $constante;
         $this->descricao = $descricao;
         $this->processos = new \Doctrine\Common\Collections\ArrayCollection();
-        $rc = new \ReflectionClass($this);
-        $this->className = $rc->getName();
     }
 
     public function getConstante() {
@@ -52,6 +50,11 @@ class Departamento extends Entidade {
 
     public function setProcessos($processos) {
         $this->processos = $processos;
+    }
+
+    public function getClassName() {
+        $rc = new \ReflectionClass($this);
+        return $rc->getName();
     }
 
 }

@@ -75,4 +75,10 @@ class Processo extends Entidade {
     public function setMovimentacoes($movimentacoes) {
         $this->movimentacoes = $movimentacoes;
     }
+
+    public function getClassName() {
+        $rc = new \ReflectionClass($this);
+        return $rc->getName();
+    }
+
 }

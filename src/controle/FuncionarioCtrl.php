@@ -71,8 +71,8 @@ class FuncionarioCtrl extends Controlador {
             $this->entidade = new Funcionario("", "", "");
         } else if ($funcao == 'enviar_funcionarios') {
             foreach ($post as $chave => $valor) {
-                if (Util::startsWithString($chave, "check_")) {
-                    $index = str_replace("check_", "", $chave);
+                if (Util::startsWithString($chave, "radio_")) {
+                    $index = str_replace("radio_", "", $chave);
                     $this->entidades[$index - 1]->setSelecionado(true);
                 }
             }

@@ -36,7 +36,7 @@
                 {% if modo_busca %}
                     <td class="collapsing">
                         <div class="ui {{ linha.selecionado ? 'checked' : '' }} toggle checkbox">
-                            <input type="checkbox" name="check_{{ loop.index }}" checked=""> 
+                            <input type="radio" name="radio_selecionado" checked="" value="radio_{{ loop.index }}"> 
                             <label></label>
                         </div>
                     </td>

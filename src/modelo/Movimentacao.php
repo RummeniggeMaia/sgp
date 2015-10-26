@@ -25,7 +25,7 @@ class Movimentacao extends Entidade {
      */
     protected $processos;
 
-    function __construct($constante, $descricao) {
+        function __construct($descricao, $constante) {
         $this->constante = $constante;
         $this->descricao = $descricao;
         $this->processos = new \Doctrine\Common\Collections\ArrayCollection();

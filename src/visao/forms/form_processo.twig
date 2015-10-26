@@ -88,12 +88,19 @@
                 </div>
                 <div class="field">
                     <label>Movimentações:</label>
-                    <select name="skills" multiple="" class="ui fluid dropdown">
-                        <option value="">Roles</option>
-                        <option value="Role1">Role 1</option>
-                        <option value="Role2">Role 2</option>
-                        <option value="Role3">Role 3</option>
-                    </select>
+                    <div class="ui fluid multiple search normal selection dropdown">
+                        <input type="hidden" name="movimentacao">
+                        <i class="dropdown icon"></i>
+                        <div class="default text">Selecione as Movimentações</div>
+                        <div class="menu">
+                            {% for movimentacao in ctrl.movimentacoes %}
+                                <div class="item" data-value="{{ loop.index }}">
+                                    <i class="archive icon"></i>
+                                    {{ movimentacao.descricao }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
                 <div class="fields">
                     {% if not ctrl.modoBusca %}

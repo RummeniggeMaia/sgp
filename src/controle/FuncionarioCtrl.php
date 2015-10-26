@@ -70,16 +70,12 @@ class FuncionarioCtrl extends Controlador {
             $this->modoEditar = false;
             $this->entidade = new Funcionario("", "", "");
         } else if ($funcao == 'enviar_funcionarios') {
-            foreach ($post as $chave => $valor) {
-                if (Util::startsWithString($chave, "radio_")) {
-                    $index = str_replace("radio_", "", $chave);
-                    $this->entidades[$index - 1]->setSelecionado(true);
-                }
-            }
             $selecionados = array();
-            foreach ($this->entidades as $f) {
-                if ($f->getSelecionado() == true) {
-                    $selecionados[] = clone $f;
+            foreach ($post as $valor) {
+                if (Util::startsWithString($valor, "radio_")) {
+                    $index = str_replace("radio_", "", $valor);
+                    $selecionados[] = clone $this->entidades[$index - 1];
+                    break;
                 }
             }
             $ctrl = $controladores[$this->ctrlDestino];

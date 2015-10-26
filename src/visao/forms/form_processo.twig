@@ -69,6 +69,7 @@
                     </div>
                 </div>
                 <div class="field">
+                    <label>Funcionário:</label>
                     <div class="ui action input">
                         <input type="text" placeholder="Funcionário" 
                                value="{{ ctrl.funcionarios|length > 0 ? ctrl.funcionarios[0].nome : '' }}"
@@ -79,7 +80,20 @@
                             <i class="search icon"></i>
                             Buscar
                         </div>
+                        <div class="ui button red" 
+                             onclick="submeterForm('form_processo', 'funcao_gerenciar_processo', 'remover_funcionario');">
+                            <i class="delete icon"></i>
+                        </div>
                     </div>
+                </div>
+                <div class="field">
+                    <label>Movimentações:</label>
+                    <select name="skills" multiple="" class="ui fluid dropdown">
+                        <option value="">Roles</option>
+                        <option value="Role1">Role 1</option>
+                        <option value="Role2">Role 2</option>
+                        <option value="Role3">Role 3</option>
+                    </select>
                 </div>
                 <div class="fields">
                     {% if not ctrl.modoBusca %}
@@ -116,7 +130,7 @@
                     {% endif %}
                     <div class="field">
                         <div class="ui submit black button"
-                             onclick="submeterForm('form_processo', 'funcao_gerenciar_funcionario', 'pesquisar');">
+                             onclick="submeterForm('form_processo', 'funcao_gerenciar_processo', 'pesquisar');">
                             <i class="search icon"></i>Pesquisar
                         </div>
                     </div>

@@ -10,6 +10,7 @@ use controle\tabela\Paginador;
 use modelo\Funcionario;
 use modelo\Assunto;
 use modelo\Departamento;
+use modelo\Movimentacao;
 use modelo\Processo;
 use util\Util;
 
@@ -23,6 +24,7 @@ class ProcessoCtrl extends Controlador {
     private $assuntos;
     private $departamentos;
     private $funcionarios;
+    private $movimentacoes;
 
     function __construct($dao) {
         $this->dao = $dao;
@@ -37,6 +39,8 @@ class ProcessoCtrl extends Controlador {
         $this->assuntos = $this->dao->pesquisar($assunto, PHP_INT_MAX, 0);
         $departamento = new Departamento(null, true);
         $this->departamentos = $this->dao->pesquisar($departamento, PHP_INT_MAX, 0);
+        $movimentacao = new Movimentacao(null, true);
+        $this->movimentacoes = $this->dao->pesquisar($movimentacao, PHP_INT_MAX, 0);
         $this->funcionarios = array();
         //Depois q esse contrutor for chamado no index.php, esse controlador vai 
         //ser serializado, por isso o objeto dao tem q ser nulado pois o mesmo 
@@ -66,6 +70,14 @@ class ProcessoCtrl extends Controlador {
 
     public function setFuncionarios($funcionarios) {
         $this->funcionarios = $funcionarios;
+    }
+
+    public function getMovimentacoes() {
+        return $this->movimentacoes;
+    }
+
+    public function setMovimentacoes($movimentacoes) {
+        $this->movimentacoes = $movimentacoes;
     }
 
     public function gerarProcesso($post) {

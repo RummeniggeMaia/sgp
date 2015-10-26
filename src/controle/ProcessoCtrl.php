@@ -3,8 +3,11 @@
 namespace controle;
 
 use controle\Controlador;
+use controle\Mensagem;
+use controle\tabela\Linha;
 use controle\tabela\ModeloDeTabela;
 use controle\tabela\Paginador;
+use modelo\Funcionario;
 use modelo\Assunto;
 use modelo\Departamento;
 use modelo\Processo;
@@ -28,8 +31,8 @@ class ProcessoCtrl extends Controlador {
         $this->mensagem = null;
         $this->modeloTabela = new ModeloDeTabela();
         $this->modeloTabela->setCabecalhos(
-                array("Nº Processo", "Funcionário", "Departamento", "Assunto",
-                    "Movimentações"));
+                array("Nº Processo", "Funcionário", "Departamento", "Assunto"
+        /* , "Movimentações" */        ));
         $assunto = new Assunto(null, true);
         $this->assuntos = $this->dao->pesquisar($assunto, PHP_INT_MAX, 0);
         $departamento = new Departamento(null, true);
@@ -182,9 +185,15 @@ class ProcessoCtrl extends Controlador {
             $linha = new Linha();
             $valores = array();
             $valores[] = $processo->getNumeroProcesso();
-            $valores[] = $processo->getFuncionario();
-            $valores[] = $processo->getDepartamento();
-            $valores[] = $processo->getAssunto();
+            $valores[] = $processo->getFuncionario() != null ?
+                    $processo->getFuncionario()->getNome() :
+                    "";
+            $valores[] = $processo->getDepartamento() != null ?
+                    $processo->getDepartamento()->getDescricao() :
+                    "";
+            $valores[] = $processo->getAssunto() != null ?
+                    $processo->getAssunto()->getDescricao() :
+                    "";
             $linha->setValores($valores);
             $linhas[] = $linha;
         }

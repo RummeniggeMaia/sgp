@@ -79,16 +79,12 @@ class AssuntoCtrl extends Controlador {
             $this->modoEditar = false;
             $this->entidade = new Assunto("", "");
         } else if ($funcao == 'enviar_assuntos') {
-            foreach ($post as $chave => $valor) {
-                if (Util::startsWithString($chave, "check_")) {
-                    $index = str_replace("check_", "", $chave);
-                    $this->entidades[$index - 1]->setSelecionado(true);
-                }
-            }
             $selecionados = array();
-            foreach ($this->entidades as $f) {
-                if ($f->getSelecionado() == true) {
-                    $selecionados[] = clone $f;
+            foreach ($post as $valor) {
+                if (Util::startsWithString($valor, "radio_")) {
+                    $index = str_replace("radio_", "", $valor);
+                    $selecionados[] = clone $this->entidades[$index - 1];
+                    break;
                 }
             }
             $ctrl = $controladores[$this->ctrlDestino];
@@ -101,9 +97,9 @@ class AssuntoCtrl extends Controlador {
             $this->setCtrlDestino("");
             $this->setModoBusca(false);
         }else if (Util::startsWithString($funcao, "editar_")) {
-            $resultado = $this->validadorAssunto->validarEdicao($funcao);
-            if ($resultado != 0) {
-                $this->entidade = $this->entidades[$resultado - 1];
+            $index = intval(str_replace("editar_", "", $funcao));
+            if ($index != 0) {
+                $this->entidade = $this->entidades[$index - 1];
                 $this->modoEditar = true;
             }
         } else if (Util::startsWithString($funcao, "excluir_")) {

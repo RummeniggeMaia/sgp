@@ -36,7 +36,9 @@
                 {% if modo_busca %}
                     <td class="collapsing">
                         <div class="ui {{ linha.selecionado ? 'checked' : '' }} toggle checkbox">
-                            <input type="radio" name="radio_selecionado" checked="" value="radio_{{ loop.index }}"> 
+                            <!-- Quando os inputs do tipo radio possuem o mesmo valor, eles pertecem ao mesmo 
+                            grupo de radio botoes, entao apenas 1 selecionado por vez na interface-->
+                            <input type="radio" name="radio_selecionado" value="radio_{{ loop.index }}"> 
                             <label></label>
                         </div>
                     </td>

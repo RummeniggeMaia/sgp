@@ -17,6 +17,7 @@ $conn = array(
     'user' => 'root',
     'password' => '',
     'host' => 'localhost',
+    'charset' => 'utf8',
 );
 
 // A ideia aqui é importar esse script nas classes no script de controle.

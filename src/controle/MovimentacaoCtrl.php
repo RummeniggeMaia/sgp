@@ -9,12 +9,15 @@ use controle\tabela\ModeloDeTabela;
 use controle\tabela\Paginador;
 use modelo\Movimentacao;
 use util\Util;
+
 /**
  * Description of MovimentacaoCtrl
  *
  * @author Rummenigge
  */
 class MovimentacaoCtrl extends Controlador {
+
+    public $validadorMovimentacao;
 
     public function __construct() {
         $this->entidade = new Movimentacao("", "");
@@ -23,6 +26,7 @@ class MovimentacaoCtrl extends Controlador {
         $this->modeloTabela = new ModeloDeTabela();
         $this->modeloTabela->setCabecalhos(array("Descrição"));
         $this->modeloTabela->setModoBusca(false);
+        $this->validadorMovimentacao = new ValidadorMovimentacao();
     }
 
     /**
@@ -37,19 +41,31 @@ class MovimentacaoCtrl extends Controlador {
 
     public function executarFuncao($post, $funcao, $controladores) {
         $this->gerarMovimentacao($post);
+        $redirecionamento = new Redirecionamento();
+        $redirecionamento->setDestino('gerenciar_movimentacao');
+        $redirecionamento->setCtrl($this);
+
 
         if ($funcao == "salvar") {
-            if ($this->modoEditar) {
-                $this->dao->editar($this->entidade);
+            $resultado = $this->validadorMovimentacao->validarCadastro($this->entidade);
+            if ($resultado != null) {
+                $this->mensagem = new Mensagem(
+                        "Cadastro de movimentacao"
+                        , "msg_tipo_error"
+                        , $resultado);
             } else {
-                $this->dao->criar($this->entidade);
+                if ($this->modoEditar) {
+                    $this->dao->editar($this->entidade);
+                } else {
+                    $this->dao->criar($this->entidade);
+                }
+                $this->entidade = new Movimentacao("", "");
+                $this->modoEditar = false;
+                $this->mensagem = new Mensagem(
+                        "Cadastro de movimentação"
+                        , "msg_tipo_ok"
+                        , "Dados de Movimentação salvo com sucesso.");
             }
-            $this->entidade = new Movimentacao("", "");
-            $this->modoEditar = false;
-            $this->mensagem = new Mensagem(
-                    "Cadastro de departamentos"
-                    , "msg_tipo_ok"
-                    , "Dados de Movimentação salvo com sucesso.");
         } else if ($funcao == "pesquisar") {
             $this->modeloTabela->setPaginador(new Paginador());
             $this->modeloTabela->getPaginador()->setContagem(
@@ -60,6 +76,28 @@ class MovimentacaoCtrl extends Controlador {
         } else if ($funcao == "cancelar_edicao") {
             $this->modoEditar = false;
             $this->entidade = new Movimentacao("", "");
+        } else if ($funcao == 'enviar_movimentacaos') {
+            foreach ($post as $chave => $valor) {
+                if (Util::startsWithString($chave, "check_")) {
+                    $index = str_replace("check_", "", $chave);
+                    $this->entidades[$index - 1]->setSelecionado(true);
+                }
+            }
+            $selecionados = array();
+            foreach ($this->entidades as $f) {
+                if ($f->getSelecionado() == true) {
+                    $selecionados[] = clone $f;
+                }
+            }
+            $ctrl = $controladores[$this->ctrlDestino];
+            $ctrl->setMovimentacoes($selecionados);
+            $this->modoBusca = false;
+            $redirecionamento->setDestino($this->getCtrlDestino());
+            $redirecionamento->setCtrl($controladores[$this->getCtrlDestino()]);
+            return $redirecionamento;
+        } else if ($funcao == 'cancelar_enviar') {
+            $this->setCtrlDestino("");
+            $this->setModoBusca(false);
         } else if (Util::startsWithString($funcao, "editar_")) {
             $index = intval(str_replace("editar_", "", $funcao));
             if ($index != 0) {
@@ -79,9 +117,9 @@ class MovimentacaoCtrl extends Controlador {
                 $this->pesquisar();
             }
         } else if (Util::startsWithString($funcao, "paginador_")) {
-            return parent::paginar($funcao, "gerenciar_movimentacao");
+             parent::paginar($funcao);
         }
-        return 'gerenciar_movimentacao';
+        return $redirecionamento;
     }
 
     public function gerarLinhas() {

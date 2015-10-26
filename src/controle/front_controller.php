@@ -29,13 +29,13 @@ foreach ($chaves as $requisicao) {
     if (is_string($requisicao)) {
         //Os link do sistema tem que começar com 'navegador_' seguido da visao 
         // a ser acessada
+        $redirecionamento = new Redirecionamento();
         if (Util::startsWithString($requisicao, "navegador_")) {
             //remove a palavra navegador_
             $visao = str_replace("navegador_", "", $requisicao);
             //Verifica se essa visao existe no sistema, nesse caso no vetor
             //de visões
             if (isset($visoes_navegacao[$visao])) {
-                $redirecionamento = new Redirecionamento();
                 $redirecionamento->setDestino($visoes_navegacao[$visao]);
                 $redirecionamento->setCtrl(
                         isset($controladores[$visao]) ?

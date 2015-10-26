@@ -8,6 +8,7 @@ use controle\tabela\Linha;
 use controle\tabela\ModeloDeTabela;
 use controle\tabela\Paginador;
 use modelo\Departamento;
+use controle\ValidadorDepartamento;
 use util\Util;
 
 /**
@@ -17,6 +18,8 @@ use util\Util;
  */
 class DepartamentoCtrl extends Controlador {
 
+    public $validadorDepartamento;
+
     public function __construct() {
         $this->entidade = new Departamento("", "");
         $this->entidades = array();
@@ -24,6 +27,7 @@ class DepartamentoCtrl extends Controlador {
         $this->modeloTabela = new ModeloDeTabela();
         $this->modeloTabela->setCabecalhos(array("Descrição"));
         $this->modeloTabela->setModoBusca(false);
+        $this->validadorDepartamento = new ValidadorDepartamento();
     }
 
     /**
@@ -38,19 +42,30 @@ class DepartamentoCtrl extends Controlador {
 
     public function executarFuncao($post, $funcao, $controladores) {
         $this->gerarDepartamento($post);
+        $redirecionamento = new Redirecionamento();
+        $redirecionamento->setDestino('gerenciar_departamento');
+        $redirecionamento->setCtrl($this);
 
         if ($funcao == "salvar") {
-            if ($this->modoEditar) {
-                $this->dao->editar($this->entidade);
+            $resultado = $this->validadorDepartamento->validarCadastro($this->entidade);
+            if ($resultado != null) {
+                $this->mensagem = new Mensagem(
+                        "Cadastro de departamentos"
+                        , "msg_tipo_error"
+                        , $resultado);
             } else {
-                $this->dao->criar($this->entidade);
+                if ($this->modoEditar) {
+                    $this->dao->editar($this->entidade);
+                } else {
+                    $this->dao->criar($this->entidade);
+                }
+                $this->entidade = new Departamento("", "");
+                $this->modoEditar = false;
+                $this->mensagem = new Mensagem(
+                        "Cadastro de departamentos"
+                        , "msg_tipo_ok"
+                        , "Dados do Departamento salvo com sucesso.");
             }
-            $this->entidade = new Departamento("", "");
-            $this->modoEditar = false;
-            $this->mensagem = new Mensagem(
-                    "Cadastro de departamentos"
-                    , "msg_tipo_ok"
-                    , "Dados do Departamento salvo com sucesso.");
         } else if ($funcao == "pesquisar") {
             $this->modeloTabela->setPaginador(new Paginador());
             $this->modeloTabela->getPaginador()->setContagem(
@@ -61,6 +76,28 @@ class DepartamentoCtrl extends Controlador {
         } else if ($funcao == "cancelar_edicao") {
             $this->modoEditar = false;
             $this->entidade = new Departamento("", "");
+        } else if ($funcao == 'enviar_departamentos') {
+            foreach ($post as $chave => $valor) {
+                if (Util::startsWithString($chave, "check_")) {
+                    $index = str_replace("check_", "", $chave);
+                    $this->entidades[$index - 1]->setSelecionado(true);
+                }
+            }
+            $selecionados = array();
+            foreach ($this->entidades as $f) {
+                if ($f->getSelecionado() == true) {
+                    $selecionados[] = clone $f;
+                }
+            }
+            $ctrl = $controladores[$this->ctrlDestino];
+            $ctrl->setDepartamentos($selecionados);
+            $this->modoBusca = false;
+            $redirecionamento->setDestino($this->getCtrlDestino());
+            $redirecionamento->setCtrl($controladores[$this->getCtrlDestino()]);
+            return $redirecionamento;
+        } else if ($funcao == 'cancelar_enviar') {
+            $this->setCtrlDestino("");
+            $this->setModoBusca(false);
         } else if (Util::startsWithString($funcao, "editar_")) {
             $index = intval(str_replace("editar_", "", $funcao));
             if ($index != 0) {
@@ -80,9 +117,9 @@ class DepartamentoCtrl extends Controlador {
                 $this->pesquisar();
             }
         } else if (Util::startsWithString($funcao, "paginador_")) {
-            return parent::paginar($funcao, "gerenciar_departamento");
+            parent::paginar($funcao);
         }
-        return 'gerenciar_departamento';
+        return $redirecionamento;
     }
 
     public function gerarLinhas() {

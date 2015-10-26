@@ -8,6 +8,7 @@ use controle\tabela\Linha;
 use controle\tabela\ModeloDeTabela;
 use controle\tabela\Paginador;
 use modelo\Assunto;
+use controle\ValidadorAssunto;
 use util\Util;
 
 /**
@@ -17,13 +18,16 @@ use util\Util;
  */
 class AssuntoCtrl extends Controlador {
 
+    public $validadorAssunto;
+
     public function __construct() {
-        $this->entidade = new Assunto("","");
+        $this->entidade = new Assunto("", "");
         $this->entidades = array();
         $this->mensagem = null;
         $this->modeloTabela = new ModeloDeTabela;
         $this->modeloTabela->setCabecalhos(array("Descrição"));
         $this->modeloTabela->setModoBusca(false);
+        $this->validadorAssunto = new ValidadorAssunto();
     }
 
     /**
@@ -36,32 +40,63 @@ class AssuntoCtrl extends Controlador {
         }
     }
 
- public function executarFuncao($post, $funcao, $controladores) {
+    public function executarFuncao($post, $funcao, $controladores) {
         $this->gerarAssunto($post);
+        $redirecionamento = new Redirecionamento();
+        $redirecionamento->setDestino('gerenciar_assunto');
+        $redirecionamento->setCtrl($this);
+        $this->mensagem = null;
+
 
         if ($funcao == "salvar") {
-            if ($this->modoEditar) {
-                $this->dao->editar($this->entidade);
+            $resultado = $this->validadorAssunto->validarCadastro($this->entidade);
+            if ($resultado != null) {
+                $this->mensagem = new Mensagem(
+                        "Cadastro de assuntos"
+                        , "msg_tipo_error"
+                        , $resultado);
             } else {
-                $this->dao->criar($this->entidade);
+                if ($this->modoEditar) {
+                    $this->dao->editar($this->entidade);
+                } else {
+                    $this->dao->criar($this->entidade);
+                }
+                $this->entidade = new Assunto("", "");
+                $this->modoEditar = false;
+                $this->mensagem = new Mensagem(
+                        "Cadastro de assuntos"
+                        , "msg_tipo_ok"
+                        , "Dados do Assunto salvo com sucesso.");
             }
-            $this->entidade = new Assunto("", "");
-            $this->modoEditar = false;
-            $this->mensagem = new Mensagem(
-                    "Cadastro de assuntos"
-                    , "msg_tipo_ok"
-                    , "Dados do Assunto salvo com sucesso.");
         } else if ($funcao == "pesquisar") {
             $this->modeloTabela->setPaginador(new Paginador());
             $this->modeloTabela->getPaginador()->setContagem(
                     $this->dao->contar($this->entidade));
             $this->modeloTabela->getPaginador()->setPesquisa(
                     clone $this->entidade);
-            $this->pesquisar();      
+            $this->pesquisar();
         } else if ($funcao == "cancelar_edicao") {
             $this->modoEditar = false;
             $this->entidade = new Assunto("", "");
-        } else if (Util::startsWithString($funcao, "editar_")) {
+        } else if ($funcao == 'enviar_assuntos') {
+            $selecionados = array();
+            foreach ($post as $valor) {
+                if (Util::startsWithString($valor, "radio_")) {
+                    $index = str_replace("radio_", "", $valor);
+                    $selecionados[] = clone $this->entidades[$index - 1];
+                    break;
+                }
+            }
+            $ctrl = $controladores[$this->ctrlDestino];
+            $ctrl->setAssuntos($selecionados);
+            $this->modoBusca = false;
+            $redirecionamento->setDestino($this->getCtrlDestino());
+            $redirecionamento->setCtrl($controladores[$this->getCtrlDestino()]);
+            return $redirecionamento;            
+        } else if ($funcao == 'cancelar_enviar') {
+            $this->setCtrlDestino("");
+            $this->setModoBusca(false);
+        }else if (Util::startsWithString($funcao, "editar_")) {
             $index = intval(str_replace("editar_", "", $funcao));
             if ($index != 0) {
                 $this->entidade = $this->entidades[$index - 1];
@@ -80,9 +115,9 @@ class AssuntoCtrl extends Controlador {
                 $this->pesquisar();
             }
         } else if (Util::startsWithString($funcao, "paginador_")) {
-            return parent::paginar($funcao, "gerenciar_assunto");
+            parent::paginar($funcao);
         }
-        return 'gerenciar_assunto';
+        return $redirecionamento;
     }
 
     public function gerarLinhas() {

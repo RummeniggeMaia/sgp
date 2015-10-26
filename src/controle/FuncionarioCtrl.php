@@ -3,11 +3,13 @@
 namespace controle;
 
 use controle\Controlador;
+use controle\ProcessoCtrl;
 use controle\Mensagem;
 use controle\tabela\Linha;
 use controle\tabela\ModeloDeTabela;
 use controle\tabela\Paginador;
 use modelo\Funcionario;
+use controle\ValidadorFuncionario;
 use util\Util;
 
 /**
@@ -17,6 +19,8 @@ use util\Util;
  */
 class FuncionarioCtrl extends Controlador {
 
+    public $validadorFuncionario;
+
     public function __construct() {
         $this->entidade = new Funcionario("", "", "");
         $this->entidades = array();
@@ -24,6 +28,7 @@ class FuncionarioCtrl extends Controlador {
         $this->modeloTabela = new ModeloDeTabela();
         $this->modeloTabela->setCabecalhos(array("Nome", "RG", "CPF"));
         $this->modeloTabela->setModoBusca(false);
+        $this->validadorFuncionario = new ValidadorFuncionario();
     }
 
     /**
@@ -48,10 +53,24 @@ class FuncionarioCtrl extends Controlador {
         $redirecionamento->setCtrl($this);
 
         if ($funcao == "salvar") {
-            if ($this->modoEditar) {
-                $this->dao->editar($this->entidade);
+            $resultado = $this->validadorFuncionario->validarCadastro($this->entidade);
+            if ($resultado != null) {
+                $this->mensagem = new Mensagem(
+                        "Cadastro de funcionários"
+                        , "msg_tipo_error"
+                        , $resultado);
             } else {
-                $this->dao->criar($this->entidade);
+                if ($this->modoEditar) {
+                    $this->dao->editar($this->entidade);
+                } else {
+                    $this->dao->criar($this->entidade);
+                }
+                $this->entidade = new Funcionario("", "", "");
+                $this->modoEditar = false;
+                $this->mensagem = new Mensagem(
+                        "Cadastro de funcionários"
+                        , "msg_tipo_ok"
+                        , "Dados do Funcionário salvo com sucesso.");
             }
             $this->entidade = new Funcionario("", "", "");
             $this->modoEditar = false;

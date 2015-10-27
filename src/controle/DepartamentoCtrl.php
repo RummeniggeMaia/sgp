@@ -66,6 +66,12 @@ class DepartamentoCtrl extends Controlador {
                         , "msg_tipo_ok"
                         , "Dados do Departamento salvo com sucesso.");
             }
+            $this->entidade = new Departamento("", "");
+            $this->modoEditar = false;
+            $this->mensagem = new Mensagem(
+                    "Cadastro de departamentos"
+                    , "msg_tipo_ok"
+                    , "Dados do Departamento salvo com sucesso.");
         } else if ($funcao == "pesquisar") {
             $this->modeloTabela->setPaginador(new Paginador());
             $this->modeloTabela->getPaginador()->setContagem(
@@ -77,16 +83,12 @@ class DepartamentoCtrl extends Controlador {
             $this->modoEditar = false;
             $this->entidade = new Departamento("", "");
         } else if ($funcao == 'enviar_departamentos') {
-            foreach ($post as $chave => $valor) {
-                if (Util::startsWithString($chave, "check_")) {
-                    $index = str_replace("check_", "", $chave);
-                    $this->entidades[$index - 1]->setSelecionado(true);
-                }
-            }
             $selecionados = array();
-            foreach ($this->entidades as $f) {
-                if ($f->getSelecionado() == true) {
-                    $selecionados[] = clone $f;
+            foreach ($post as $valor) {
+                if (Util::startsWithString($valor, "radio_")) {
+                    $index = str_replace("radio_", "", $valor);
+                    $selecionados[] = clone $this->entidades[$index - 1];
+                    break;
                 }
             }
             $ctrl = $controladores[$this->ctrlDestino];

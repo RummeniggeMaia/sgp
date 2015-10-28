@@ -66,6 +66,12 @@ class MovimentacaoCtrl extends Controlador {
                         , "msg_tipo_ok"
                         , "Dados de Movimentação salvo com sucesso.");
             }
+            $this->entidade = new Movimentacao("", "");
+            $this->modoEditar = false;
+            $this->mensagem = new Mensagem(
+                    "Cadastro de movimentação"
+                    , "msg_tipo_ok"
+                    , "Dados de Movimentação salvo com sucesso.");
         } else if ($funcao == "pesquisar") {
             $this->modeloTabela->setPaginador(new Paginador());
             $this->modeloTabela->getPaginador()->setContagem(
@@ -77,20 +83,16 @@ class MovimentacaoCtrl extends Controlador {
             $this->modoEditar = false;
             $this->entidade = new Movimentacao("", "");
         } else if ($funcao == 'enviar_movimentacaos') {
-            foreach ($post as $chave => $valor) {
-                if (Util::startsWithString($chave, "check_")) {
-                    $index = str_replace("check_", "", $chave);
-                    $this->entidades[$index - 1]->setSelecionado(true);
-                }
-            }
             $selecionados = array();
-            foreach ($this->entidades as $f) {
-                if ($f->getSelecionado() == true) {
-                    $selecionados[] = clone $f;
+            foreach ($post as $valor) {
+                if (Util::startsWithString($valor, "radio_")) {
+                    $index = str_replace("radio_", "", $valor);
+                    $selecionados[] = clone $this->entidades[$index - 1];
+                    break;
                 }
             }
             $ctrl = $controladores[$this->ctrlDestino];
-            $ctrl->setMovimentacoes($selecionados);
+            $ctrl->setMovimentacaos($selecionados);
             $this->modoBusca = false;
             $redirecionamento->setDestino($this->getCtrlDestino());
             $redirecionamento->setCtrl($controladores[$this->getCtrlDestino()]);
@@ -117,7 +119,7 @@ class MovimentacaoCtrl extends Controlador {
                 $this->pesquisar();
             }
         } else if (Util::startsWithString($funcao, "paginador_")) {
-             parent::paginar($funcao);
+            parent::paginar($funcao);
         }
         return $redirecionamento;
     }

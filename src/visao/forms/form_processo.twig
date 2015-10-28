@@ -5,7 +5,7 @@
 
 {% block body %}
     <br/>
-    <div class="html ui top right attached segment">
+    <div class="html ui top right attached segment" style="width: 100%">
         <br/>
         {% include 'fragmentos/frag_titulo.twig' 
             with {
@@ -33,6 +33,23 @@
                 <div class="field">
                     <label>Nº Processo:</label>
                     <input type="text" name="campo_numero_processo" placeholder="Número do Processo">
+                </div>
+                <div class="two fields">
+                    <div class="field">
+                        <label>Data do processo:</label>
+                        <input type="text" name="campo_data_processo" placeholder="__/__/____">
+                    </div>
+                    <div class="field">
+                        <label>Entre período:</label>
+                        <div class="two fields">
+                            <div class="field">
+                                <input type="text" name="campo_data_de" placeholder="__/__/____">
+                            </div>
+                            <div class="field">
+                                <input type="text" name="campo_data_ate" placeholder="__/__/____">
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="two fields">
                     <div class="field">
@@ -71,7 +88,7 @@
                 <div class="field">
                     <label>Funcionário:</label>
                     <div class="ui action input">
-                        <input type="text" placeholder="Funcionário" 
+                        <input type="text" placeholder="Buscar um funcionário no sistema" 
                                value="{{ ctrl.funcionarios|length > 0 ? ctrl.funcionarios[0].nome : '' }}"
                                name="campo_funcionario"
                                data-value="{{ ctrl.funcionarios|length > 0 ? ctrl.funcionarios[0].id : '' }}">

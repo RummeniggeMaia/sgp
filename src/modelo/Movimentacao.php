@@ -18,7 +18,10 @@ class Movimentacao extends Entidade {
 
     /** @Column(type="string") */
     protected $descricao;
-
+    
+    /** @Column(type="date") */
+    protected $dataProcesso;
+    
     /**
      * @ManyToMany(targetEntity="Processo", inversedBy="movimentacoes")
      * @JoinTable(name="processos_movimentacoes")     
@@ -66,10 +69,17 @@ class Movimentacao extends Entidade {
     public function setProcessos($processos) {
         $this->processos = $processos;
     }
+    
+    public function getDataProcesso() {
+        return $this->dataProcesso;
+    }
+
+    public function setDataProcesso($dataProcesso) {
+        $this->dataProcesso = $dataProcesso;
+    }
 
     public function getClassName() {
         $rc = new \ReflectionClass($this);
         return $rc->getName();
     }
-
 }

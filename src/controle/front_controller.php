@@ -25,6 +25,11 @@ $twig = new Twig_Environment($loader);
 //Para cada requisicao feita a esse script, é necessario saber se trata de um 
 //link ou um comando de controle
 $chaves = array_keys($_POST);
+//Caso o front_controller seja chamado sem nenhuma funcao ou navegacao
+// o usuario é redirecionado para a pagina home
+if (empty($chaves)) {
+    $chaves[] = "navegador_gerenciar_home"; 
+}
 foreach ($chaves as $requisicao) {
     if (is_string($requisicao)) {
         //Os link do sistema tem que começar com 'navegador_' seguido da visao 

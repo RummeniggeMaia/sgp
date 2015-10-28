@@ -7,7 +7,9 @@
         <script type="text/javascript" src="{{semantic_js|default('../../web/semantic_ui/semantic.min.js')}}"></script>
         <script type="text/javascript" src="{{jquerylib|default('../../web/jquery.maskedinput.js')}}"></script>
         <link href="{{semantic_css|default('../../web/semantic_ui/semantic.min.css')}}" rel="stylesheet" type="text/css"/>
+        
         <script type="text/javascript">
+
             $(document).ready(function() {
                 $('a').click(function(event) {
                     var form = $('<form method="post" action="{{front_ctrl|default('front_controller.php')}}"></form>');
@@ -18,10 +20,13 @@
                     form.append(campo);
                     form.submit();
                 });
+
                 $('.dropdown').dropdown({transition: 'drop'});
                 $('#modal_mensagem').modal('show');
                 $('.menu .item').tab();
                 $('.ui.checkbox').checkbox('toggle');
+                $('#menu_principal')
+                        .sidebar('setting', 'transition', 'push');
             });
             function submeterForm(form, controlador, funcao) {
                 var funcionalidade = document.createElement('input');
@@ -40,19 +45,8 @@
         </script>
     </head>
     <body class="pushable">
-        <div class="ui fixed main menu">
-            <div class="container">
-                <div class="ui menu inverted" style="padding-left: 260px">
-                    <a class="item">
-                        <i class="home icon"></i> Home
-                    </a>
-                    <a class="item">
-                        <i class="info circle icon"></i> Sobre
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div class="ui vertical sidebar inverted menu left visible">
+
+        <div class="ui vertical sidebar inverted menu left" id="menu_principal">
             <div class="item">
                 <img src="{{logo|default('../../web/imagens/icon-process-white.png')}}" width="100px" />
             </div>
@@ -62,7 +56,22 @@
             <a class="item" name="navegador_gerenciar_movimentacao"><i class="exchange icon"></i>Movimentações</a>
             <a class="item" name="navegador_gerenciar_processo"><i class="flag icon"></i>Processos</a>
         </div>
-        <div class="pusher" style="padding-right: 20%">
+        <div class="pusher">
+            <div class="ui fixed main menu">
+                <div class="container">
+                    <div class="ui menu inverted">
+                        <div class="ui button icon item" onclick="$('#menu_principal').sidebar('toggle');">
+                            <i class="sidebar icon"></i>
+                        </div>
+                        <a class="item" name="navegador_gerenciar_home">
+                            <i class="home icon"></i> Home
+                        </a>
+                        <a class="item">
+                            <i class="info circle icon"></i> Sobre
+                        </a>
+                    </div>
+                </div>
+            </div>
             {% block body %}
 
             {% endblock %}

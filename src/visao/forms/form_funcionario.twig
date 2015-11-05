@@ -23,12 +23,12 @@
             %}
         {% endif %}
         <div class="ui top attached tabular menu">
-            <div class="item {{ ctrl.modoEditar ? 'active' : ''}}" data-tab="form">Formulário</div>
-            <div class="item {{ ctrl.modoEditar ? '' : 'active'}}" data-tab="tabela">Tabela</div>
+            <div class="item {{ ctrl.tab == 'tab_form' ? 'active' : '' }}" data-tab="form">Formulário</div>
+            <div class="item {{ ctrl.tab == 'tab_tabela' ? 'active' : '' }}" data-tab="tabela">Tabela</div>
         </div>    
         <form id="form_funcionario" class="ui form" method="post" 
               action="front_controller.php"> 
-            <div class="ui bottom attached tab segment {{ ctrl.modoEditar ? 'active' : ''}}" data-tab="form">
+            <div class="ui bottom attached tab segment {{ ctrl.tab == 'tab_form' ? 'active' : '' }}" data-tab="form">
 
                 <div class="field">
                     <label>Nome:</label>
@@ -87,7 +87,7 @@
                 </div>
 
             </div>
-            <div class="ui bottom attached tab segment {{ ctrl.modoEditar ? '' : 'active'}}" data-tab="tabela">
+            <div class="ui bottom attached tab segment {{ ctrl.tab == 'tab_tabela' ? 'active' : '' }}" data-tab="tabela">
                 {% include 'fragmentos/frag_tabela.twig' 
                 with {
                     'modelo' : ctrl.modeloTabela,

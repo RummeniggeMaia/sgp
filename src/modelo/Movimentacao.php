@@ -18,19 +18,20 @@ class Movimentacao extends Entidade {
 
     /** @Column(type="string") */
     protected $descricao;
-    
+
     /** @Column(type="date") */
     protected $dataProcesso;
-    
+
     /**
      * @ManyToMany(targetEntity="Processo", inversedBy="movimentacoes")
      * @JoinTable(name="processos_movimentacoes")     
      */
     protected $processos;
 
-        function __construct($descricao, $constante) {
+    function __construct($dataProcesso, $descricao, $constante) {
         $this->constante = $constante;
         $this->descricao = $descricao;
+        $this->dataProcesso = $dataProcesso;
         $this->processos = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
@@ -69,7 +70,7 @@ class Movimentacao extends Entidade {
     public function setProcessos($processos) {
         $this->processos = $processos;
     }
-    
+
     public function getDataProcesso() {
         return $this->dataProcesso;
     }
@@ -82,4 +83,5 @@ class Movimentacao extends Entidade {
         $rc = new \ReflectionClass($this);
         return $rc->getName();
     }
+
 }

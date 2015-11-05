@@ -94,7 +94,6 @@ class FuncionarioCtrl extends Controlador {
                 if (Util::startsWithString($valor, "radio_")) {
                     $index = str_replace("radio_", "", $valor);
                     $selecionados[] = clone $this->entidades[$index - 1];
-                    break;
                 }
             }
             $ctrl = $controladores[$this->ctrlDestino];

@@ -23,9 +23,16 @@ abstract class Entidade {
     /** @Column(type="boolean") */
     protected $ativo = true;
 
-    /** Esse campo é transiente, por isso não tem anotação */
+    /** Esse campo é transiente, por isso não tem anotação. 
+     * Usado para indicar se essa entidade foi selecionada em uma tabela */
     private $selecionado;
 
+    /**
+     * Esse campo é transiente e é utilizado para informar em qual indice de 
+     * um drop down essa entidade pertence.
+     */
+    private $indice;
+    
     public function getId() {
         return $this->id;
     }
@@ -44,6 +51,14 @@ abstract class Entidade {
 
     public function setSelecionado($selecionado) {
         $this->selecionado = $selecionado;
+    }
+    
+    public function getIndice() {
+        return $this->indice;
+    }
+
+    public function setIndice($indice) {
+        $this->indice = $indice;
     }
 
     public abstract function getClassName();

@@ -56,6 +56,20 @@ class Processo extends Entidade {
         return $this->movimentacoes;
     }
 
+    public function addMovimentacao($movimentacao) {
+        $this->movimentacoes[] = $movimentacao;
+    }
+
+    public function removerMovimentacao($indice) {
+        unset($this->movimentacoes[$indice]);
+    }
+
+    public function setMovimentacaoAt($indice, $mov) {
+        if ($indice >= 0 && $indice < count($this->movimentacoes)) {
+            $this->movimentacoes[$indice] = $mov;
+        }
+    }
+
     public function setNumeroProcesso($numeroProcesso) {
         $this->numeroProcesso = $numeroProcesso;
     }

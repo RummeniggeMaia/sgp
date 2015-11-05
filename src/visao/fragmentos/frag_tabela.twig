@@ -1,25 +1,22 @@
 {# empty Twig template #}
+<div class="ui basic segment center aligned" style="padding: 0em !important;" >
+    {% include 'fragmentos/frag_paginador.twig' 
+        with {
+            'paginador' : modelo.paginador,
+            'formulario' : formulario,
+            'funcao' : funcao,
+            'id' : 'pag_1'
+        }
+    %}
+</div>
 <table class="ui compact celled definition table">
     <thead>
-        <tr>
-            <th>    
-            </th>
-            <th colspan="999" style="text-align: center">
-                {% include 'fragmentos/frag_paginador.twig' 
-                    with {
-                        'paginador' : modelo.paginador,
-                        'formulario' : formulario,
-                        'funcao' : funcao
-                    }
-                %}
-            </th>
-        </tr>
         <tr>
             <th>
             </th>
             {% for cabecalho in modelo.cabecalhos %}
                 <th>
-                    {{ cabecalho}}
+                    {{ cabecalho }}
                 </th>
             {% endfor %}
             {% if not modo_busca %}
@@ -31,6 +28,18 @@
         </tr>
     </thead>
     <tbody>
+        {% if not modelo.linhas %}
+            {% for i in 1..5 %}
+                <tr>
+                    <td></td>
+                    {% for cabecalho in modelo.cabecalhos %}
+                        <td style="height: 40px"></td>
+                    {% endfor %}
+                    <td></td>
+                    <td></td>
+                </tr>
+            {% endfor %}
+        {% endif%}
         {% for linha in modelo.linhas %} 
             <tr>
                 {% if modo_busca %}
@@ -71,19 +80,15 @@
             </tr>
         {% endfor %}
     </tbody>
-    <tfoot class="full-width">
-        <tr>
-            <th>
-            </th>
-            <th colspan="999" style="text-align: center">
-                {% include 'fragmentos/frag_paginador.twig' 
-                    with {
-                        'paginador' : modelo.paginador,
-                        'formulario' : formulario,
-                        'funcao' : funcao
-                    }
-                %}
-            </th>
-        </tr>
-    </tfoot>
+
 </table>
+<div class="ui basic segment center aligned" style="padding: 0em !important;" >
+    {% include 'fragmentos/frag_paginador.twig' 
+        with {
+            'paginador' : modelo.paginador,
+            'formulario' : formulario,
+            'funcao' : funcao,
+            'id' : 'pag_2'
+        }
+    %}
+</div>

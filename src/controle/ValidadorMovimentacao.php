@@ -14,7 +14,7 @@ use modelo\Movimentacao;
 class ValidadorMovimentacao extends Validador {
 
     public function __construct() {
-        $this->entidade = new Movimentacao("", "");
+        $this->entidade = new Movimentacao(null, "", "");
     }
 
     public function validarCadastro($entidade) {

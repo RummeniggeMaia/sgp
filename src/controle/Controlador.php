@@ -20,6 +20,10 @@ abstract class Controlador {
     //Controlador que receberá as entidades selecionadas, deve ser String 
     //apenas pra acessar o controlador de destino no vetor de controladores
     protected $ctrlDestino;
+    //Variavel usada apenas acionar uma determinada tab na durante a resposta, 
+    //quando o usuario clica em editar entao a tab de form tem q aparecer em vez
+    // da tab que contem a tabela
+    protected $tab = "tab_tabela";
 
     public function getEntidade() {
         return $this->entidade;
@@ -91,6 +95,14 @@ abstract class Controlador {
 
     public function setModoBusca($modoBusca) {
         $this->modoBusca = $modoBusca;
+    }
+
+    public function getTab() {
+        return $this->tab;
+    }
+
+    public function setTab($tab) {
+        $this->tab = $tab;
     }
 
     public function pesquisar() {

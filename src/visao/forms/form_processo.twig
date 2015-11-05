@@ -23,12 +23,12 @@
             %}
         {% endif %}
         <div class="ui top attached tabular menu">
-            <div class="item {{ ctrl.modoEditar ? 'active' : ''}}" data-tab="form">Formulário</div>
-            <div class="item {{ ctrl.modoEditar ? '' : 'active'}}" data-tab="tabela">Tabela</div>
+            <div class="item {{ ctrl.tab == 'tab_form' ? 'active' : '' }}" data-tab="form">Formulário</div>
+            <div class="item {{ ctrl.tab == 'tab_tabela' ? 'active' : '' }}" data-tab="tabela">Tabela</div>
         </div>
         <form id="form_processo" class="ui form" method="post" 
               action="front_controller.php">
-            <div class="ui bottom attached tab segment {{ ctrl.modoEditar ? 'active' : ''}}" data-tab="form">
+            <div class="ui bottom attached tab segment {{ ctrl.tab == 'tab_form' ? 'active' : ''}}" data-tab="form">
 
                 <div class="field">
                     <label>Nº Processo:</label>
@@ -55,12 +55,13 @@
                     <div class="field">
                         <label>Assunto:</label>
                         <div class="ui fluid search selection dropdown">
-                            <input type="hidden" name="assunto">
+                            <input type="hidden" name="assunto" value="{{ ctrl.entidade.assunto.indice }}">
                             <i class="dropdown icon"></i>
                             <div class="default text">Selecione o Assunto</div>
                             <div class="menu">
                                 {% for assunto in ctrl.assuntos %}
-                                    <div class="item" data-value="{{ loop.index }}">
+                                    <div class="item" 
+                                         data-value="{{ loop.index }}">
                                         <i class="archive icon"></i>
                                         {{ assunto.descricao }}
                                     </div>
@@ -71,7 +72,7 @@
                     <div class="field">
                         <label>Departamento:</label>
                         <div class="ui fluid search selection dropdown">
-                            <input type="hidden" name="departamento">
+                            <input type="hidden" name="departamento" value="{{ ctrl.entidade.departamento.indice }}">
                             <i class="dropdown icon"></i>
                             <div class="default text">Selecione o Departamento</div>
                             <div class="menu">
@@ -88,10 +89,10 @@
                 <div class="field">
                     <label>Funcionário:</label>
                     <div class="ui action input">
-                        <input type="text" placeholder="Buscar um funcionário no sistema" 
-                               value="{{ ctrl.funcionarios|length > 0 ? ctrl.funcionarios[0].nome : '' }}"
+                        <input type="text" placeholder="Buscar um funcionário" 
+                               value="{{ ctrl.entidade.funcionario.nome }}"
                                name="campo_funcionario"
-                               data-value="{{ ctrl.funcionarios|length > 0 ? ctrl.funcionarios[0].id : '' }}">
+                               data-value="{{ ctrl.entidade.funcionario.id }}">
                         <div class="ui button" 
                              onclick="submeterForm('form_processo', 'funcao_gerenciar_processo', 'buscar_funcionario');">
                             <i class="search icon"></i>
@@ -105,18 +106,48 @@
                 </div>
                 <div class="field">
                     <label>Movimentações:</label>
-                    <div class="ui fluid multiple search normal selection dropdown">
-                        <input type="hidden" name="movimentacao">
-                        <i class="dropdown icon"></i>
-                        <div class="default text">Selecione as Movimentações</div>
-                        <div class="menu">
-                            {% for movimentacao in ctrl.movimentacoes %}
-                                <div class="item" data-value="{{ loop.index }}">
-                                    <i class="archive icon"></i>
-                                    {{ movimentacao.descricao }}
-                                </div>
-                            {% endfor %}
+                    <div class="ui segment">
+                        <div class="ui submit black button right aligned" 
+                             onclick="submeterForm(
+                                             'form_processo',
+                                             'funcao_gerenciar_processo',
+                                             'adicionar_movimentacao');">
+                            <i class="plus icon"></i>Adicionar nova Movimentação
                         </div>
+                        <table class="ui celled striped table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Data
+                                    </th>
+                                    <th colspan="999">
+                                        Movimento
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for movimentacao in ctrl.entidade.movimentacoes %}
+                                    <tr>
+                                        <td>{{ movimentacao.dataProcesso|date('d/m/Y') }}</td>
+                                        <td>
+                                            <div class="ui fluid search normal selection dropdown">
+                                                <input type="hidden" name="movimentacao_{{ loop.index }}" value="{{ movimentacao.indice }}">
+                                                <i class="dropdown icon"></i>
+                                                <div class="default text">Selecione a Movimentação</div>
+                                                <div class="menu">
+                                                    {% for mov in ctrl.movimentacoes %}
+                                                        <div class="item" data-value="{{ loop.index }}">
+                                                            <i class="archive icon"></i>
+                                                            {{ mov.descricao }}
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 <div class="fields">
@@ -160,7 +191,7 @@
                     </div>
                 </div>
             </div>
-            <div class="ui bottom attached tab segment {{ ctrl.modoEditar ? '' : 'active'}}" data-tab="tabela">
+            <div class="ui bottom attached tab segment {{ ctrl.tab == 'tab_tabela' ? 'active' : ''}}" data-tab="tabela">
                 {% include 'fragmentos/frag_tabela.twig' 
                 with {
                     'modelo' : ctrl.modeloTabela,

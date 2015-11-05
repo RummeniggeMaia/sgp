@@ -8,7 +8,7 @@ use controle\tabela\Linha;
 use controle\tabela\ModeloDeTabela;
 use controle\tabela\Paginador;
 use modelo\Assunto;
-use controle\ValidadorAssunto;
+use validadores\ValidadorAssunto;
 use util\Util;
 
 /**

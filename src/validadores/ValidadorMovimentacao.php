@@ -1,9 +1,9 @@
 <?php
 
-namespace controle;
+namespace validadores;
 
-use controle\Validador;
-use modelo\Assunto;
+use modelo\Movimentacao;
+use validadores\Validador;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -11,16 +11,15 @@ use modelo\Assunto;
  * and open the template in the editor.
  */
 
-class ValidadorAssunto extends Validador {
+class ValidadorMovimentacao extends Validador {
 
     public function __construct() {
-        $this->entidade = new Assunto("", "");
+        $this->entidade = new Movimentacao(null, "", "");
     }
 
     public function validarCadastro($entidade) {
         $this->entidade = $entidade;
         $this->mensagem = null;
-
 
         if ($this->entidade->getDescricao() == null) {
             $this->mensagem = "Campo Descrição obrigatório!";
@@ -31,8 +30,7 @@ class ValidadorAssunto extends Validador {
     }
 
     public function validarEdicao($funcao) {
-        $index = intval(str_replace("editar_", "", $funcao));
-        return $index;
+        
     }
 
 }

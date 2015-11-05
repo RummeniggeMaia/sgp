@@ -1,8 +1,8 @@
 <?php
 
-namespace controle;
+namespace validadores;
 
-use controle\Validador;
+use validadores\Validador;
 use modelo\Funcionario;
 
 /*

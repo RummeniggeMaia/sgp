@@ -9,6 +9,8 @@ use controle\tabela\ModeloDeTabela;
 use controle\tabela\Paginador;
 use modelo\Movimentacao;
 use util\Util;
+use DateTime;
+use validadores\ValidadorMovimentacao;
 
 /**
  * Description of MovimentacaoCtrl
@@ -20,7 +22,7 @@ class MovimentacaoCtrl extends Controlador {
     public $validadorMovimentacao;
 
     public function __construct() {
-        $this->entidade = new Movimentacao(null, "", "");
+        $this->entidade = new Movimentacao(new DateTime('now'), "", "");
         $this->entidades = array();
         $this->mensagem = null;
         $this->modeloTabela = new ModeloDeTabela();

@@ -9,7 +9,7 @@ use controle\tabela\Linha;
 use controle\tabela\ModeloDeTabela;
 use controle\tabela\Paginador;
 use modelo\Funcionario;
-use controle\ValidadorFuncionario;
+use validadores\ValidadorFuncionario;
 use util\Util;
 
 /**

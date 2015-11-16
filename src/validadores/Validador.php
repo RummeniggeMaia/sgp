@@ -1,6 +1,6 @@
 <?php
 
-namespace controle;
+namespace validadores;
 
 use util\Util;
 

@@ -40,7 +40,7 @@ class ProcessoCtrl extends Controlador {
         $this->assuntos = $this->dao->pesquisar($assunto, PHP_INT_MAX, 0);
         $departamento = new Departamento(null, true);
         $this->departamentos = $this->dao->pesquisar($departamento, PHP_INT_MAX, 0);
-        $movimentacao = new Movimentacao(null, "", true);
+        $movimentacao = new Movimentacao(new DateTime("now"), "", true);
         $this->movimentacoes = $this->dao->pesquisar($movimentacao, PHP_INT_MAX, 0);
         //Apos as listas serem iniciadas elas vao ser indexadas.
         $this->indexarListas();
@@ -172,7 +172,7 @@ class ProcessoCtrl extends Controlador {
             $this->entidade->setFuncionario(new Funcionario("", "", ""));
             $this->tab = "tab_form";
         } else if ($funcao == 'adicionar_movimentacao') {
-            $mov = new Movimentacao(null, "", true);
+            $mov = new Movimentacao(new DateTime("now"), "", true);
             $this->entidade->addMovimentacao($mov);
             $this->tab = "tab_form";
         } else if (Util::startsWithString($funcao, "editar_")) {
@@ -203,6 +203,7 @@ class ProcessoCtrl extends Controlador {
             $redirecionamento = new Redirecionamento();
             $redirecionamento->setDestino('gerenciar_funcionario');
             $redirecionamento->setCtrl($funcCtrl);
+            $this->tab = "tab_form";
             return $redirecionamento;
         }
         return $redirecionamento;

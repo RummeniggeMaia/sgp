@@ -36,23 +36,6 @@
                 </div>
                 <div class="two fields">
                     <div class="field">
-                        <label>Data do processo:</label>
-                        <input type="text" name="campo_data_processo" placeholder="__/__/____">
-                    </div>
-                    <div class="field">
-                        <label>Entre período:</label>
-                        <div class="two fields">
-                            <div class="field">
-                                <input type="text" name="campo_data_de" placeholder="__/__/____">
-                            </div>
-                            <div class="field">
-                                <input type="text" name="campo_data_ate" placeholder="__/__/____">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="two fields">
-                    <div class="field">
                         <label>Assunto:</label>
                         <div class="ui fluid search selection dropdown">
                             <input type="hidden" name="assunto" value="{{ ctrl.entidade.assunto.indice }}">
@@ -92,7 +75,8 @@
                         <input type="text" placeholder="Buscar um funcionário" 
                                value="{{ ctrl.entidade.funcionario.nome }}"
                                name="campo_funcionario"
-                               data-value="{{ ctrl.entidade.funcionario.id }}">
+                               data-value="{{ ctrl.entidade.funcionario.id }}"
+                               readonly="true">
                         <div class="ui button" 
                              onclick="submeterForm('form_processo', 'funcao_gerenciar_processo', 'buscar_funcionario');">
                             <i class="search icon"></i>

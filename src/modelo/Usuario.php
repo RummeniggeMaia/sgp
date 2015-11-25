@@ -45,4 +45,8 @@ class Usuario extends Entidade {
         return $rc->getName();
     }
 
+    public function clonar() {
+        
+    }
+
 }

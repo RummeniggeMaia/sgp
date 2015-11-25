@@ -19,7 +19,7 @@ class Departamento extends Entidade {
     /** @Column(type="string") */
     protected $descricao;
 
-    /** @OneToMany(targetEntity="Processo", mappedBy="departamento") */
+    /** @OneToMany(targetEntity="Processo", mappedBy="departamento", fetch="EAGER", cascade={"detach", "merge"}) */
     protected $processos;
 
     function __construct($descricao, $constante) {
@@ -55,6 +55,20 @@ class Departamento extends Entidade {
     public function getClassName() {
         $rc = new \ReflectionClass($this);
         return $rc->getName();
+    }
+
+    public function clonar() {
+        $clone = new Departamento("", false);
+        
+        $clone->setId($this->id);
+        $clone->setAtivo($this->ativo);
+        $clone->setIndice($this->indice);
+        $clone->setSelecionado($this->selecionado);
+        
+        $clone->setConstante($this->constante);
+        $clone->setDescricao($this->descricao);
+        
+        return $clone;
     }
 
 }

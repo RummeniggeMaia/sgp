@@ -49,14 +49,31 @@ class Dao {
                 $queryBuilder, $entidade, DqlBuilder::FUNCAO_BUSCAR);
         $queryBuilder->setMaxResults($limit);
         $queryBuilder->setFirstResult($offset);
-        return $queryBuilder->getQuery()->getResult();
+        $result = $queryBuilder->getQuery()->getResult();
+        return $this->desanexar($result);
+//        return $result;
     }
 
     public function contar($entidade) {
         $queryBuilder = $this->entityManager->createQueryBuilder();
         $this->dqlBuilder->gerarDql(
                 $queryBuilder, $entidade, DqlBuilder::FUNCAO_CONTAR);
-        return $queryBuilder->getQuery()->getSingleScalarResult();
+        $result = $queryBuilder->getQuery()->getSingleScalarResult();
+        return $result;
+    }
+
+    /**
+     * Função utilizada para desanexar as entidades pesquisadas da ORM, 
+     * a pesquisa na base de dados retorna uma lista de entidades com 
+     * propriedades diferentes das classes do pacote modelo, entao é necessario 
+     * converter a lista clonando cada entidade.
+     */
+    public function desanexar($lista) {
+        $desanexados = array();
+        foreach ($lista as $e) {
+            $desanexados[] = $e->clonar();
+        }
+        return count($desanexados) > 0 ? $desanexados : $lista;
     }
 
 }

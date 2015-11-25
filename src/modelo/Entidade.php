@@ -25,13 +25,13 @@ abstract class Entidade {
 
     /** Esse campo é transiente, por isso não tem anotação. 
      * Usado para indicar se essa entidade foi selecionada em uma tabela */
-    private $selecionado;
+    protected $selecionado;
 
     /**
      * Esse campo é transiente e é utilizado para informar em qual indice de 
      * um drop down essa entidade pertence.
      */
-    private $indice;
+    protected $indice;
     
     public function getId() {
         return $this->id;
@@ -45,7 +45,11 @@ abstract class Entidade {
         return $this->selecionado;
     }
 
-    public function setAtivo($ativo) {
+    public function setId($id) {
+        $this->id = $id;
+    }
+
+        public function setAtivo($ativo) {
         $this->ativo = $ativo;
     }
 
@@ -63,4 +67,5 @@ abstract class Entidade {
 
     public abstract function getClassName();
 
+    public abstract function clonar();
 }

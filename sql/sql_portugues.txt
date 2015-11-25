@@ -96,9 +96,9 @@ insert into assunto(ativo, descricao, constante) values (true, "ADICIONAL", true
 /*
         Adicionando os tipos de lugares que os processos poderão estar.
 */
-insert into departamento(ativo, nome, constante) values (true,"RECURSOS HUMANOS", true);
-insert into departamento(ativo, nome, constante) values (true,"SEC. DE ADM. E DE TRIBUTAÇÃO", true);
-insert into departamento(ativo, nome, constante) values (true,"PROCURADORIA", true);
+insert into departamento(ativo, descricao, constante) values (true,"RECURSOS HUMANOS", true);
+insert into departamento(ativo, descricao, constante) values (true,"SEC. DE ADM. E DE TRIBUTAÇÃO", true);
+insert into departamento(ativo, descricao, constante) values (true,"PROCURADORIA", true);
 
 
 /*

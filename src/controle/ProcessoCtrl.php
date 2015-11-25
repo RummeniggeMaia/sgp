@@ -25,7 +25,6 @@ class ProcessoCtrl extends Controlador {
     private $assuntos;
     private $departamentos;
     private $funcionarios;
-    private $movimentacoes;
 
     function __construct($dao) {
         $this->dao = $dao;
@@ -40,13 +39,21 @@ class ProcessoCtrl extends Controlador {
         $this->assuntos = $this->dao->pesquisar($assunto, PHP_INT_MAX, 0);
         $departamento = new Departamento(null, true);
         $this->departamentos = $this->dao->pesquisar($departamento, PHP_INT_MAX, 0);
-        $movimentacao = new Movimentacao(new DateTime("now"), "", true);
-        $this->movimentacoes = $this->dao->pesquisar($movimentacao, PHP_INT_MAX, 0);
-        //Apos as listas serem iniciadas elas vao ser indexadas.
-        $this->indexarListas();
+//      Apos as listas serem iniciadas elas vao ser indexadas.
+//      Esse indice sera utilizado para saber qual elemento 
+//      o usuario selecionou em um dropdown.   
+        foreach ($this->assuntos as $k => $v) {
+            $v->setIndice($k + 1);
+        }
+        foreach ($this->departamentos as $k => $v) {
+            $v->setIndice($k + 1);
+        }
+        foreach ($this->movimentacoes as $k => $v) {
+            $v->setIndice($k + 1);
+        }
         //Como o controle de processos tem apenas um funcinario que é 
         //buscado na pagina de genrenciamento de funcionarios, entao nao 
-        //há necessidade de indexar essa lista, pos ela nao vai ficar em 
+        //há necessidade de indexar essa lista, pois ela nao vai ficar em 
         //um dropdown.
         $this->funcionarios = array();
         //Depois q esse contrutor for chamado no index.php, esse controlador vai 
@@ -111,7 +118,6 @@ class ProcessoCtrl extends Controlador {
                 $index = intval(str_replace("movimentacao_", "", $k));
                 if ($v > 0) {
                     $mov = clone $this->movimentacoes[$v - 1];
-                    $mov->setDataProcesso(new DateTime('now'));
                     $this->entidade->setMovimentacaoAt($index - 1, $mov);
                 }
             }
@@ -146,20 +152,15 @@ class ProcessoCtrl extends Controlador {
             $this->modoEditar = false;
             $this->entidade = new Funcionario("", "", "");
         } else if ($funcao == 'enviar_processos') {
-            foreach ($post as $chave => $valor) {
-                if (Util::startsWithString($chave, "check_")) {
-                    $index = str_replace("check_", "", $chave);
-                    $this->entidades[$index - 1]->setSelecionado(true);
-                }
-            }
             $selecionados = array();
-            foreach ($this->entidades as $f) {
-                if ($f->getSelecionado() == true) {
-                    $selecionados[] = clone $f;
+            foreach ($post as $valor) {
+                if (Util::startsWithString($valor, "radio_")) {
+                    $index = str_replace("radio_", "", $valor);
+                    $selecionados[] = clone $this->entidades[$index - 1];
                 }
             }
             $ctrl = $controladores[$this->ctrlDestino];
-            $ctrl->setFuncionarios($selecionados);
+            $ctrl->setProcessos($selecionados);
             $this->modoBusca = false;
             $redirecionamento->setDestino($this->getCtrlDestino());
             $redirecionamento->setCtrl($controladores[$this->getCtrlDestino()]);
@@ -171,14 +172,23 @@ class ProcessoCtrl extends Controlador {
         } else if ($funcao == 'remover_funcionario') {
             $this->entidade->setFuncionario(new Funcionario("", "", ""));
             $this->tab = "tab_form";
-        } else if ($funcao == 'adicionar_movimentacao') {
-            $mov = new Movimentacao(new DateTime("now"), "", true);
-            $this->entidade->addMovimentacao($mov);
-            $this->tab = "tab_form";
         } else if (Util::startsWithString($funcao, "editar_")) {
             $index = intval(str_replace("editar_", "", $funcao));
             if ($index != 0) {
                 $this->entidade = $this->entidades[$index - 1];
+                foreach ($this->assuntos as $a) {
+                    if ($this->entidade->getAssunto()->getId() == $a->getId()) {
+                        $this->entidade->getAssunto()
+                                ->setIndice($a->getIndice());
+                    }
+                    break;
+                }
+                foreach ($this->departamentos as $d) {
+                    if ($this->entidade->getDepartamento()->getId() == $d->getId()) {
+                        $this->entidade->getDepartamento()->setIndice($d->getIndice());
+                    }
+                    break;
+                }
                 $this->modoEditar = true;
                 $this->tab = "tab_form";
             }
@@ -228,26 +238,6 @@ class ProcessoCtrl extends Controlador {
             $linhas[] = $linha;
         }
         $this->modeloTabela->setLinhas($linhas);
-    }
-
-    /**
-     * Funcao utilizada para indexar todas as listas deste controlador. 
-     * No contrutor as listas: assuntos, funcionarios e movimencacoes sao 
-     * pesquisadas no sistema porem cada entidade nao reconhece o seu indice
-     *  no vetor, essa funcao é utilizada para indexar todos os elementos de 
-     * cada lista. Esse indice sera utilizado para saber qual elemento 
-     * o usuario selecionou em um dropdown.
-     */
-    private function indexarListas() {
-        foreach ($this->assuntos as $k => $v) {
-            $v->setIndice($k + 1);
-        }
-        foreach ($this->departamentos as $k => $v) {
-            $v->setIndice($k + 1);
-        }
-        foreach ($this->movimentacoes as $k => $v) {
-            $v->setIndice($k + 1);
-        }
     }
 
 }

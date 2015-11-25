@@ -19,21 +19,13 @@ class Assunto extends Entidade {
     /** @Column(type="string", unique=true) */
     protected $descricao;
 
-    /** @OneToMany(targetEntity="Processo", mappedBy="assunto") */
+    /** @OneToMany(targetEntity="Processo", mappedBy="assunto", fetch="EAGER", cascade={"detach", "merge"}) */
     protected $processos;
 
     function __construct($descricao, $constante) {
         $this->descricao = $descricao;
         $this->constante = $constante;
         $this->processos = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-
-    public function getId() {
-        return $this->id;
-    }
-
-    public function setId($id) {
-        $this->id = $id;
     }
 
     public function getConstante() {
@@ -63,6 +55,20 @@ class Assunto extends Entidade {
     public function getClassName() {
         $rc = new \ReflectionClass($this);
         return $rc->getName();
+    }
+
+    public function clonar() {
+        $clone = new Assunto("", false);
+        
+        $clone->setId($this->id);
+        $clone->setAtivo($this->ativo);
+        $clone->setIndice($this->indice);
+        $clone->setSelecionado($this->selecionado);
+        
+        $clone->setConstante($this->constante);
+        $clone->setDescricao($this->descricao);
+        
+        return $clone;
     }
 
 }

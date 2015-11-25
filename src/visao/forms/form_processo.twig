@@ -32,7 +32,8 @@
 
                 <div class="field">
                     <label>Nº Processo:</label>
-                    <input type="text" name="campo_numero_processo" placeholder="Número do Processo">
+                    <input type="text" name="campo_numero_processo" placeholder="Número do Processo" 
+                           value="{{ ctrl.entidade.numeroProcesso }}">
                 </div>
                 <div class="two fields">
                     <div class="field">
@@ -88,52 +89,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="field">
-                    <label>Movimentações:</label>
-                    <div class="ui segment">
-                        <div class="ui submit black button right aligned" 
-                             onclick="submeterForm(
-                                             'form_processo',
-                                             'funcao_gerenciar_processo',
-                                             'adicionar_movimentacao');">
-                            <i class="plus icon"></i>Adicionar nova Movimentação
-                        </div>
-                        <table class="ui celled striped table">
-                            <thead>
-                                <tr>
-                                    <th>
-                                        Data
-                                    </th>
-                                    <th colspan="999">
-                                        Movimento
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for movimentacao in ctrl.entidade.movimentacoes %}
-                                    <tr>
-                                        <td>{{ movimentacao.dataProcesso|date('d/m/Y') }}</td>
-                                        <td>
-                                            <div class="ui fluid search normal selection dropdown">
-                                                <input type="hidden" name="movimentacao_{{ loop.index }}" value="{{ movimentacao.indice }}">
-                                                <i class="dropdown icon"></i>
-                                                <div class="default text">Selecione a Movimentação</div>
-                                                <div class="menu">
-                                                    {% for mov in ctrl.movimentacoes %}
-                                                        <div class="item" data-value="{{ loop.index }}">
-                                                            <i class="archive icon"></i>
-                                                            {{ mov.descricao }}
-                                                        </div>
-                                                    {% endfor %}
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
                 <div class="fields">
                     {% if not ctrl.modoBusca %}
                         <div class="field">
@@ -155,7 +110,7 @@
                         <div class="field">
                             <div class="ui submit black button" 
                                  onclick="submeterForm('form_processo', 'funcao_gerenciar_processo', 'enviar_processos');">
-                                <i class="reply all icon"></i>Enviar funcionários
+                                <i class="reply all icon"></i>Enviar Processo
                             </div>
                         </div>
                     {% endif %}

@@ -3,7 +3,7 @@
 namespace modelo;
 
 use modelo\Entidade;
-use modelo\Processo;
+use modelo\ProcessoMovimentacao;
 
 /**
  *
@@ -19,20 +19,13 @@ class Movimentacao extends Entidade {
     /** @Column(type="string") */
     protected $descricao;
 
-    /** @Column(type="date") */
-    protected $dataProcesso;
+    /** @OneToMany(targetEntity="ProcessoMovimentacao", mappedBy="movimentacao", fetch="LAZY") */
+    protected $processoMovimetacoes;
 
-    /**
-     * @ManyToMany(targetEntity="Processo", inversedBy="movimentacoes")
-     * @JoinTable(name="processos_movimentacoes")     
-     */
-    protected $processos;
-
-    function __construct($dataProcesso, $descricao, $constante) {
+    function __construct($descricao, $constante) {
         $this->constante = $constante;
         $this->descricao = $descricao;
-        $this->dataProcesso = $dataProcesso;
-        $this->processos = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->processoMovimetacoes = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     public function getId() {
@@ -55,6 +48,14 @@ class Movimentacao extends Entidade {
         return $this->descricao;
     }
 
+    public function getProcessoMovimetacoes() {
+        return $this->processoMovimetacoes;
+    }
+
+    public function setProcessoMovimetacoes($processoMovimetacoes) {
+        $this->processoMovimetacoes = $processoMovimetacoes;
+    }
+
     public function setConstante($constante) {
         $this->constante = $constante;
     }
@@ -63,25 +64,23 @@ class Movimentacao extends Entidade {
         $this->descricao = $descricao;
     }
 
-    public function getProcessos() {
-        return $this->processos;
-    }
-
-    public function setProcessos($processos) {
-        $this->processos = $processos;
-    }
-
-    public function getDataProcesso() {
-        return $this->dataProcesso;
-    }
-
-    public function setDataProcesso($dataProcesso) {
-        $this->dataProcesso = $dataProcesso;
-    }
-
     public function getClassName() {
         $rc = new \ReflectionClass($this);
         return $rc->getName();
+    }
+
+    public function clonar() {
+        $clone = new Movimentacao(null, "", false);
+
+        $clone->setId($this->id);
+        $clone->setAtivo($this->ativo);
+        $clone->setIndice($this->indice);
+        $clone->setSelecionado($this->selecionado);
+
+        $clone->setConstante($this->constante);
+        $clone->setDescricao($this->descricao);
+
+        return $clone;
     }
 
 }

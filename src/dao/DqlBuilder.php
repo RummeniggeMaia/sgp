@@ -2,13 +2,13 @@
 
 namespace dao;
 
-use dao\Dql;
 use Doctrine\ORM\QueryBuilder;
 use modelo\Entidade;
-use modelo\Funcionario;
 use modelo\Assunto;
 use modelo\Departamento;
+use modelo\Funcionario;
 use modelo\Movimentacao;
+use modelo\Processo;
 
 /**
  * Description of DqlBuilder
@@ -21,7 +21,6 @@ class DqlBuilder {
     const FUNCAO_CONTAR = 2;
 
     public function gerarDql(QueryBuilder $queryBuilder, Entidade $entidade, $funcao) {
-
         if ($funcao == self::FUNCAO_BUSCAR) {
             $queryBuilder->select("x");
         } else if ($funcao == self::FUNCAO_CONTAR) {
@@ -83,8 +82,8 @@ class DqlBuilder {
             $qb->andWhere("x.descricao like '%" . $departamento->getDescricao() . "%'");
         }
     }
-    
-        private function gerarClausulaWhereMovimentacao(Movimentacao $movimentacao, QueryBuilder $qb) {
+
+    private function gerarClausulaWhereMovimentacao(Movimentacao $movimentacao, QueryBuilder $qb) {
         $qb->where("x.ativo = true");
         if ($movimentacao->getDescricao() != null &&
                 preg_match("/.+/i", $movimentacao->getDescricao())) {

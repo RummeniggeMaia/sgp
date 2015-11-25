@@ -19,13 +19,19 @@ if (isset($_SESSION['controladores'])) {
     $assuntoCtrl = new controle\AssuntoCtrl();
     $departamentoCtrl = new controle\DepartamentoCtrl();
     $movimentacaoCtrl = new controle\MovimentacaoCtrl();
+    //No contrutor do ProcessoCtrl e ProcessoMovimentacaoCtrlsao pesquisadas as 
+    //listas de assuntos, departamentos e movimentacoes, por isso passa-se o 
+    //DAO pelo contrutor
     $processoCtrl = new controle\ProcessoCtrl($dao);
+    $processoMovimentacaoCtrl = new controle\ProcessoMovimentacaoCtrl($dao);
     $homeCtrl = new controle\HomeCtrl();
+    
     $controladores['gerenciar_funcionario'] = $funcionarioCtrl;
     $controladores['gerenciar_assunto'] = $assuntoCtrl;
     $controladores['gerenciar_departamento'] = $departamentoCtrl;
     $controladores['gerenciar_movimentacao'] = $movimentacaoCtrl;
     $controladores['gerenciar_processo'] = $processoCtrl;
+    $controladores['gerenciar_processo_movimentacao'] = $processoMovimentacaoCtrl;
     $controladores['gerenciar_home'] = $homeCtrl;
     $_SESSION['controladores'] = serialize($controladores);
 }
@@ -41,11 +47,12 @@ if (isset($_SESSION['visoes_navegacao'])) {
         'gerenciar_departamento' => 'forms/form_departamento.twig',
         'gerenciar_movimentacao' => 'forms/form_movimentacao.twig',
         'gerenciar_processo' => 'forms/form_processo.twig',
+        'gerenciar_processo_movimentacao' => 'forms/form_processo_movimentacao.twig',
         'gerenciar_home' => 'home.twig'
     );
-//Pra inserir qualquer objeto na sessao é necessario serializa-lo, 
-//visoes_navegacao é a chave de mapeamento pra esse vetor, as variaveis de
-//sessao sao acessadas de todos os locais do sitema
+    //Pra inserir qualquer objeto na sessao é necessario serializa-lo, 
+    //visoes_navegacao é a chave de mapeamento pra esse vetor, as variaveis de
+    //sessao sao acessadas de todos os locais do sitema
     $_SESSION['visoes_navegacao'] = serialize($visoes_navegacao);
 }
 
@@ -53,21 +60,3 @@ if (isset($_SESSION['visoes_navegacao'])) {
 // redirecionara o usuario para a pagina home, o front controller se encarregara 
 // de carregar a pagina home.
 header("Location: src/controle/front_controller.php");
-////Inicia o twig
-//Twig_Autoloader::register();
-////Carrega o diretorio dos templates, aqui é src/visao por causa do local do
-////index.php
-//$loader = new Twig_Loader_Filesystem('src/visao/');
-//$twig = new Twig_Environment($loader);
-////Gera a interface home de acordo com o template home.twig
-//$template = $twig->loadTemplate($visoes_navegacao['gerenciar_home']);
-////Renderiza a pagina home de acordo com o template. O vetor serve para passar
-////os diretorios dos arquivos web.
-//print $template->render(
-//                array(
-//                    'semantic_js' => 'web/semantic_ui/semantic.min.js',
-//                    'semantic_css' => 'web/semantic_ui/semantic.min.css',
-//                    'jquerylib' => 'web/jquery.min.js',
-//                    'front_ctrl' => 'src/controle/front_controller.php',
-//                    'logo' => 'web/imagens/icon-process-white.png')
-//);

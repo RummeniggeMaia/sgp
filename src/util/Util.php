@@ -17,5 +17,4 @@ class Util {
         }
         return false;
     }
-
 }

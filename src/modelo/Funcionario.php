@@ -22,7 +22,7 @@ class Funcionario extends Entidade {
     /** @Column(type="string") */
     protected $rg;
 
-    /** @OneToMany(targetEntity="Processo", mappedBy="funcionario") */
+    /** @OneToMany(targetEntity="Processo", mappedBy="funcionario", fetch="EAGER") */
     protected $processos;
 
     function __construct($nome, $cpf, $rg) {
@@ -80,4 +80,20 @@ class Funcionario extends Entidade {
         $rc = new \ReflectionClass($this);
         return $rc->getName();
     }
+
+    public function clonar() {
+        $clone = new Funcionario("", "", "");
+        
+        $clone->setId($this->id);
+        $clone->setAtivo($this->ativo);
+        $clone->setIndice($this->indice);
+        $clone->setSelecionado($this->selecionado);
+        
+        $clone->setNome($this->nome);
+        $clone->setCpf($this->cpf);
+        $clone->setRg($this->rg);
+        
+        return $clone;
+    }
+
 }

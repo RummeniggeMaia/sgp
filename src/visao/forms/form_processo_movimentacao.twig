@@ -1,0 +1,125 @@
+{# empty Twig template #}
+{% extends "templates/base.twig"%}
+
+{% block title %}Movimentação Processual{% endblock %}
+
+{% block body %}
+    <br/>
+    <div class="html ui top right attached segment">
+        <br/>
+        {% include 'fragmentos/frag_titulo.twig' 
+            with {
+                'titulo' : 'Andamento Processual', 
+                'sub_titulo' : 'Interface para gerenciar o andamento dos processos'
+            }
+        %}
+        {% if ctrl.mensagem != null %}
+            {% include 'fragmentos/frag_mensagem.twig'
+                with {
+                    'cabecalho' : ctrl.mensagem.cabecalho,
+                    'tipo_msg' : ctrl.mensagem.tipo,
+                    'descricao' : ctrl.mensagem.descricao
+                }
+            %}
+        {% endif %}
+        <div class="ui top attached tabular menu">
+            <div class="item active" data-tab="form">Formulário</div>
+        </div>      
+        <div class="ui bottom attached tab segment active" data-tab="form">
+            <form id="form_processo_movimentacao" class="ui form" method="post" 
+                  action="front_controller.php">                
+                <div class="field">
+                    <label>Processo:</label>
+                    <div class="ui action input">
+                        <input type="text" placeholder="Buscar processo" 
+                               value="Nº do processo: {{ ctrl.entidade.numeroProcesso }}"
+                               name="campo_processo"
+                               data-value="{{ ctrl.entidade.id }}"
+                               readonly="true">
+                        <div class="ui button" 
+                             onclick="submeterForm('form_processo_movimentacao', 'funcao_gerenciar_processo_movimentacao', 'buscar_processo');">
+                            <i class="search icon"></i>
+                            Buscar
+                        </div>
+                        <div class="ui button red" 
+                             onclick="submeterForm('form_processo_movimentacao', 'funcao_gerenciar_processo_movimentacao', 'remover_processo');">
+                            <i class="delete icon"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui label">
+                        <i class="user icon"></i>
+                        Funcionário: {{ ctrl.entidade.funcionario.nome }}
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui label">
+                        <i class="archive icon"></i>
+                        Assunto: {{ ctrl.entidade.assunto.descricao }} 
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui label">
+                        <i class="building icon"></i>
+                        Departamento: {{ ctrl.entidade.departamento.descricao }}
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Movimentações:</label>
+                    <div class="ui segment">
+                        <div class="ui submit black button right aligned" 
+                             onclick="submeterForm(
+                                             'form_processo_movimentacao',
+                                             'funcao_gerenciar_processo_movimentacao',
+                                             'adicionar_movimentacao');">
+                            <i class="plus icon"></i>Adicionar nova Movimentação
+                        </div>
+                        <table class="ui celled striped table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Data
+                                    </th>
+                                    <th colspan="999">
+                                        Movimento
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for pm in ctrl.entidade.processoMovimentacoes %}
+                                    <tr>
+                                        <td>{{ pm.dataMovimentacao|date('d/m/Y') }}</td>
+                                        <td>
+                                            <div class="ui fluid search normal selection dropdown">
+                                                <input type="hidden" name="movimentacao_{{ loop.index }}" value="{{ pm.indice }}">
+                                                <i class="dropdown icon"></i>
+                                                <div class="default text">Selecione a Movimentação</div>
+                                                <div class="menu">
+                                                    {% for mov in ctrl.movimentacoes %}
+                                                        <div class="item" data-value="{{ loop.index }}">
+                                                            <i class="archive icon"></i>
+                                                            {{ mov.descricao }}
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        <div class="ui submit black button"
+                             onClick="submeterForm('form_processo_movimentacao', 'funcao_gerenciar_processo_movimentacao', 'salvar');">
+                            <i class="save icon"></i>Salvar
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -6,7 +6,7 @@ use modelo\Entidade;
 use modelo\Funcionario;
 use modelo\Assunto;
 use modelo\Departamento;
-use modelo\Movimentacao;
+use modelo\ProcessoMovimentacao;
 
 /**
  *
@@ -28,12 +28,15 @@ class Processo extends Entidade {
     /** @ManyToOne(targetEntity="Departamento", inversedBy="processos") */
     protected $departamento;
 
-    /** @ManyToMany(targetEntity="Movimentacao", mappedBy="processos") */
-    protected $movimentacoes;
+    /** @OneToMany(targetEntity="ProcessoMovimentacao", mappedBy="processo", fetch="EAGER") */
+    protected $processoMovimentacoes;
 
     function __construct($numeroProcesso) {
         $this->numeroProcesso = $numeroProcesso;
-        $this->movimentacoes = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->processoMovimentacoes = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->funcionario = new Funcionario("", "", "");
+        $this->assunto = new Assunto("", false);
+        $this->departamento = new Departamento("", false);
     }
 
     public function getNumeroProcesso() {
@@ -52,22 +55,12 @@ class Processo extends Entidade {
         return $this->departamento;
     }
 
-    public function getMovimentacoes() {
-        return $this->movimentacoes;
+    public function getProcessoMovimentacoes() {
+        return $this->processoMovimentacoes;
     }
 
-    public function addMovimentacao($movimentacao) {
-        $this->movimentacoes[] = $movimentacao;
-    }
-
-    public function removerMovimentacao($indice) {
-        unset($this->movimentacoes[$indice]);
-    }
-
-    public function setMovimentacaoAt($indice, $mov) {
-        if ($indice >= 0 && $indice < count($this->movimentacoes)) {
-            $this->movimentacoes[$indice] = $mov;
-        }
+    public function setProcessoMovimentacoes($processoMovimentacoes) {
+        $this->processoMovimentacoes = $processoMovimentacoes;
     }
 
     public function setNumeroProcesso($numeroProcesso) {
@@ -86,13 +79,72 @@ class Processo extends Entidade {
         $this->departamento = $departamento;
     }
 
-    public function setMovimentacoes($movimentacoes) {
-        $this->movimentacoes = $movimentacoes;
-    }
-
     public function getClassName() {
         $rc = new \ReflectionClass($this);
         return $rc->getName();
     }
+
+    public function clonar() {
+        $clone = new Processo("");
+
+        $clone->setId($this->id);
+        $clone->setAtivo($this->ativo);
+        $clone->setIndice($this->indice);
+        $clone->setSelecionado($this->selecionado);
+
+        $clone->setNumeroProcesso($this->numeroProcesso);
+        $clone->setFuncionario(
+                $this->funcionario == null ?
+                        new Funcionario("", "", "") :
+                        $this->funcionario->clonar());
+        $clone->setAssunto(
+                $this->assunto == null ?
+                        new Assunto("", false) :
+                        $this->assunto->clonar());
+        $clone->setDepartamento(
+                $this->departamento == null ?
+                        new Departamento("", false) :
+                        $this->departamento->clonar());
+
+        $pms = new \Doctrine\Common\Collections\ArrayCollection();
+        foreach ($this->processoMovimentacoes->toArray() as $pm) {
+            $clonePm = $pm->clonar();
+            $clonePm->setProcesso($clone);
+            $pms->add($clonePm);
+        }
+        $clone->setProcessoMovimentacoes($pms);
+        return $clone;
+    }
+//    public function __clone() {
+//        $clone = new Processo("");
+//
+//        $clone->setId($this->id);
+//        $clone->setAtivo($this->ativo);
+//        $clone->setIndice($this->indice);
+//        $clone->setSelecionado($this->selecionado);
+//
+//        $clone->setNumeroProcesso($this->numeroProcesso);
+//        $clone->setFuncionario(
+//                $this->funcionario == null ?
+//                        new Funcionario("", "", "") :
+//                        clone $this->funcionario);
+//        $clone->setAssunto(
+//                $this->assunto == null ?
+//                        new Assunto("", false) :
+//                        clone $this->assunto);
+//        $clone->setDepartamento(
+//                $this->departamento == null ?
+//                        new Departamento("", false) :
+//                        clone $this->departamento);
+//
+//        $pms = array();
+//        foreach ($this->processoMovimentacoes->toArray() as $pm) {
+//            $clonePm = clone $pm;
+//            $clonePm->setProcesso($clone);
+//            $pms[] = $clonePm;
+//        }
+//        $clone->setProcessoMovimentacoes($pms);
+//        return $clone;
+//    }
 
 }

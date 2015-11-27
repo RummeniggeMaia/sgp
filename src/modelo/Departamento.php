@@ -19,7 +19,7 @@ class Departamento extends Entidade {
     /** @Column(type="string") */
     protected $descricao;
 
-    /** @OneToMany(targetEntity="Processo", mappedBy="departamento", fetch="EAGER", cascade={"detach", "merge"}) */
+    /** @OneToMany(targetEntity="Processo", mappedBy="departamento") */
     protected $processos;
 
     function __construct($descricao, $constante) {

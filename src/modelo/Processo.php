@@ -28,7 +28,7 @@ class Processo extends Entidade {
     /** @ManyToOne(targetEntity="Departamento", inversedBy="processos") */
     protected $departamento;
 
-    /** @OneToMany(targetEntity="ProcessoMovimentacao", mappedBy="processo", fetch="EAGER") */
+    /** @OneToMany(targetEntity="ProcessoMovimentacao", mappedBy="processo", fetch="EAGER", cascade={"ALL"}) */
     protected $processoMovimentacoes;
 
     function __construct($numeroProcesso) {
@@ -115,36 +115,4 @@ class Processo extends Entidade {
         $clone->setProcessoMovimentacoes($pms);
         return $clone;
     }
-//    public function __clone() {
-//        $clone = new Processo("");
-//
-//        $clone->setId($this->id);
-//        $clone->setAtivo($this->ativo);
-//        $clone->setIndice($this->indice);
-//        $clone->setSelecionado($this->selecionado);
-//
-//        $clone->setNumeroProcesso($this->numeroProcesso);
-//        $clone->setFuncionario(
-//                $this->funcionario == null ?
-//                        new Funcionario("", "", "") :
-//                        clone $this->funcionario);
-//        $clone->setAssunto(
-//                $this->assunto == null ?
-//                        new Assunto("", false) :
-//                        clone $this->assunto);
-//        $clone->setDepartamento(
-//                $this->departamento == null ?
-//                        new Departamento("", false) :
-//                        clone $this->departamento);
-//
-//        $pms = array();
-//        foreach ($this->processoMovimentacoes->toArray() as $pm) {
-//            $clonePm = clone $pm;
-//            $clonePm->setProcesso($clone);
-//            $pms[] = $clonePm;
-//        }
-//        $clone->setProcessoMovimentacoes($pms);
-//        return $clone;
-//    }
-
 }

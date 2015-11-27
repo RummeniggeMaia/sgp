@@ -22,7 +22,7 @@ class Funcionario extends Entidade {
     /** @Column(type="string") */
     protected $rg;
 
-    /** @OneToMany(targetEntity="Processo", mappedBy="funcionario", fetch="EAGER") */
+    /** @OneToMany(targetEntity="Processo", mappedBy="funcionario") */
     protected $processos;
 
     function __construct($nome, $cpf, $rg) {

@@ -29,7 +29,10 @@ abstract class Entidade {
 
     /**
      * Esse campo é transiente e é utilizado para informar em qual indice de 
-     * um drop down essa entidade pertence.
+     * um drop down essa entidade pertence. O dropdown do Semantic UI exige um 
+     * valor inteiro q represente qual indice da lista selecionar por padrao,
+     * por isso foi criado essa entidade, ela serve apenas para informar qual 
+     * entidade carregar quando a pagina for carregada.
      */
     protected $indice;
     

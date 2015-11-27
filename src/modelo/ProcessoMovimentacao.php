@@ -67,7 +67,7 @@ class ProcessoMovimentacao extends Entidade {
         $clone->setMovimentacao(
                 $this->movimentacao == null ?
                         new Movimentacao("", false) :
-                        clone $this->movimentacao);
+                        $this->movimentacao->clonar());
         return $clone;
     }
 

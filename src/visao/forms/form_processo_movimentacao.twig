@@ -47,24 +47,41 @@
                         </div>
                     </div>
                 </div>
-                <div class="field">
-                    <div class="ui label">
-                        <i class="user icon"></i>
-                        Funcionário: {{ ctrl.entidade.funcionario.nome }}
-                    </div>
-                </div>
-                <div class="field">
-                    <div class="ui label">
-                        <i class="archive icon"></i>
-                        Assunto: {{ ctrl.entidade.assunto.descricao }} 
-                    </div>
-                </div>
-                <div class="field">
-                    <div class="ui label">
-                        <i class="building icon"></i>
-                        Departamento: {{ ctrl.entidade.departamento.descricao }}
-                    </div>
-                </div>
+                <table class="ui very basic table">
+                    <tr>
+                        <td style="width: 15%">
+                            <div class="ui fluid label">
+                                <i class="user icon"></i>
+                                Funcionário: 
+                            </div>
+                        </td>
+                        <td>
+                            {{ ctrl.entidade.funcionario.nome }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="ui fluid label">
+                                <i class="archive icon"></i>
+                                Assunto: 
+                            </div>
+                        </td>
+                        <td>
+                            {{ ctrl.entidade.assunto.descricao }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="ui fluid label">
+                                <i class="building icon"></i>
+                                Departamento: 
+                            </div>
+                        </td>
+                        <td>
+                            {{ ctrl.entidade.departamento.descricao }}
+                        </td>
+                    </tr>
+                </table>
                 <div class="field">
                     <label>Movimentações:</label>
                     <div class="ui segment">

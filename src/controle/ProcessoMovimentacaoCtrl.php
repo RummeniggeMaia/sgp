@@ -2,10 +2,11 @@
 
 namespace controle;
 
-use modelo\Processo;
-use modelo\Movimentacao;
-use modelo\ProcessoMovimentacao;
 use DateTime;
+use modelo\Movimentacao;
+use modelo\Processo;
+use modelo\ProcessoMovimentacao;
+use util\Util;
 
 /**
  * Description of ProcessoMovimentacaoCtrl
@@ -20,10 +21,16 @@ class ProcessoMovimentacaoCtrl extends Controlador {
      * $dao usado para buscar a lista de movimentacoes do sistema
      */
     function __construct($dao) {
+        $this->dao = $dao;
         $this->entidade = new Processo("");
         $movimentacao = new Movimentacao(null, "", true);
         $this->movimentacoes = $this->dao->pesquisar($movimentacao, PHP_INT_MAX, 0);
         $this->mensagem = null;
+
+        //Depois q esse contrutor for chamado no index.php, esse controlador vai 
+        //ser serializado, por isso o objeto dao tem q ser nulado pois o mesmo 
+        //nao pode ser serializado
+        $this->dao = null;
     }
 
     public function getMovimentacoes() {
@@ -34,17 +41,33 @@ class ProcessoMovimentacaoCtrl extends Controlador {
         $this->movimentacoes = $movimentacoes;
     }
 
+    public function gerarProcessoMovimentacao($post) {
+        foreach ($post as $k => $v) {
+            if (Util::startsWithString($k, "movimentacao_")) {
+                $index = intval(str_replace("movimentacao_", "", $k));
+                if ($v > 0) {
+                    $mov = $this->movimentacoes[$v - 1]->clonar();
+                    $pms = $this->entidade->getProcessoMovimentacoes();
+                    $pm = $pms->get($index - 1);
+                    $pm->setMovimentacao($mov);
+                    $pm->setProcesso($this->entidade);
+                    $pm->setIndice($index);
+                }
+            }
+        }
+    }
+
     public function executarFuncao($post, $funcao, $controladores) {
+        $this->gerarProcessoMovimentacao($post);
+
         $redirecionamento = new Redirecionamento();
         $redirecionamento->setDestino('gerenciar_processo_movimentacao');
         $redirecionamento->setCtrl($this);
-        //A aba/tab tabela é selecionada por padrao
 
         if ($funcao == "salvar") {
             $this->dao->editar($this->entidade);
             $this->entidade = new Processo("");
             $this->modoEditar = false;
-            $this->tab = "tab_form";
             $this->mensagem = new Mensagem(
                     "Movimentação Processual"
                     , "msg_tipo_ok"
@@ -72,12 +95,22 @@ class ProcessoMovimentacaoCtrl extends Controlador {
     }
 
     public function gerarLinhas() {
-        
+        //Nao precisa gerar as linhas, pois a interface de ProcessoMovimentacao 
+        //nao tem tabela para pesquisa
     }
 
     public function setProcessos($list) {
         if ($list != null && count($list) > 0) {
             $this->entidade = $list[0];
+
+            foreach ($this->entidade->getProcessoMovimentacoes() as $pm) {
+                foreach ($this->movimentacoes as $k => $m) {
+                    if ($pm->getMovimentacao()->getId() == $m->getId()) {
+                        $pm->setIndice($k + 1);
+                        break;
+                    }
+                }
+            }
         }
     }
 

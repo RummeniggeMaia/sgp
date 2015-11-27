@@ -19,7 +19,7 @@ class Assunto extends Entidade {
     /** @Column(type="string", unique=true) */
     protected $descricao;
 
-    /** @OneToMany(targetEntity="Processo", mappedBy="assunto", fetch="EAGER", cascade={"detach", "merge"}) */
+    /** @OneToMany(targetEntity="Processo", mappedBy="assunto") */
     protected $processos;
 
     function __construct($descricao, $constante) {

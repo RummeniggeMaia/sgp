@@ -7,11 +7,9 @@ use controle\Mensagem;
 use controle\tabela\Linha;
 use controle\tabela\ModeloDeTabela;
 use controle\tabela\Paginador;
-use DateTime;
 use modelo\Assunto;
 use modelo\Departamento;
 use modelo\Funcionario;
-use modelo\Movimentacao;
 use modelo\Processo;
 use util\Util;
 
@@ -39,18 +37,6 @@ class ProcessoCtrl extends Controlador {
         $this->assuntos = $this->dao->pesquisar($assunto, PHP_INT_MAX, 0);
         $departamento = new Departamento(null, true);
         $this->departamentos = $this->dao->pesquisar($departamento, PHP_INT_MAX, 0);
-//      Apos as listas serem iniciadas elas vao ser indexadas.
-//      Esse indice sera utilizado para saber qual elemento 
-//      o usuario selecionou em um dropdown.   
-        foreach ($this->assuntos as $k => $v) {
-            $v->setIndice($k + 1);
-        }
-        foreach ($this->departamentos as $k => $v) {
-            $v->setIndice($k + 1);
-        }
-        foreach ($this->movimentacoes as $k => $v) {
-            $v->setIndice($k + 1);
-        }
         //Como o controle de processos tem apenas um funcinario que é 
         //buscado na pagina de genrenciamento de funcionarios, entao nao 
         //há necessidade de indexar essa lista, pois ela nao vai ficar em 
@@ -84,16 +70,8 @@ class ProcessoCtrl extends Controlador {
 
     public function setFuncionarios($funcionarios) {
         if ($funcionarios != null && !empty($funcionarios)) {
-            $this->entidade->setFuncionario(clone $funcionarios[0]);
+            $this->entidade->setFuncionario($funcionarios[0]->clonar());
         }
-    }
-
-    public function getMovimentacoes() {
-        return $this->movimentacoes;
-    }
-
-    public function setMovimentacoes($movimentacoes) {
-        $this->movimentacoes = $movimentacoes;
     }
 
     public function gerarProcesso($post) {
@@ -105,22 +83,15 @@ class ProcessoCtrl extends Controlador {
                 $post['assunto'] > 0) {
 
             $this->entidade->setAssunto(
-                    clone $this->assuntos[$post['assunto'] - 1]);
+                    $this->assuntos[$post['assunto'] - 1]->clonar());
+            $this->entidade->getAssunto()->setIndice($post['assunto']);
         }
         if (isset($post['departamento']) &&
                 is_numeric($post['departamento']) &&
                 $post['departamento'] > 0) {
             $this->entidade->setDepartamento(
-                    clone $this->departamentos[$post['departamento'] - 1]);
-        }
-        foreach ($post as $k => $v) {
-            if (Util::startsWithString($k, "movimentacao_")) {
-                $index = intval(str_replace("movimentacao_", "", $k));
-                if ($v > 0) {
-                    $mov = clone $this->movimentacoes[$v - 1];
-                    $this->entidade->setMovimentacaoAt($index - 1, $mov);
-                }
-            }
+                    $this->departamentos[$post['departamento'] - 1]->clonar());
+            $this->entidade->getDepartamento()->setIndice($post['departamento']);
         }
     }
 

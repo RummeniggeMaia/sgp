@@ -109,12 +109,12 @@
                                         <td>{{ pm.dataMovimentacao|date('d/m/Y') }}</td>
                                         <td>
                                             <div class="ui fluid search normal selection dropdown">
-                                                <input type="hidden" name="movimentacao_{{ loop.index }}" value="{{ pm.indice }}">
+                                                <input type="hidden" name="movimentacao_{{ loop.index }}" value="{{ pm.movimentacao.descricao }}">
                                                 <i class="dropdown icon"></i>
                                                 <div class="default text">Selecione a Movimentação</div>
                                                 <div class="menu">
                                                     {% for mov in ctrl.movimentacoes %}
-                                                        <div class="item" data-value="{{ loop.index }}">
+                                                        <div class="item" data-value="{{ mov.descricao }}">
                                                             <i class="archive icon"></i>
                                                             {{ mov.descricao }}
                                                         </div>

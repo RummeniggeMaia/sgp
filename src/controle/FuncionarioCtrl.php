@@ -51,6 +51,7 @@ class FuncionarioCtrl extends Controlador {
         $redirecionamento = new Redirecionamento();
         $redirecionamento->setDestino('gerenciar_funcionario');
         $redirecionamento->setCtrl($this);
+        $this->mensagem = null;
 
         if ($funcao == "salvar") {
             $resultado = $this->validadorFuncionario->validarCadastro($this->entidade);
@@ -72,12 +73,6 @@ class FuncionarioCtrl extends Controlador {
                         , "msg_tipo_ok"
                         , "Dados do Funcionário salvo com sucesso.");
             }
-            $this->entidade = new Funcionario("", "", "");
-            $this->modoEditar = false;
-            $this->mensagem = new Mensagem(
-                    "Cadastro de funcionários"
-                    , "msg_tipo_ok"
-                    , "Dados do Funcionário salvos com sucesso.");
         } else if ($funcao == "pesquisar") {
             $this->modeloTabela->setPaginador(new Paginador());
             $this->modeloTabela->getPaginador()->setContagem(
@@ -94,6 +89,7 @@ class FuncionarioCtrl extends Controlador {
                 if (Util::startsWithString($valor, "radio_")) {
                     $index = str_replace("radio_", "", $valor);
                     $selecionados[] = clone $this->entidades[$index - 1];
+                    break;
                 }
             }
             $ctrl = $controladores[$this->ctrlDestino];
@@ -108,8 +104,9 @@ class FuncionarioCtrl extends Controlador {
         } else if (Util::startsWithString($funcao, "editar_")) {
             $index = intval(str_replace("editar_", "", $funcao));
             if ($index != 0) {
-                $this->entidade = $this->entidades[$index - 1];
+                $this->entidade = $this->entidades[$index - 1]; 
                 $this->modoEditar = true;
+                $this->tab = "tab_form";
             }
         } else if (Util::startsWithString($funcao, "excluir_")) {
             $index = intval(str_replace("excluir_", "", $funcao));

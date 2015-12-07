@@ -3,26 +3,26 @@ SQL do sistema SGP!
 */
 
 
-drop table if exists movimentacoes_processos;
-drop table if exists processos;
-drop table if exists movimentacaos;
-drop table if exists funcionarios;
-drop table if exists assuntos;
-drop table if exists departamentos;
-drop table if exists usuarios;
+drop table if exists processo_movimentacao;
+drop table if exists processo;
+drop table if exists movimentacao;
+drop table if exists funcionario;
+drop table if exists assunto;
+drop table if exists departamento;
+drop table if exists usuario;
 
 -- employee acho que a tabela deve ser no plural no caso employees
-create table funcionarios (
+create table funcionario (
     id bigint not null auto_increment,
     ativo boolean, -- active
     nome varchar(100),
-    rg varchar(11), -- rg
-    cpf varchar(14), -- cfg
+    rg varchar(11) unique, -- rg
+    cpf varchar(14) unique, -- cfg
     primary key(id)
 );
 
 -- Subjects
-create table assuntos (
+create table assunto (
     id bigint not null auto_increment,
     ativo boolean, -- active
     descricao varchar(255) unique, -- description
@@ -31,16 +31,16 @@ create table assuntos (
 );
 
 -- departents
-create table departamentos (
+create table departamento (
     id bigint not null auto_increment,
     ativo boolean, -- active
-    nome varchar(100) unique, -- name
+    descricao varchar(100) unique, -- name
     constante boolean, -- contant
     primary key(id)
 );
 
 -- process
-create table processos (
+create table processo (
     id bigint not null auto_increment,
     ativo boolean, -- active
     numero_processo varchar(30), -- process_numver
@@ -48,13 +48,13 @@ create table processos (
     funcionario_id bigint not null, -- employee_id
     departamento_id bigint not null, -- department_id
     primary key(id),
-    foreign key (assunto_id) references assuntos(id),
-    foreign key (departamento_id) references departamentos(id),
-    foreign key (funcionario_id) references funcionarios(id)        
+    foreign key (assunto_id) references assunto(id),
+    foreign key (departamento_id) references departamento(id),
+    foreign key (funcionario_id) references funcionario(id)        
 );
 
 -- transactions
-create table movimentacaos (
+create table movimentacao (
     id bigint not null auto_increment,
     ativo boolean, -- active
     nome varchar(100), -- name
@@ -62,16 +62,16 @@ create table movimentacaos (
     primary key(id)
 );
 
-create table movimentacoes_processos (
+create table processo_movimentacao (
     id bigint not null auto_increment,
     processo_id bigint not null,
     movimentacao_id bigint not null,
     primary key(id),
-    foreign key (movimentacao_id) references movimentacaos(id),
-    foreign key (processo_id) references processos(id)
+    foreign key (movimentacao_id) references movimentacao(id),
+    foreign key (processo_id) references processo(id)
 );
 
-create table usuarios (
+create table usuario (
     id bigint not null auto_increment,
     login varchar(20),
     senha varchar(100),
@@ -104,10 +104,10 @@ insert into departamento(ativo, descricao, constante) values (true,"PROCURADORIA
 /*
         Adicionando os tipos de movimentações
 */
-insert into movimentacao(ativo, descricao, constante) values (true, "AGUARDANDO PARECER JURÍDICO", true);
-insert into movimentacao(ativo, descricao, constante) values (true, "AGUARDANDO MANIFESTAÇÃO DA SECRETARIA RESPONSÁVEL", true);
-insert into movimentacao(ativo, descricao, constante) values (true, "AGUARDANDO DOCUMENTAÇÃO DO REQUERENTE", true);
-insert into movimentacao(ativo, descricao, constante) values (true, "REQUERIMENTO DEFERIDO", true);
-insert into movimentacao(ativo, descricao, constante) values (true, "REQUERIMENTO INDEFERIDO", true);
-insert into movimentacao(ativo, descricao, constante) values (true, "AGUARDANDO INTIMAÇÃO DO REQUERENTE", true);
-insert into movimentacao(ativo, descricao, constante) values (true, "PARA ARQUIVAR", true);
+insert into movimentacao(ativo, nome, constante) values (true, "AGUARDANDO PARECER JURÍDICO", true);
+insert into movimentacao(ativo, nome, constante) values (true, "AGUARDANDO MANIFESTAÇÃO DA SECRETARIA RESPONSÁVEL", true);
+insert into movimentacao(ativo, nome, constante) values (true, "AGUARDANDO DOCUMENTAÇÃO DO REQUERENTE", true);
+insert into movimentacao(ativo, nome, constante) values (true, "REQUERIMENTO DEFERIDO", true);
+insert into movimentacao(ativo, nome, constante) values (true, "REQUERIMENTO INDEFERIDO", true);
+insert into movimentacao(ativo, nome, constante) values (true, "AGUARDANDO INTIMAÇÃO DO REQUERENTE", true);
+insert into movimentacao(ativo, nome, constante) values (true, "PARA ARQUIVAR", true);

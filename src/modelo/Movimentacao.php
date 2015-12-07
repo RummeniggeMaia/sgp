@@ -73,7 +73,7 @@ class Movimentacao extends Entidade {
         $clone = new Movimentacao(null, "", false);
 
         $clone->setId($this->id);
-        $clone->setAtivo($this->ativo);
+        //$clone->setAtivo($this->ativo);
         $clone->setIndice($this->indice);
         $clone->setSelecionado($this->selecionado);
 

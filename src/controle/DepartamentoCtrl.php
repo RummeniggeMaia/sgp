@@ -59,14 +59,14 @@ class DepartamentoCtrl extends Controlador {
                 } else {
                     $this->dao->criar($this->entidade);
                 }
-                $this->entidade = new Departamento("", "");
+                $this->entidade = new Departamento("");
                 $this->modoEditar = false;
                 $this->mensagem = new Mensagem(
                         "Cadastro de departamentos"
                         , "msg_tipo_ok"
                         , "Dados do Departamento salvo com sucesso.");
             }
-            $this->entidade = new Departamento("", "");
+            $this->entidade = new Departamento("");
             $this->modoEditar = false;
             $this->mensagem = new Mensagem(
                     "Cadastro de departamentos"
@@ -81,7 +81,7 @@ class DepartamentoCtrl extends Controlador {
             $this->pesquisar();
         } else if ($funcao == "cancelar_edicao") {
             $this->modoEditar = false;
-            $this->entidade = new Departamento("", "");
+            $this->entidade = new Departamento("");
         } else if ($funcao == 'enviar_departamentos') {
             $selecionados = array();
             foreach ($post as $valor) {
@@ -103,8 +103,9 @@ class DepartamentoCtrl extends Controlador {
         } else if (Util::startsWithString($funcao, "editar_")) {
             $index = intval(str_replace("editar_", "", $funcao));
             if ($index != 0) {
-                $this->entidade = $this->entidades[$index - 1];
+                $this->entidade = $this->entidades[$index - 1]; 
                 $this->modoEditar = true;
+                $this->tab = "tab_form";
             }
         } else if (Util::startsWithString($funcao, "excluir_")) {
             $index = intval(str_replace("excluir_", "", $funcao));

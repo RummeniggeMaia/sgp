@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace controle;
 
@@ -29,6 +29,7 @@ class AssuntoCtrl extends Controlador {
         $this->modeloTabela->setModoBusca(false);
         $this->validadorAssunto = new ValidadorAssunto();
     }
+ 	// modificado
 
     /**
      * Factory method para gerar assuntos baseado a partir do POST
@@ -46,7 +47,7 @@ class AssuntoCtrl extends Controlador {
         $redirecionamento->setDestino('gerenciar_assunto');
         $redirecionamento->setCtrl($this);
         $this->mensagem = null;
-
+        $this->tab = "tab_tabela";
 
         if ($funcao == "salvar") {
             $resultado = $this->validadorAssunto->validarCadastro($this->entidade);
@@ -99,8 +100,9 @@ class AssuntoCtrl extends Controlador {
         }else if (Util::startsWithString($funcao, "editar_")) {
             $index = intval(str_replace("editar_", "", $funcao));
             if ($index != 0) {
-                $this->entidade = $this->entidades[$index - 1];
+                $this->entidade = $this->entidades[$index - 1]; 
                 $this->modoEditar = true;
+                $this->tab = "tab_form";
             }
         } else if (Util::startsWithString($funcao, "excluir_")) {
             $index = intval(str_replace("excluir_", "", $funcao));

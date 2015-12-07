@@ -106,7 +106,7 @@
                             <tbody>
                                 {% for pm in ctrl.entidade.processoMovimentacoes %}
                                     <tr>
-                                        <td>{{ pm.dataMovimentacao|date('d/m/Y') }}</td>
+                                        <td>{{ pm.dataMovimentacao|date("d/m/Y") }}</td>
                                         <td>
                                             <div class="ui fluid search normal selection dropdown">
                                                 <input type="hidden" name="movimentacao_{{ loop.index }}" value="{{ pm.indice }}">

@@ -24,15 +24,6 @@ abstract class Entidade {
      * Usado para indicar se essa entidade foi selecionada em uma tabela */
     protected $selecionado;
     
-     /**
-     * Esse campo é transiente e é utilizado para informar em qual indice de 
-     * um drop down essa entidade pertence. O dropdown do Semantic UI exige um 
-     * valor inteiro q represente qual indice da lista selecionar por padrao,
-     * por isso foi criado essa entidade, ela serve apenas para informar qual 
-     * entidade carregar quando a pagina for carregada.
-     */
-    protected $indice;
-    
     public function getId() {
         return $this->id;
     }
@@ -51,14 +42,6 @@ abstract class Entidade {
 
     public function setSelecionado($selecionado) {
         $this->selecionado = $selecionado;
-    }
-
-     public function getIndice() {
-        return $this->indice;
-    }
-
-    public function setIndice($indice) {
-        $this->indice = $indice;
     }
     
     public abstract function getClassName();

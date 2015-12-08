@@ -60,8 +60,6 @@ class Departamento extends Entidade {
         $clone = new Departamento("", false);
         
         $clone->setId($this->id);
-       //$clone->setAtivo($this->ativo);
-        $clone->setIndice($this->indice);
         $clone->setSelecionado($this->selecionado);
         
         $clone->setConstante($this->constante);

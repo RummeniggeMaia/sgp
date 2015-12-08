@@ -58,8 +58,6 @@ class ProcessoMovimentacao extends Entidade {
         $clone = new ProcessoMovimentacao();
 
         $clone->setId($this->id);
-        //$clone->setAtivo($this->ativo);
-        $clone->setIndice($this->indice);
         $clone->setSelecionado($this->selecionado);
 
         $clone->setDataMovimentacao($this->dataMovimentacao);

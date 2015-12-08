@@ -39,13 +39,13 @@
                     <div class="field">
                         <label>Assunto:</label>
                         <div class="ui fluid search selection dropdown">
-                            <input type="hidden" name="assunto" value="{{ ctrl.entidade.assunto.indice }}">
+                            <input type="hidden" name="assunto" value="{{ ctrl.entidade.assunto.descricao }}">
                             <i class="dropdown icon"></i>
                             <div class="default text">Selecione o Assunto</div>
                             <div class="menu">
                                 {% for assunto in ctrl.assuntos %}
                                     <div class="item" 
-                                         data-value="{{ loop.index }}">
+                                         data-value="{{ assunto.descricao }}">
                                         <i class="archive icon"></i>
                                         {{ assunto.descricao }}
                                     </div>
@@ -56,12 +56,12 @@
                     <div class="field">
                         <label>Departamento:</label>
                         <div class="ui fluid search selection dropdown">
-                            <input type="hidden" name="departamento" value="{{ ctrl.entidade.departamento.indice }}">
+                            <input type="hidden" name="departamento" value="{{ ctrl.entidade.departamento.descricao }}">
                             <i class="dropdown icon"></i>
                             <div class="default text">Selecione o Departamento</div>
                             <div class="menu">
                                 {% for departamento in ctrl.departamentos %}
-                                    <div class="item" data-value="{{ loop.index }}">
+                                    <div class="item" data-value="{{ departamento.descricao }}">
                                         <i class="building icon"></i>
                                         {{ departamento.descricao }}
                                     </div>

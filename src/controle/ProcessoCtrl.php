@@ -37,6 +37,16 @@ class ProcessoCtrl extends Controlador {
         $this->assuntos = $this->dao->pesquisar($assunto, PHP_INT_MAX, 0);
         $departamento = new Departamento(null, true);
         $this->departamentos = $this->dao->pesquisar($departamento, PHP_INT_MAX, 0);
+        $aux = array();
+        foreach ($this->assuntos as $a) {
+            $aux[$a->getDescricao()] = $a;
+        }
+        $this->assuntos = $aux;
+        $aux = array();
+        foreach ($this->departamentos as $d) {
+            $aux[$d->getDescricao()] = $d;
+        }
+        $this->departamentos = $aux;
         //Como o controle de processos tem apenas um funcinario que é 
         //buscado na pagina de genrenciamento de funcionarios, entao nao 
         //há necessidade de indexar essa lista, pois ela nao vai ficar em 
@@ -79,19 +89,14 @@ class ProcessoCtrl extends Controlador {
             $this->entidade->setNumeroProcesso($post['campo_numero_processo']);
         }
         if (isset($post['assunto']) &&
-                is_numeric($post['assunto']) &&
-                $post['assunto'] > 0) {
-
+                isset($this->assuntos[$post['assunto']])) {
             $this->entidade->setAssunto(
-                    $this->assuntos[$post['assunto'] - 1]->clonar());
-            $this->entidade->getAssunto()->setIndice($post['assunto']);
+                    $this->assuntos[$post['assunto']]->clonar());
         }
         if (isset($post['departamento']) &&
-                is_numeric($post['departamento']) &&
-                $post['departamento'] > 0) {
+                isset($this->assuntos[$post['departamento']])) {
             $this->entidade->setDepartamento(
-                    $this->departamentos[$post['departamento'] - 1]->clonar());
-            $this->entidade->getDepartamento()->setIndice($post['departamento']);
+                    $this->departamentos[$post['departamento']]->clonar());
         }
     }
 
@@ -147,19 +152,6 @@ class ProcessoCtrl extends Controlador {
             $index = intval(str_replace("editar_", "", $funcao));
             if ($index != 0) {
                 $this->entidade = $this->entidades[$index - 1];
-                foreach ($this->assuntos as $a) {
-                    if ($this->entidade->getAssunto()->getId() == $a->getId()) {
-                        $this->entidade->getAssunto()
-                                ->setIndice($a->getIndice());
-                    }
-                    break;
-                }
-                foreach ($this->departamentos as $d) {
-                    if ($this->entidade->getDepartamento()->getId() == $d->getId()) {
-                        $this->entidade->getDepartamento()->setIndice($d->getIndice());
-                    }
-                    break;
-                }
                 $this->modoEditar = true;
                 $this->tab = "tab_form";
             }

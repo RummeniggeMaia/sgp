@@ -18,6 +18,7 @@ class Dao {
     public function __construct($entityManager) {
         $this->entityManager = $entityManager;
         $this->dqlBuilder = new DqlBuilder();
+        
     }
 
     public function getEntityManager() {
@@ -39,7 +40,7 @@ class Dao {
     }
 
     public function excluir($entidade) {
-        $entidade->setAtivo(false);
+        //$entidade->setAtivo(false);
         $this->editar($entidade);
     }
 

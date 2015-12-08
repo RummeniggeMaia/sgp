@@ -88,7 +88,7 @@ class Processo extends Entidade {
         $clone = new Processo("");
 
         $clone->setId($this->id);
-        $clone->setAtivo($this->ativo);
+        //$clone->setAtivo($this->ativo);
         $clone->setIndice($this->indice);
         $clone->setSelecionado($this->selecionado);
 

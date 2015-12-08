@@ -22,8 +22,7 @@ class Departamento extends Entidade {
     /** @OneToMany(targetEntity="Processo", mappedBy="departamento") */
     protected $processos;
 
-    function __construct($descricao, $constante) {
-        $this->constante = $constante;
+    function __construct($descricao) {
         $this->descricao = $descricao;
         $this->processos = new \Doctrine\Common\Collections\ArrayCollection();
     }
@@ -61,7 +60,7 @@ class Departamento extends Entidade {
         $clone = new Departamento("", false);
         
         $clone->setId($this->id);
-        $clone->setAtivo($this->ativo);
+       //$clone->setAtivo($this->ativo);
         $clone->setIndice($this->indice);
         $clone->setSelecionado($this->selecionado);
         

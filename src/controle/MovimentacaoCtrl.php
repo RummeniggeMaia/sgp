@@ -105,8 +105,9 @@ class MovimentacaoCtrl extends Controlador {
         } else if (Util::startsWithString($funcao, "editar_")) {
             $index = intval(str_replace("editar_", "", $funcao));
             if ($index != 0) {
-                $this->entidade = $this->entidades[$index - 1];
+                $this->entidade = $this->entidades[$index - 1]; 
                 $this->modoEditar = true;
+                $this->tab = "tab_form";
             }
         } else if (Util::startsWithString($funcao, "excluir_")) {
             $index = intval(str_replace("excluir_", "", $funcao));

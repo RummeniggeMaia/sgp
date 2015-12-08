@@ -20,9 +20,6 @@ abstract class Entidade {
      */
     protected $id;
 
-    /** @Column(type="boolean") */
-    protected $ativo = true;
-
     /** Esse campo é transiente, por isso não tem anotação. 
      * Usado para indicar se essa entidade foi selecionada em uma tabela */
     protected $selecionado;
@@ -38,10 +35,6 @@ abstract class Entidade {
     
     public function getId() {
         return $this->id;
-    }
-
-    public function getAtivo() {
-        return $this->ativo;
     }
 
     public function getSelecionado() {

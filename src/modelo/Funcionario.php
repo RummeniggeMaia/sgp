@@ -85,7 +85,7 @@ class Funcionario extends Entidade {
         $clone = new Funcionario("", "", "");
         
         $clone->setId($this->id);
-        $clone->setAtivo($this->ativo);
+        //$clone->setAtivo($this->ativo);
         $clone->setIndice($this->indice);
         $clone->setSelecionado($this->selecionado);
         

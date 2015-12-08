@@ -2,13 +2,10 @@
 
 namespace dao;
 
+use dao\Dql;
 use Doctrine\ORM\QueryBuilder;
 use modelo\Entidade;
-use modelo\Assunto;
-use modelo\Departamento;
 use modelo\Funcionario;
-use modelo\Movimentacao;
-use modelo\Processo;
 
 /**
  * Description of DqlBuilder
@@ -21,6 +18,7 @@ class DqlBuilder {
     const FUNCAO_CONTAR = 2;
 
     public function gerarDql(QueryBuilder $queryBuilder, Entidade $entidade, $funcao) {
+
         if ($funcao == self::FUNCAO_BUSCAR) {
             $queryBuilder->select("x");
         } else if ($funcao == self::FUNCAO_CONTAR) {
@@ -31,22 +29,10 @@ class DqlBuilder {
             $this->gerarClausulaWhereFuncionario(
                     $entidade, $queryBuilder);
         }
-        if ($entidade->getClassName() == "modelo\Assunto") {
-            $this->gerarClausulaWhereAssunto(
-                    $entidade, $queryBuilder);
-        }
-        if ($entidade->getClassName() == "modelo\Departamento") {
-            $this->gerarClausulaWhereDepartamento(
-                    $entidade, $queryBuilder);
-        }
-        if ($entidade->getClassName() == "modelo\Movimentacao") {
-            $this->gerarClausulaWhereMovimentacao(
-                    $entidade, $queryBuilder);
-        }
     }
 
     private function gerarClausulaWhereFuncionario(Funcionario $funcionario, QueryBuilder $qb) {
-        $qb->where("x.ativo = true");
+        
         if ($funcionario->getNome() != null &&
                 preg_match("/.+/i", $funcionario->getNome())) {
             $qb->andWhere("x.nome like '%" . $funcionario->getNome() . "%'");
@@ -58,36 +44,6 @@ class DqlBuilder {
         if ($funcionario->getRg() != null &&
                 preg_match("/.+/i", $funcionario->getRg())) {
             $qb->andWhere("x.rg = '" . $funcionario->getRg() . "'");
-        }
-    }
-
-    private function gerarClausulaWhereAssunto(Assunto $assunto, QueryBuilder $qb) {
-        $qb->where("x.ativo = true");
-        if ($assunto->getConstante()) {
-            $qb->andWhere("x.constante = true");
-        }
-        if ($assunto->getDescricao() != null &&
-                preg_match("/.+/i", $assunto->getDescricao())) {
-            $qb->andWhere("x.descricao like '%" . $assunto->getDescricao() . "%'");
-        }
-    }
-
-    private function gerarClausulaWhereDepartamento(Departamento $departamento, QueryBuilder $qb) {
-        $qb->where("x.ativo = true");
-        if ($departamento->getConstante()) {
-            $qb->andWhere("x.constante = true");
-        }
-        if ($departamento->getDescricao() != null &&
-                preg_match("/.+/i", $departamento->getDescricao())) {
-            $qb->andWhere("x.descricao like '%" . $departamento->getDescricao() . "%'");
-        }
-    }
-
-    private function gerarClausulaWhereMovimentacao(Movimentacao $movimentacao, QueryBuilder $qb) {
-        $qb->where("x.ativo = true");
-        if ($movimentacao->getDescricao() != null &&
-                preg_match("/.+/i", $movimentacao->getDescricao())) {
-            $qb->andWhere("x.descricao like '%" . $movimentacao->getDescricao() . "%'");
         }
     }
 

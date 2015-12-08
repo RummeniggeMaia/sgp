@@ -37,11 +37,13 @@ class ProcessoCtrl extends Controlador {
         $this->assuntos = $this->dao->pesquisar($assunto, PHP_INT_MAX, 0);
         $departamento = new Departamento(null, true);
         $this->departamentos = $this->dao->pesquisar($departamento, PHP_INT_MAX, 0);
+        //Indexa todas os assuntos para ser buscada pela descricao
         $aux = array();
         foreach ($this->assuntos as $a) {
             $aux[$a->getDescricao()] = $a;
         }
         $this->assuntos = $aux;
+        //Indexa todas os departamentos para ser buscada pela descricao
         $aux = array();
         foreach ($this->departamentos as $d) {
             $aux[$d->getDescricao()] = $d;
@@ -102,6 +104,7 @@ class ProcessoCtrl extends Controlador {
 
     public function executarFuncao($post, $funcao, $controladores) {
         $this->gerarProcesso($post);
+
         $redirecionamento = new Redirecionamento();
         $redirecionamento->setDestino('gerenciar_processo');
         $redirecionamento->setCtrl($this);
@@ -109,38 +112,14 @@ class ProcessoCtrl extends Controlador {
         $this->tab = "tab_tabela";
 
         if ($funcao == "salvar") {
-            $this->dao->editar($this->entidade);
-            $this->entidade = new Processo("");
-            $this->modoEditar = false;
-            $this->tab = "tab_form";
-            $this->mensagem = new Mensagem(
-                    "Cadastro de processos"
-                    , "msg_tipo_ok"
-                    , "Dados do Processo salvos com sucesso.");
+            $this->salvarProcesso();
         } else if ($funcao == "pesquisar") {
-            $this->modeloTabela->setPaginador(new Paginador());
-            $this->modeloTabela->getPaginador()->setContagem(
-                    $this->dao->contar($this->entidade));
-            $this->modeloTabela->getPaginador()->setPesquisa(
-                    clone $this->entidade);
-            $this->pesquisar();
+            $this->pesquisarProcessos();
         } else if ($funcao == "cancelar_edicao") {
             $this->modoEditar = false;
             $this->entidade = new Funcionario("", "", "");
         } else if ($funcao == 'enviar_processos') {
-            $selecionados = array();
-            foreach ($post as $valor) {
-                if (Util::startsWithString($valor, "radio_")) {
-                    $index = str_replace("radio_", "", $valor);
-                    $selecionados[] = clone $this->entidades[$index - 1];
-                }
-            }
-            $ctrl = $controladores[$this->ctrlDestino];
-            $ctrl->setProcessos($selecionados);
-            $this->modoBusca = false;
-            $redirecionamento->setDestino($this->getCtrlDestino());
-            $redirecionamento->setCtrl($controladores[$this->getCtrlDestino()]);
-            return $redirecionamento;
+            return $this->enviarProcessos($post, $controladores);
         } else if ($funcao == 'cancelar_enviar') {
             $this->setCtrlDestino("");
             $this->setModoBusca(false);
@@ -150,34 +129,14 @@ class ProcessoCtrl extends Controlador {
             $this->tab = "tab_form";
         } else if (Util::startsWithString($funcao, "editar_")) {
             $index = intval(str_replace("editar_", "", $funcao));
-            if ($index != 0) {
-                $this->entidade = $this->entidades[$index - 1];
-                $this->modoEditar = true;
-                $this->tab = "tab_form";
-            }
+            $this->editarProcesso($index);
         } else if (Util::startsWithString($funcao, "excluir_")) {
             $index = intval(str_replace("excluir_", "", $funcao));
-            if ($index != 0) {
-                $aux = $this->entidades[$index - 1];
-                $this->dao->excluir($aux);
-                $p = $this->modeloTabela->getPaginador();
-                if ($p->getOffset() == $p->getContagem()) {
-                    $p->anterior();
-                }
-                $p->setContagem($p->getContagem() - 1);
-                $this->pesquisar();
-            }
+            $this->excluirProcesso($index);
         } else if (Util::startsWithString($funcao, "paginador_")) {
             parent::paginar($funcao);
         } else if ($funcao == 'buscar_funcionario') {
-            $funcCtrl = $controladores['gerenciar_funcionario'];
-            $funcCtrl->setModoBusca(true);
-            $funcCtrl->setCtrlDestino('gerenciar_processo');
-            $redirecionamento = new Redirecionamento();
-            $redirecionamento->setDestino('gerenciar_funcionario');
-            $redirecionamento->setCtrl($funcCtrl);
-            $this->tab = "tab_form";
-            return $redirecionamento;
+            return $this->buscarFuncionario($controladores);
         }
         return $redirecionamento;
     }
@@ -201,6 +160,76 @@ class ProcessoCtrl extends Controlador {
             $linhas[] = $linha;
         }
         $this->modeloTabela->setLinhas($linhas);
+    }
+
+    private function salvarProcesso() {
+        $this->dao->editar($this->entidade);
+        $this->entidade = new Processo("");
+        $this->modoEditar = false;
+        $this->tab = "tab_form";
+        $this->mensagem = new Mensagem(
+                "Cadastro de processos"
+                , "msg_tipo_ok"
+                , "Dados do Processo salvos com sucesso.");
+    }
+
+    private function pesquisarProcessos() {
+        $this->modeloTabela->setPaginador(new Paginador());
+        $this->modeloTabela->getPaginador()->setContagem(
+                $this->dao->contar($this->entidade));
+        $this->modeloTabela->getPaginador()->setPesquisa(
+                clone $this->entidade);
+        $this->pesquisar();
+    }
+
+    private function editarProcesso($index) {
+        if ($index != 0) {
+            $this->entidade = $this->entidades[$index - 1];
+            $this->modoEditar = true;
+            $this->tab = "tab_form";
+        }
+    }
+
+    private function excluirProcesso($index) {
+        if ($index != 0) {
+            $aux = $this->entidades[$index - 1];
+            $this->dao->excluir($aux);
+            $p = $this->modeloTabela->getPaginador();
+            if ($p->getOffset() == $p->getContagem()) {
+                $p->anterior();
+            }
+            $p->setContagem($p->getContagem() - 1);
+            $this->pesquisar();
+        }
+    }
+
+    private function enviarProcessos($post, $controladores) {
+        $redirecionamento = new Redirecionamento();
+
+        $selecionados = array();
+        foreach ($post as $valor) {
+            if (Util::startsWithString($valor, "radio_")) {
+                $index = str_replace("radio_", "", $valor);
+                $selecionados[] = clone $this->entidades[$index - 1];
+            }
+        }
+        $ctrl = $controladores[$this->ctrlDestino];
+        $ctrl->setProcessos($selecionados);
+        $this->modoBusca = false;
+        $redirecionamento->setDestino($this->ctrlDestino);
+        $redirecionamento->setCtrl($controladores[$this->ctrlDestino]);
+        return $redirecionamento;
+    }
+
+    private function buscarFuncionario($controladores) {
+        $funcCtrl = $controladores['gerenciar_funcionario'];
+        $funcCtrl->setModoBusca(true);
+        $funcCtrl->setCtrlDestino('gerenciar_processo');
+        $redirecionamento = new Redirecionamento();
+        $redirecionamento->setDestino('gerenciar_funcionario');
+        $redirecionamento->setCtrl($funcCtrl);
+        $this->tab = "tab_form";
+        return $redirecionamento;
     }
 
 }

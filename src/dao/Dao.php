@@ -18,7 +18,6 @@ class Dao {
     public function __construct($entityManager) {
         $this->entityManager = $entityManager;
         $this->dqlBuilder = new DqlBuilder();
-        
     }
 
     public function getEntityManager() {
@@ -40,8 +39,8 @@ class Dao {
     }
 
     public function excluir($entidade) {
-        //$entidade->setAtivo(false);
-        $this->editar($entidade);
+        $this->entityManager->remove($entidade);
+        $this->entityManager->flush();
     }
 
     public function pesquisar($entidade, $limit, $offset) {
@@ -52,7 +51,6 @@ class Dao {
         $queryBuilder->setFirstResult($offset);
         $result = $queryBuilder->getQuery()->getResult();
         return $this->desanexar($result);
-//        return $result;
     }
 
     public function contar($entidade) {

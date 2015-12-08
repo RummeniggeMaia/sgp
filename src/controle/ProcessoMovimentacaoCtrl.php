@@ -80,7 +80,6 @@ class ProcessoMovimentacaoCtrl extends Controlador {
                 //Atualiza a movimentacao e o processoMovimentacao.
                 $pm->setMovimentacao($mov);
                 $pm->setProcesso($this->entidade);
-//                $pm->setIndice($index);
             }
         }
     }

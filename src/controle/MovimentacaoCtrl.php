@@ -22,7 +22,7 @@ class MovimentacaoCtrl extends Controlador {
     public $validadorMovimentacao;
 
     public function __construct() {
-        $this->entidade = new Movimentacao(new DateTime('now'), "", "");
+        $this->entidade = new Movimentacao("", "");
         $this->entidades = array();
         $this->mensagem = null;
         $this->modeloTabela = new ModeloDeTabela();

@@ -105,7 +105,7 @@ class MovimentacaoCtrl extends Controlador {
         } else if (Util::startsWithString($funcao, "editar_")) {
             $index = intval(str_replace("editar_", "", $funcao));
             if ($index != 0) {
-                $this->entidade = $this->entidades[$index - 1]; 
+                $this->entidade = $this->entidades[$index - 1];
                 $this->modoEditar = true;
                 $this->tab = "tab_form";
             }
@@ -137,6 +137,77 @@ class MovimentacaoCtrl extends Controlador {
             $linhas[] = $linha;
         }
         $this->modeloTabela->setLinhas($linhas);
+    }
+
+    private function salvar() {
+        $resultado = $this->validadorMovimentacao->validarCadastro($this->entidade);
+        if ($resultado != null) {
+            $this->mensagem = new Mensagem(
+                    "Cadastro de movimentacao"
+                    , "msg_tipo_error"
+                    , $resultado);
+        } else {
+            if ($this->modoEditar) {
+                $this->dao->editar($this->entidade);
+            } else {
+                $this->dao->criar($this->entidade);
+            }
+            $this->entidade = new Movimentacao("", "");
+            $this->modoEditar = false;
+            $this->mensagem = new Mensagem(
+                    "Cadastro de movimentação"
+                    , "msg_tipo_ok"
+                    , "Dados de Movimentação salvo com sucesso.");
+        }
+    }
+
+    private function enviarMovimentacao() {
+        $selecionados = array();
+        foreach ($post as $valor) {
+            if (Util::startsWithString($valor, "radio_")) {
+                $index = str_replace("radio_", "", $valor);
+                $selecionados[] = clone $this->entidades[$index - 1];
+                break;
+            }
+        }
+        $ctrl = $controladores[$this->ctrlDestino];
+        $ctrl->setMovimentacaos($selecionados);
+        $this->modoBusca = false;
+        $redirecionamento->setDestino($this->getCtrlDestino());
+        $redirecionamento->setCtrl($controladores[$this->getCtrlDestino()]);
+        return $redirecionamento;
+    }
+
+    private function editar($funcao) {
+        $index = intval(str_replace("editar_", "", $funcao));
+        if ($index != 0) {
+            $this->entidade = $this->entidades[$index - 1];
+            $this->modoEditar = true;
+            $this->tab = "tab_form";
+        }
+    }
+
+    private function excluir($funcao) {
+        $index = intval(str_replace("excluir_", "", $funcao));
+        if ($index != 0) {
+            $aux = $this->entidades[$index - 1];
+            $this->dao->excluir($aux);
+            $p = $this->modeloTabela->getPaginador();
+            if ($p->getOffset() == $p->getContagem()) {
+                $p->anterior();
+            }
+            $p->setContagem($p->getContagem() - 1);
+            $this->pesquisar();
+        }
+    }
+
+    private function gerarTabela() {
+        $this->modeloTabela->setPaginador(new Paginador());
+        $this->modeloTabela->getPaginador()->setContagem(
+                $this->dao->contar($this->entidade));
+        $this->modeloTabela->getPaginador()->setPesquisa(
+                clone $this->entidade);
+        $this->pesquisar();
     }
 
 }

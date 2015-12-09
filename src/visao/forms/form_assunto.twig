@@ -25,14 +25,14 @@
         <div class="ui top attached tabular menu">
             <div class="item {{ ctrl.tab == 'tab_form' ? 'active' : '' }}" data-tab="form">Formulário</div>
             <div class="item {{ ctrl.tab == 'tab_tabela' ? 'active' : '' }}" data-tab="tabela">Tabela</div>
-        </div>      
+        </div>
         <div class="ui bottom attached tab segment {{ ctrl.tab == 'tab_form' ? 'active' : '' }}" data-tab="form">
             <form id="form_assunto" class="ui form" method="post" 
                   action="front_controller.php">                
                 <div class="field">
                     <label>Descrição:</label>
                     <input type="text" name="campo_descricao" 
-                           placeholder="descricao" value="{{ctrl.entidade.descricao}}">
+                           placeholder="descricao" value="{{ ctrl.entidade.descricao }}">
                 </div>
                 <div class="fields">
                     <div class="field">

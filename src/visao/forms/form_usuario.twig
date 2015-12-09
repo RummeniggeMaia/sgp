@@ -1,0 +1,34 @@
+{# empty Twig template #}
+{% extends "templates/base.twig"%}
+
+{% block title %}Gerenciamento de Login{% endblock %}
+
+{% block body %}
+    <br/>
+    {% include 'fragmentos/frag_titulo.twig' 
+            with {
+                'titulo' : 'Gerenciamento de Login', 
+                'sub_titulo' : 'Interface para gerenciar login no sistema'
+            }
+    %}
+    <div class="html ui top right attached segment">
+        {% if error %}
+            <div>{{ error.message }}</div>
+        {% endif %}
+
+         <form id="form_usuario" class="ui form" method="post" 
+                  action="front_controller.php"> 
+            <label>Login:</label>
+            <input type="text" name="campo_usuario" value="{{ ctrl.usuario.login }}" />
+
+            <label>Senha:</label>
+            <input type="password" name="campo_senha" />
+
+            <div class="ui submit black button"
+                 onClick="submeterForm('form_usuario', 'funcao_gerenciar_usuario', 'logar');">
+                <i class="unlock icon"></i>Login
+            </div>
+        </form>
+    </div>
+{% endblock %}
+{# empty Twig template #}

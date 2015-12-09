@@ -47,78 +47,18 @@ class DepartamentoCtrl extends Controlador {
         $redirecionamento->setCtrl($this);
 
         if ($funcao == "salvar") {
-            $resultado = $this->validadorDepartamento->validarCadastro($this->entidade);
-            if ($resultado != null) {
-                $this->mensagem = new Mensagem(
-                        "Cadastro de departamentos"
-                        , "msg_tipo_error"
-                        , $resultado);
-            } else {
-                if ($this->modoEditar) {
-                    $this->dao->editar($this->entidade);
-                } else {
-                    $this->dao->criar($this->entidade);
-                }
-                $this->entidade = new Departamento("");
-                $this->modoEditar = false;
-                $this->mensagem = new Mensagem(
-                        "Cadastro de departamentos"
-                        , "msg_tipo_ok"
-                        , "Dados do Departamento salvo com sucesso.");
-            }
-            $this->entidade = new Departamento("");
-            $this->modoEditar = false;
-            $this->mensagem = new Mensagem(
-                    "Cadastro de departamentos"
-                    , "msg_tipo_ok"
-                    , "Dados do Departamento salvo com sucesso.");
+            $this->salvarDepartamento();
         } else if ($funcao == "pesquisar") {
-            $this->modeloTabela->setPaginador(new Paginador());
-            $this->modeloTabela->getPaginador()->setContagem(
-                    $this->dao->contar($this->entidade));
-            $this->modeloTabela->getPaginador()->setPesquisa(
-                    clone $this->entidade);
-            $this->pesquisar();
+            $this->pesquisarDepartamento();
         } else if ($funcao == "cancelar_edicao") {
             $this->modoEditar = false;
             $this->entidade = new Departamento("");
-        } else if ($funcao == 'enviar_departamentos') {
-            $selecionados = array();
-            foreach ($post as $valor) {
-                if (Util::startsWithString($valor, "radio_")) {
-                    $index = str_replace("radio_", "", $valor);
-                    $selecionados[] = clone $this->entidades[$index - 1];
-                    break;
-                }
-            }
-            $ctrl = $controladores[$this->ctrlDestino];
-            $ctrl->setDepartamentos($selecionados);
-            $this->modoBusca = false;
-            $redirecionamento->setDestino($this->getCtrlDestino());
-            $redirecionamento->setCtrl($controladores[$this->getCtrlDestino()]);
-            return $redirecionamento;
-        } else if ($funcao == 'cancelar_enviar') {
-            $this->setCtrlDestino("");
-            $this->setModoBusca(false);
         } else if (Util::startsWithString($funcao, "editar_")) {
             $index = intval(str_replace("editar_", "", $funcao));
-            if ($index != 0) {
-                $this->entidade = $this->entidades[$index - 1]; 
-                $this->modoEditar = true;
-                $this->tab = "tab_form";
-            }
+            $this->editarDepartamento($index);
         } else if (Util::startsWithString($funcao, "excluir_")) {
             $index = intval(str_replace("excluir_", "", $funcao));
-            if ($index != 0) {
-                $aux = $this->entidades[$index - 1];
-                $this->dao->excluir($aux);
-                $p = $this->modeloTabela->getPaginador();
-                if ($p->getOffset() == $p->getContagem()) {
-                    $p->anterior();
-                }
-                $p->setContagem($p->getContagem() - 1);
-                $this->pesquisar();
-            }
+            $this->excluirDepartamento($index);
         } else if (Util::startsWithString($funcao, "paginador_")) {
             parent::paginar($funcao);
         }
@@ -137,4 +77,51 @@ class DepartamentoCtrl extends Controlador {
         $this->modeloTabela->setLinhas($linhas);
     }
 
+    private function salvarDepartamento() {
+        $resultado = $this->validadorMovimentacao->validarCadastro($this->entidade);
+        if ($resultado != null) {
+            $this->mensagem = new Mensagem(
+                    "Cadastro de departamento"
+                    , "msg_tipo_error"
+                    , $resultado);
+        } else {
+            $this->dao->editar($this->entidade);
+            $this->entidade = new Departamento("", "");
+            $this->modoEditar = false;
+            $this->mensagem = new Mensagem(
+                    "Cadastro de departamento"
+                    , "msg_tipo_ok"
+                    , "Dados do departamento salvos com sucesso.");
+        }
+    }
+
+    private function pesquisarDepartamento() {
+        $this->modeloTabela->setPaginador(new Paginador());
+        $this->modeloTabela->getPaginador()->setContagem(
+                $this->dao->contar($this->entidade));
+        $this->modeloTabela->getPaginador()->setPesquisa(
+                clone $this->entidade);
+        $this->pesquisar();
+    }
+
+    private function editarDepartamento($index) {
+        if ($index != 0) {
+            $this->entidade = $this->entidades[$index - 1];
+            $this->modoEditar = true;
+            $this->tab = "tab_form";
+        }
+    }
+
+    private function excluirDepartamento($index) {
+        if ($index != 0) {
+            $aux = $this->entidades[$index - 1];
+            $this->dao->excluir($aux);
+            $p = $this->modeloTabela->getPaginador();
+            if ($p->getOffset() == $p->getContagem()) {
+                $p->anterior();
+            }
+            $p->setContagem($p->getContagem() - 1);
+            $this->pesquisar();
+        }
+    }
 }

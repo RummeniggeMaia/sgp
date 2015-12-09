@@ -5,6 +5,7 @@
 
 {% block body %}
     <br/>
+    <br/>
     <div class="html ui top right attached segment">
         {% include 'fragmentos/frag_titulo.twig' 
             with {
@@ -30,7 +31,7 @@
                   action="front_controller.php">              
                 <div class="field">
                     <label>Descrição:</label>
-                    <input type="text" name="campo_descricao" placeholder="descricao" value="{{ctrl.entidade.descricao}}">
+                    <input type="text" name="campo_descricao" placeholder="descricao" value="{{ ctrl.entidade.descricao }}">
                 </div>
 
                 <div class="fields">

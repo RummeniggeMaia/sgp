@@ -29,7 +29,8 @@ class AssuntoCtrl extends Controlador {
         $this->modeloTabela->setModoBusca(false);
         $this->validadorAssunto = new ValidadorAssunto();
     }
- 	// modificado
+
+    // modificado
 
     /**
      * Factory method para gerar assuntos baseado a partir do POST
@@ -43,79 +44,31 @@ class AssuntoCtrl extends Controlador {
 
     public function executarFuncao($post, $funcao, $controladores) {
         $this->gerarAssunto($post);
+
         $redirecionamento = new Redirecionamento();
         $redirecionamento->setDestino('gerenciar_assunto');
         $redirecionamento->setCtrl($this);
-        $this->mensagem = null;
+
         $this->tab = "tab_tabela";
 
         if ($funcao == "salvar") {
-            $resultado = $this->validadorAssunto->validarCadastro($this->entidade);
-            if ($resultado != null) {
-                $this->mensagem = new Mensagem(
-                        "Cadastro de assuntos"
-                        , "msg_tipo_error"
-                        , $resultado);
-            } else {
-                if ($this->modoEditar) {
-                    $this->dao->editar($this->entidade);
-                } else {
-                    $this->dao->criar($this->entidade);
-                }
-                $this->entidade = new Assunto("", "");
-                $this->modoEditar = false;
-                $this->mensagem = new Mensagem(
-                        "Cadastro de assuntos"
-                        , "msg_tipo_ok"
-                        , "Dados do Assunto salvo com sucesso.");
-            }
+            $this->salvarAssunto();
         } else if ($funcao == "pesquisar") {
-            $this->modeloTabela->setPaginador(new Paginador());
-            $this->modeloTabela->getPaginador()->setContagem(
-                    $this->dao->contar($this->entidade));
-            $this->modeloTabela->getPaginador()->setPesquisa(
-                    clone $this->entidade);
-            $this->pesquisar();
+            $this->pesquisarAssunto();
         } else if ($funcao == "cancelar_edicao") {
             $this->modoEditar = false;
             $this->entidade = new Assunto("", "");
-        } else if ($funcao == 'enviar_assuntos') {
-            $selecionados = array();
-            foreach ($post as $valor) {
-                if (Util::startsWithString($valor, "radio_")) {
-                    $index = str_replace("radio_", "", $valor);
-                    $selecionados[] = clone $this->entidades[$index - 1];
-                    break;
-                }
-            }
-            $ctrl = $controladores[$this->ctrlDestino];
-            $ctrl->setAssuntos($selecionados);
-            $this->modoBusca = false;
-            $redirecionamento->setDestino($this->getCtrlDestino());
-            $redirecionamento->setCtrl($controladores[$this->getCtrlDestino()]);
-            return $redirecionamento;            
-        } else if ($funcao == 'cancelar_enviar') {
-            $this->setCtrlDestino("");
-            $this->setModoBusca(false);
-        }else if (Util::startsWithString($funcao, "editar_")) {
+        } /* else if ($funcao == 'enviar_assuntos') {
+          return $this->enviarAssuntos();
+          } else if ($funcao == 'cancelar_enviar') {
+          $this->setCtrlDestino("");
+          $this->setModoBusca(false);
+          } */ else if (Util::startsWithString($funcao, "editar_")) {
             $index = intval(str_replace("editar_", "", $funcao));
-            if ($index != 0) {
-                $this->entidade = $this->entidades[$index - 1]; 
-                $this->modoEditar = true;
-                $this->tab = "tab_form";
-            }
+            $this->editarAssunto($index);
         } else if (Util::startsWithString($funcao, "excluir_")) {
             $index = intval(str_replace("excluir_", "", $funcao));
-            if ($index != 0) {
-                $aux = $this->entidades[$index - 1];
-                $this->dao->excluir($aux);
-                $p = $this->modeloTabela->getPaginador();
-                if ($p->getOffset() == $p->getContagem()) {
-                    $p->anterior();
-                }
-                $p->setContagem($p->getContagem() - 1);
-                $this->pesquisar();
-            }
+            $this->excluirAssunto();
         } else if (Util::startsWithString($funcao, "paginador_")) {
             parent::paginar($funcao);
         }
@@ -132,6 +85,72 @@ class AssuntoCtrl extends Controlador {
             $linhas[] = $linha;
         }
         $this->modeloTabela->setLinhas($linhas);
+    }
+
+    private function salvarAssunto() {
+        $resultado = $this->validadorAssunto->validarCadastro($this->entidade);
+        if ($resultado != null) {
+            $this->mensagem = new Mensagem(
+                    "Cadastro de assuntos"
+                    , "msg_tipo_error"
+                    , $resultado);
+        } else {
+            $this->entidade->setConstante(true);
+            $this->dao->editar($this->entidade);
+            $this->entidade = new Assunto("", "");
+            $this->modoEditar = false;
+            $this->mensagem = new Mensagem(
+                    "Cadastro de assuntos"
+                    , "msg_tipo_ok"
+                    , "Dados do Assunto salvo com sucesso.");
+        }
+    }
+
+    public function pesquisarAssunto() {
+        $this->modeloTabela->setPaginador(new Paginador());
+        $this->modeloTabela->getPaginador()->setContagem(
+                $this->dao->contar($this->entidade));
+        $this->modeloTabela->getPaginador()->setPesquisa(
+                clone $this->entidade);
+        $this->pesquisar();
+    }
+
+    /* public function enviarAssuntos($post, $controladores) {
+      $redirecionamento = new Redirecionamento();
+      $selecionados = array();
+      foreach ($post as $valor) {
+      if (Util::startsWithString($valor, "radio_")) {
+      $index = str_replace("radio_", "", $valor);
+      $selecionados[] = clone $this->entidades[$index - 1];
+      }
+      }
+      $ctrl = $controladores[$this->ctrlDestino];
+      $ctrl->setAssuntos($selecionados);
+      $this->modoBusca = false;
+      $redirecionamento->setDestino($this->getCtrlDestino());
+      $redirecionamento->setCtrl($controladores[$this->getCtrlDestino()]);
+      return $redirecionamento;
+      } */
+
+    public function editarAssunto($index) {
+        if ($index != 0) {
+            $this->entidade = $this->entidades[$index - 1];
+            $this->modoEditar = true;
+            $this->tab = "tab_form";
+        }
+    }
+
+    public function excluirAssunto($index) {
+        if ($index != 0) {
+            $aux = $this->entidades[$index - 1];
+            $this->dao->excluir($aux);
+            $p = $this->modeloTabela->getPaginador();
+            if ($p->getOffset() == $p->getContagem()) {
+                $p->anterior();
+            }
+            $p->setContagem($p->getContagem() - 1);
+            $this->pesquisar();
+        }
     }
 
 }

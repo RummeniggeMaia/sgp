@@ -58,6 +58,7 @@ class MovimentacaoCtrl extends Controlador {
         } else if (Util::startsWithString($funcao, "editar_")) {
             $index = intval(str_replace("editar_", "", $funcao));
             $this->editarMovimentacao($index);
+
         } else if (Util::startsWithString($funcao, "excluir_")) {
             $index = intval(str_replace("excluir_", "", $funcao));
             $this->excluirMovimentacao();
@@ -115,6 +116,7 @@ class MovimentacaoCtrl extends Controlador {
     }
 
     private function excluirMovimentacao($index) {
+
         if ($index != 0) {
             $aux = $this->entidades[$index - 1];
             $this->dao->excluir($aux);
@@ -126,5 +128,4 @@ class MovimentacaoCtrl extends Controlador {
             $this->pesquisar();
         }
     }
-
 }

@@ -6,6 +6,7 @@ use dao\Dql;
 use Doctrine\ORM\QueryBuilder;
 use modelo\Entidade;
 use modelo\Funcionario;
+use modelo\Usuario;
 
 /**
  * Description of DqlBuilder
@@ -29,10 +30,14 @@ class DqlBuilder {
             $this->gerarClausulaWhereFuncionario(
                     $entidade, $queryBuilder);
         }
+        if ($entidade->getClassName() == "modelo\Usuario") {
+            $this->gerarClausulaWhereUsuario(
+                    $entidade, $queryBuilder);
+        }
     }
 
     private function gerarClausulaWhereFuncionario(Funcionario $funcionario, QueryBuilder $qb) {
-        
+
         if ($funcionario->getNome() != null &&
                 preg_match("/.+/i", $funcionario->getNome())) {
             $qb->andWhere("x.nome like '%" . $funcionario->getNome() . "%'");
@@ -45,6 +50,18 @@ class DqlBuilder {
                 preg_match("/.+/i", $funcionario->getRg())) {
             $qb->andWhere("x.rg = '" . $funcionario->getRg() . "'");
         }
+    }
+
+    private function gerarClausulaWhereUsuario(Usuario $usuario, QueryBuilder $qb) {
+        if ($usuario->getLogin() != null &&
+                preg_match("/.+/i", $usuario->getLogin())) {
+            $qb->andWhere("x.login = '" . $usuario->getLogin() . "'");
+        }
+        if ($usuario->getSenha() != null &&
+                preg_match("/.+/i", $usuario->getSenha())) {
+            $qb->andWhere("x.senha = '" . $usuario->getSenha() . "'");
+        }
+        
     }
 
 }

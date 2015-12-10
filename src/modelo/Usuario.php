@@ -14,6 +14,12 @@ use modelo\Entidade;
 class Usuario extends Entidade {
 
     /** @Column(type="string") */
+    protected $nome;
+    
+    /** @Column(type="string") */
+    protected $email;
+    
+    /** @Column(type="string", unique=true) */
     protected $login;
 
     /** @Column(type="string") */
@@ -48,5 +54,20 @@ class Usuario extends Entidade {
     public function clonar() {
         
     }
+    
+    public function getNome() {
+        return $this->nome;
+    }
 
+    public function getEmail() {
+        return $this->email;
+    }
+
+    public function setNome($nome) {
+        $this->nome = $nome;
+    }
+
+    public function setEmail($email) {
+        $this->email = $email;
+    }
 }

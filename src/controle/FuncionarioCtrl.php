@@ -3,13 +3,12 @@
 namespace controle;
 
 use controle\Controlador;
-use controle\ProcessoCtrl;
 use controle\Mensagem;
 use controle\tabela\Linha;
 use controle\tabela\ModeloDeTabela;
 use controle\tabela\Paginador;
+use controle\validadores\ValidadorFuncionario;
 use modelo\Funcionario;
-use validadores\ValidadorFuncionario;
 use util\Util;
 
 /**
@@ -48,24 +47,19 @@ class FuncionarioCtrl extends Controlador {
 
     public function executarFuncao($post, $funcao, $controladores) {
         $this->gerarFuncionario($post);
+
         $redirecionamento = new Redirecionamento();
         $redirecionamento->setDestino('gerenciar_funcionario');
         $redirecionamento->setCtrl($this);
-        $this->mensagem = null;
+        $this->tab = "tab_tabela";
 
         if ($funcao == "salvar") {
-            $resultado = $this->validadorFuncionario->validarCadastro($this->entidade);
-            if ($resultado != null) {
-                $this->mensagem = new Mensagem(
-                        "Cadastro de funcionários"
-                        , "msg_tipo_error"
-                        , $resultado);
+            $this->validadorFuncionario->validar($this->entidade);
+            if (!$this->validadorFuncionario->getValido()) {
+                $this->mensagem = $this->validadorFuncionario->getMensagem();
+                $this->tab = "tab_form";
             } else {
-                if ($this->modoEditar) {
-                    $this->dao->editar($this->entidade);
-                } else {
-                    $this->dao->criar($this->entidade);
-                }
+                $this->dao->editar($this->entidade);
                 $this->entidade = new Funcionario("", "", "");
                 $this->modoEditar = false;
                 $this->mensagem = new Mensagem(
@@ -104,7 +98,7 @@ class FuncionarioCtrl extends Controlador {
         } else if (Util::startsWithString($funcao, "editar_")) {
             $index = intval(str_replace("editar_", "", $funcao));
             if ($index != 0) {
-                $this->entidade = $this->entidades[$index - 1]; 
+                $this->entidade = $this->entidades[$index - 1];
                 $this->modoEditar = true;
                 $this->tab = "tab_form";
             }
@@ -192,6 +186,11 @@ class FuncionarioCtrl extends Controlador {
                 return true;
             }
         }
+    }
+
+    public function resetar() {
+        $this->mensagem = null;
+        $this->validadorFuncionario = new ValidadorFuncionario();
     }
 
 }

@@ -18,4 +18,9 @@ class HomeCtrl extends Controlador {
     public function gerarLinhas() {
         
     }
+
+    public function resetar() {
+        $this->mensagem = null;
+    }
+
 }

@@ -232,4 +232,8 @@ class ProcessoCtrl extends Controlador {
         return $redirecionamento;
     }
 
+    public function resetar() {
+        $this->mensagem = null;
+    }
+
 }

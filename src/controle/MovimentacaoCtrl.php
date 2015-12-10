@@ -9,7 +9,7 @@ use controle\tabela\ModeloDeTabela;
 use controle\tabela\Paginador;
 use modelo\Movimentacao;
 use util\Util;
-use validadores\ValidadorMovimentacao;
+use controle\validadores\ValidadorMovimentacao;
 
 /**
  * Description of MovimentacaoCtrl
@@ -128,4 +128,9 @@ class MovimentacaoCtrl extends Controlador {
             $this->pesquisar();
         }
     }
+
+    public function resetar() {
+        $this->mensagem = null;
+    }
+
 }

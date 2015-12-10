@@ -8,7 +8,7 @@ use controle\tabela\Linha;
 use controle\tabela\ModeloDeTabela;
 use controle\tabela\Paginador;
 use modelo\Assunto;
-use validadores\ValidadorAssunto;
+use controle\validadores\ValidadorAssunto;
 use util\Util;
 
 /**
@@ -151,6 +151,10 @@ class AssuntoCtrl extends Controlador {
             $p->setContagem($p->getContagem() - 1);
             $this->pesquisar();
         }
+    }
+
+    public function resetar() {
+        $this->mensagem = null;
     }
 
 }

@@ -50,4 +50,8 @@ class UsuarioCtrl extends Controlador {
         
     }
 
+    public function resetar() {
+        $this->mensagem = null;
+    }
+
 }

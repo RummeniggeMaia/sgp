@@ -143,4 +143,6 @@ abstract class Controlador {
     public abstract function executarFuncao($post, $funcao, $controladores);
 
     public abstract function gerarLinhas();
+    
+    public abstract function resetar();
 }

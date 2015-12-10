@@ -28,7 +28,7 @@ $chaves = array_keys($_POST);
 //Caso o front_controller seja chamado sem nenhuma funcao ou navegacao
 // o usuario é redirecionado para a pagina home
 if (empty($chaves)) {
-    $chaves[] = "navegador_gerenciar_home"; 
+    $chaves[] = "navegador_gerenciar_home";
 }
 foreach ($chaves as $requisicao) {
     if (is_string($requisicao)) {
@@ -48,7 +48,7 @@ foreach ($chaves as $requisicao) {
                                 null
                 );
                 //Gera o template e manda renderizar a visao .twig
-                redirecionar($twig, $redirecionamento);
+                redirecionar($twig, $redirecionamento/*, $controladores['gerenciar_usuario']*/);
                 return;
             }
         } else if (Util::startsWithString($requisicao, "funcao_")) {
@@ -64,7 +64,7 @@ foreach ($chaves as $requisicao) {
                         $visoes_navegacao[$redirecionamento->getDestino()]);
                 $controlador->getDao()->getEntityManager()->close();
                 $controlador->getDao()->setEntityManager(null);
-                redirecionar($twig, $redirecionamento);
+                redirecionar($twig, $redirecionamento/*, $controladores['gerenciar_usuario']*/);
                 $_SESSION['controladores'] = serialize($controladores);
                 return;
             }
@@ -72,13 +72,15 @@ foreach ($chaves as $requisicao) {
     }
 }
 
-function redirecionar($twig, $redirecionamento) {
+function redirecionar($twig, $redirecionamento/*, $usuarioCtrl*/) {
     $template = $twig->loadTemplate($redirecionamento->getDestino());
     if ($redirecionamento->getCtrl() != null) {
-        print $template->render(array("ctrl" => $redirecionamento->getCtrl()));
-        //Apos o template ser renderizado com as informacoes do ctrl, a mensagem
-        //é apagada, pois so serve para exibida apenas uma vez
-        $redirecionamento->getCtrl()->setMensagem(null);
+        print $template->render(array("ctrl" => $redirecionamento->getCtrl(),
+                    /*"usuarioCtrl" => $usuarioCtrl*/));
+        //Apos o template ser renderizado com as informacoes do ctrl, alguns dados
+        //como mensagem e validador sao apagados, pois so serve para exibida apenas 
+        //uma vez
+        $redirecionamento->getCtrl()->resetar();
     } else {
         print $template->render(array());
     }

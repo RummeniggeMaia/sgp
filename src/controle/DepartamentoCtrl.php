@@ -8,7 +8,7 @@ use controle\tabela\Linha;
 use controle\tabela\ModeloDeTabela;
 use controle\tabela\Paginador;
 use modelo\Departamento;
-use validadores\ValidadorDepartamento;
+use controle\validadores\ValidadorDepartamento;
 use util\Util;
 
 /**
@@ -124,4 +124,9 @@ class DepartamentoCtrl extends Controlador {
             $this->pesquisar();
         }
     }
+
+    public function resetar() {
+        $this->mensagem = null;
+    }
+
 }

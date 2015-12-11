@@ -16,9 +16,7 @@
         {% if ctrl.mensagem != null %}
             {% include 'fragmentos/frag_mensagem.twig'
                 with {
-                    'cabecalho' : ctrl.mensagem.cabecalho,
-                    'tipo_msg' : ctrl.mensagem.tipo,
-                    'descricao' : ctrl.mensagem.descricao
+                    'mensagem' : ctrl.mensagem
                 }
             %}
         {% endif %}
@@ -109,15 +107,18 @@
                                         <td>{{ pm.dataMovimentacao|date("d/m/Y") }}</td>
                                         <td>
                                             <div class="ui fluid search normal selection dropdown">
-                                                <input type="hidden" name="movimentacao_{{ loop.index }}" value="{{ pm.movimentacao.descricao }}">
+                                                <input type="hidden" name="movimentacao_{{ loop.index }}" 
+                                                       value="{{ pm.movimentacao.descricao }}">
                                                 <i class="dropdown icon"></i>
                                                 <div class="default text">Selecione a Movimentação</div>
                                                 <div class="menu">
                                                     {% for mov in ctrl.movimentacoes %}
-                                                        <div class="item" data-value="{{ mov.descricao }}">
-                                                            <i class="archive icon"></i>
-                                                            {{ mov.descricao }}
-                                                        </div>
+                                                        {% if mov in %}
+                                                            <div class="item" data-value="{{ mov.descricao }}">
+                                                                <i class="archive icon"></i>
+                                                                {{ mov.descricao }}
+                                                            </div>
+                                                        {% endif %}
                                                     {% endfor %}
                                                 </div>
                                             </div>

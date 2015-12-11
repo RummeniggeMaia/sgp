@@ -29,7 +29,8 @@
                   action="front_controller.php">              
                 <div class="field {{ 'campo_descricao' in ctrl.validadorMovimentacao.camposInvalidos ? 'error' : ''}}">
                     <label>Descrição:</label>
-                    <input type="text" name="campo_descricao" placeholder="descricao" value="{{ ctrl.entidade.descricao }}">
+                    <input type="text" name="campo_descricao" style="text-transform: uppercase"
+                           placeholder="descrição" value="{{ ctrl.entidade.descricao }}">
                 </div>
 
                 <div class="fields">

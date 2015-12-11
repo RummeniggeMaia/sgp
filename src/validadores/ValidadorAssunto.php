@@ -17,7 +17,7 @@ class ValidadorAssunto extends Validador {
         $this->entidade = new Assunto("", "");
     }
 
-    public function validarCadastro($entidade) {
+    public function validar($entidade) {
         $this->entidade = $entidade;
         $this->mensagem = null;
 
@@ -34,5 +34,6 @@ class ValidadorAssunto extends Validador {
         $index = intval(str_replace("editar_", "", $funcao));
         return $index;
     }
+
 
 }

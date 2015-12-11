@@ -17,7 +17,7 @@ class ValidadorDepartamento extends Validador {
         $this->entidade = new Departamento("", "");
     }
 
-    public function validarCadastro($entidade) {
+    public function validar($entidade) {
         $this->entidade = $entidade;
         $this->mensagem = null;
 

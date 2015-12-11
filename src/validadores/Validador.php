@@ -13,8 +13,6 @@ abstract class Validador {
     protected $entidade;
     protected $mensagem;
     
-    public abstract function validarCadastro($entidade);
-    
-    public abstract function  validarEdicao($funcao);
+    public abstract function validar($entidade);
     
 }

@@ -15,6 +15,8 @@ use dao\Dao;
 class UsuarioCtrl extends Controlador {
     
     protected $dao;
+    const OFFSET = 0;
+    const LIMITE = 1;
     
     public function __construct() {
         
@@ -37,7 +39,12 @@ class UsuarioCtrl extends Controlador {
     }
 
     private function autenticar() {
-        $this->dao->pesquisar($this->usuario, "","");
+        $resultado = $this->dao->pesquisar($this->usuario, self::LIMITE,self::OFFSET);
+        if($resultado != NULL){
+            $ctrl->setEntidade($resultado);
+        }else{
+            // ERRO
+        }
     }
 
     private function gerarUsuario($post) {

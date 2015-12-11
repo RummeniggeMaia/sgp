@@ -54,7 +54,7 @@ class FuncionarioCtrl extends Controlador {
         $this->mensagem = null;
 
         if ($funcao == "salvar") {
-            $resultado = $this->validadorFuncionario->validarCadastro($this->entidade);
+            $resultado = $this->validadorFuncionario->validar($this->entidade);
             if ($resultado != null) {
                 $this->mensagem = new Mensagem(
                         "Cadastro de funcionários"

@@ -81,19 +81,17 @@ class MovimentacaoCtrl extends Controlador {
     }
 
     private function salvarMovimentacao() {
-        $resultado = $this->validadorMovimentacao->validarCadastro($this->entidade);
-        if ($resultado != null) {
-            $this->mensagem = new Mensagem(
-                    "Cadastro de movimentacao"
-                    , "msg_tipo_error"
-                    , $resultado);
+        $this->validadorMovimentacao->validar($this->entidade);
+        if (!$this->validadorMovimentacao->getValido()) {
+            $this->mensagem = $this->validadorMovimentacao->getMensagem();
+            $this->tab = "tab_form";
         } else {
             $this->dao->editar($this->entidade);
             $this->entidade = new Movimentacao("", "");
             $this->modoEditar = false;
             $this->mensagem = new Mensagem(
                     "Cadastro de movimentação"
-                    , "msg_tipo_ok"
+                    , Mensagem::MSG_TIPO_OK
                     , "Dados de Movimentação salvo com sucesso.");
         }
     }
@@ -131,6 +129,7 @@ class MovimentacaoCtrl extends Controlador {
 
     public function resetar() {
         $this->mensagem = null;
+        $this->validadorMovimentacao = new ValidadorMovimentacao();
     }
 
 }

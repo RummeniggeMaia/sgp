@@ -16,7 +16,9 @@ class ValidadorFuncionario extends Validador {
     public function validar($entidade) {
         $this->entidade = $entidade;
         $this->mensagem = new Mensagem(
-                'Dados inválidos', Mensagem::MSG_TIPO_ERRO, 'Dados do funcionário estão inválidos.');
+                'Dados inválidos', 
+                Mensagem::MSG_TIPO_ERRO, 
+                'Dados do funcionário estão inválidos.');
         $submensagens = array();
 
         if ($this->entidade->getNome() == null) {

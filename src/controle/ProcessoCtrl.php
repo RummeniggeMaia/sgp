@@ -7,6 +7,7 @@ use controle\Mensagem;
 use controle\tabela\Linha;
 use controle\tabela\ModeloDeTabela;
 use controle\tabela\Paginador;
+use controle\validadores\ValidadorProcesso;
 use modelo\Assunto;
 use modelo\Departamento;
 use modelo\Funcionario;
@@ -23,6 +24,7 @@ class ProcessoCtrl extends Controlador {
     private $assuntos;
     private $departamentos;
     private $funcionarios;
+    private $validadorProcesso;
 
     function __construct($dao) {
         $this->dao = $dao;
@@ -37,7 +39,7 @@ class ProcessoCtrl extends Controlador {
         $this->assuntos = $this->dao->pesquisar($assunto, PHP_INT_MAX, 0);
         $departamento = new Departamento(null, true);
         $this->departamentos = $this->dao->pesquisar($departamento, PHP_INT_MAX, 0);
-        //Indexa todas os assuntos para ser buscada pela descricao
+        //Indexa todas os assuntos para serem buscados pela descricao
         $aux = array();
         foreach ($this->assuntos as $a) {
             $aux[$a->getDescricao()] = $a;
@@ -58,6 +60,9 @@ class ProcessoCtrl extends Controlador {
         //ser serializado, por isso o objeto dao tem q ser nulado pois o mesmo 
         //nao pode ser serializado
         $this->dao = null;
+        //Validador utilizado para validar os campos assim como os 
+        //relacionamentos do processo
+        $this->validadorProcesso = new ValidadorProcesso();
     }
 
     public function getAssuntos() {
@@ -79,6 +84,14 @@ class ProcessoCtrl extends Controlador {
     public function setDepartamentos($departamentos) {
         $this->departamentos = $departamentos;
     }
+    
+    public function getValidadorProcesso() {
+        return $this->validadorProcesso;
+    }
+
+    public function setValidadorProcesso($validadorProcesso) {
+        $this->validadorProcesso = $validadorProcesso;
+    }
 
     public function setFuncionarios($funcionarios) {
         if ($funcionarios != null && !empty($funcionarios)) {
@@ -96,7 +109,7 @@ class ProcessoCtrl extends Controlador {
                     $this->assuntos[$post['assunto']]->clonar());
         }
         if (isset($post['departamento']) &&
-                isset($this->assuntos[$post['departamento']])) {
+                isset($this->departamentos[$post['departamento']])) {
             $this->entidade->setDepartamento(
                     $this->departamentos[$post['departamento']]->clonar());
         }
@@ -163,14 +176,20 @@ class ProcessoCtrl extends Controlador {
     }
 
     private function salvarProcesso() {
-        $this->dao->editar($this->entidade);
-        $this->entidade = new Processo("");
-        $this->modoEditar = false;
-        $this->tab = "tab_form";
-        $this->mensagem = new Mensagem(
-                "Cadastro de processos"
-                , "msg_tipo_ok"
-                , "Dados do Processo salvos com sucesso.");
+        $this->validadorProcesso->validar($this->entidade);
+        if (!$this->validadorProcesso->getValido()) {
+            $this->mensagem = $this->validadorProcesso->getMensagem();
+            $this->tab = "tab_form";
+        } else {
+            $this->dao->editar($this->entidade);
+            $this->entidade = new Processo("");
+            $this->modoEditar = false;
+            $this->tab = "tab_form";
+            $this->mensagem = new Mensagem(
+                    "Cadastro de processos"
+                    , Mensagem::MSG_TIPO_OK
+                    , "Dados do Processo salvos com sucesso.");
+        }
     }
 
     private function pesquisarProcessos() {
@@ -234,6 +253,7 @@ class ProcessoCtrl extends Controlador {
 
     public function resetar() {
         $this->mensagem = null;
+        $this->validadorProcesso = new ValidadorProcesso();
     }
 
 }

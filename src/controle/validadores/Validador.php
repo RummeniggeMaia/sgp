@@ -15,10 +15,6 @@ abstract class Validador {
     protected $camposInvalidos;
     protected $valido;
 
-    public function __construct() {
-        
-    }
-
     public function getEntidade() {
         return $this->entidade;
     }

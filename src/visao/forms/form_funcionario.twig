@@ -28,7 +28,7 @@
               action="front_controller.php"> 
             <div class="ui bottom attached tab segment {{ ctrl.tab == 'tab_form' ? 'active' : '' }}" data-tab="form">
 
-                <div class="field {{ 'campo_nome' in ctrl.validadorFuncionario.camposInvalidos ? 'error' : ''}}">
+                <div class="field {{ 'campo_nome' in ctrl.validadorFuncionario.camposInvalidos ? 'error' : '' }}">
                     <label>Nome:</label>
                     <input type="text" name="campo_nome" 
                            placeholder="nome" value="{{ ctrl.entidade.nome }}">

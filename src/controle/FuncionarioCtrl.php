@@ -54,66 +54,23 @@ class FuncionarioCtrl extends Controlador {
         $this->tab = "tab_tabela";
 
         if ($funcao == "salvar") {
-            $this->validadorFuncionario->validar($this->entidade);
-            if (!$this->validadorFuncionario->getValido()) {
-                $this->mensagem = $this->validadorFuncionario->getMensagem();
-                $this->tab = "tab_form";
-            } else {
-                $this->dao->editar($this->entidade);
-                $this->entidade = new Funcionario("", "", "");
-                $this->modoEditar = false;
-                $this->mensagem = new Mensagem(
-                        "Cadastro de funcionários"
-                        , "msg_tipo_ok"
-                        , "Dados do Funcionário salvo com sucesso.");
-            }
+            $this->salvarFuncionario();
         } else if ($funcao == "pesquisar") {
-            $this->modeloTabela->setPaginador(new Paginador());
-            $this->modeloTabela->getPaginador()->setContagem(
-                    $this->dao->contar($this->entidade));
-            $this->modeloTabela->getPaginador()->setPesquisa(
-                    clone $this->entidade);
-            $this->pesquisar();
+            $this->pesquisarFuncionario();
         } else if ($funcao == "cancelar_edicao") {
             $this->modoEditar = false;
             $this->entidade = new Funcionario("", "", "");
         } else if ($funcao == 'enviar_funcionarios') {
-            $selecionados = array();
-            foreach ($post as $valor) {
-                if (Util::startsWithString($valor, "radio_")) {
-                    $index = str_replace("radio_", "", $valor);
-                    $selecionados[] = clone $this->entidades[$index - 1];
-                    break;
-                }
-            }
-            $ctrl = $controladores[$this->ctrlDestino];
-            $ctrl->setFuncionarios($selecionados);
-            $this->modoBusca = false;
-            $redirecionamento->setDestino($this->getCtrlDestino());
-            $redirecionamento->setCtrl($controladores[$this->getCtrlDestino()]);
-            return $redirecionamento;
+            return $this->enviarFuncionarios($post, $controladores);
         } else if ($funcao == 'cancelar_enviar') {
             $this->setCtrlDestino("");
             $this->setModoBusca(false);
         } else if (Util::startsWithString($funcao, "editar_")) {
             $index = intval(str_replace("editar_", "", $funcao));
-            if ($index != 0) {
-                $this->entidade = $this->entidades[$index - 1];
-                $this->modoEditar = true;
-                $this->tab = "tab_form";
-            }
+            $this->editarFuncionario($index);
         } else if (Util::startsWithString($funcao, "excluir_")) {
             $index = intval(str_replace("excluir_", "", $funcao));
-            if ($index != 0) {
-                $aux = $this->entidades[$index - 1];
-                $this->dao->excluir($aux);
-                $p = $this->modeloTabela->getPaginador();
-                if ($p->getOffset() == $p->getContagem()) {
-                    $p->anterior();
-                }
-                $p->setContagem($p->getContagem() - 1);
-                $this->pesquisar();
-            }
+            $this->excluirFuncionario($index);
         } else if (Util::startsWithString($funcao, "paginador_")) {
             parent::paginar($funcao);
         }
@@ -134,57 +91,66 @@ class FuncionarioCtrl extends Controlador {
         $this->modeloTabela->setLinhas($linhas);
     }
 
-    /* Falta resolver o problema da mascara, pois a mascara tem q ser tirada antes da verificação, para conferir se
-      o CPF e RG é válido e são numéricos realmente. */
-
-    private function validacao() {
-        if ($this->entidade->getNome() == null || is_numeric($this->entidade->getNome())) {
+    private function salvarFuncionario() {
+        $this->validadorFuncionario->validar($this->entidade);
+        if (!$this->validadorFuncionario->getValido()) {
+            $this->mensagem = $this->validadorFuncionario->getMensagem();
+            $this->tab = "tab_form";
+        } else {
+            $this->dao->editar($this->entidade);
+            $this->entidade = new Funcionario("", "", "");
+            $this->modoEditar = false;
             $this->mensagem = new Mensagem(
-                    "Cadastro não realizado!"
-                    , "msg_tipo_erro"
-                    , "O campo NOME não pode está vazio");
-            return 'validacao_erro';
-        }
-
-        if ($this->entidade->getRg() == null || is_numeric($this->entidade->getRg())) {
-            $this->mensagem = new Mensagem(
-                    "Cadastro não realizado!"
-                    , "msg_tipo_erro"
-                    , "O campo RG não pode está vazio");
-            return 'validacao_erro';
-        }
-
-        if ($this->entidade->getCpf() == null || is_numeric($this->entidade->getCpf())) {
-            $this->mensagem = new Mensagem(
-                    "Cadastro não realizado!"
-                    , "msg_tipo_erro"
-                    , "O campo CPF é Inválido");
-            return 'validacao_erro';
+                    "Cadastro de funcionários"
+                    , Mensagem::MSG_TIPO_OK
+                    , "Dados do Funcionário salvo com sucesso.");
         }
     }
 
-    private function validarCPF($cpf) { { // Verifiva se o número digitado contém todos os digitos
-            $cpf = str_pad(ereg_replace('[^0-9]', '', $cpf), 11, '0', STR_PAD_LEFT);
+    private function pesquisarFuncionario() {
+        $this->modeloTabela->setPaginador(new Paginador());
+        $this->modeloTabela->getPaginador()->setContagem(
+                $this->dao->contar($this->entidade));
+        $this->modeloTabela->getPaginador()->setPesquisa(
+                clone $this->entidade);
+        $this->pesquisar();
+    }
 
-            // Verifica se nenhuma das sequências abaixo foi digitada, caso seja, retorna falso
-            if (strlen($cpf) != 11 || $cpf == '00000000000' || $cpf == '11111111111' || $cpf == '22222222222' || $cpf == '33333333333' || $cpf == '44444444444' || $cpf == '55555555555' || $cpf == '66666666666' || $cpf == '77777777777' || $cpf == '88888888888' || $cpf == '99999999999') {
-                return false;
-            } else {   // Calcula os números para verificar se o CPF é verdadeiro
-                for ($t = 9; $t < 11; $t++) {
-                    for ($d = 0, $c = 0; $c < $t; $c++) {
-                        $d += $cpf{$c} * (($t + 1) - $c);
-                    }
-
-                    $d = ((10 * $d) % 11) % 10;
-
-
-                    if ($cpf{$c} != $d) {
-                        return false;
-                    }
-                }
-
-                return true;
+    private function enviarFuncionarios($post, $controladores) {
+        $redirecionamento = new Funcionario();
+        $selecionados = array();
+        foreach ($post as $valor) {
+            if (Util::startsWithString($valor, "radio_")) {
+                $index = str_replace("radio_", "", $valor);
+                $selecionados[] = clone $this->entidades[$index - 1];
             }
+        }
+        $ctrl = $controladores[$this->ctrlDestino];
+        $ctrl->setFuncionarios($selecionados);
+        $this->modoBusca = false;
+        $redirecionamento->setDestino($this->getCtrlDestino());
+        $redirecionamento->setCtrl($controladores[$this->getCtrlDestino()]);
+        return $redirecionamento;
+    }
+
+    private function editarFuncionario($index) {
+        if ($index != 0) {
+            $this->entidade = $this->entidades[$index - 1];
+            $this->modoEditar = true;
+            $this->tab = "tab_form";
+        }
+    }
+
+    private function excluirFuncionario($index) {
+        if ($index != 0) {
+            $aux = $this->entidades[$index - 1];
+            $this->dao->excluir($aux);
+            $p = $this->modeloTabela->getPaginador();
+            if ($p->getOffset() == $p->getContagem()) {
+                $p->anterior();
+            }
+            $p->setContagem($p->getContagem() - 1);
+            $this->pesquisar();
         }
     }
 

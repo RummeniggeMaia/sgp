@@ -2,39 +2,34 @@
 
 namespace controle\validadores;
 
-use modelo\Movimentacao;
+use controle\Mensagem;
 use controle\validadores\Validador;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 class ValidadorMovimentacao extends Validador {
 
     public function __construct() {
-        $this->entidade = new Movimentacao(null, "", "");
+        $this->mensagem = new Mensagem("", "", "");
+        $this->camposInvalidos = array();
+        $this->valido = false;
     }
-
-    public function validarCadastro($entidade) {
-        $this->entidade = $entidade;
-        $this->mensagem = null;
-
-        if ($this->entidade->getDescricao() == null) {
-            $this->mensagem = "Campo Descrição obrigatório!";
-        }
-
-
-        return $this->mensagem;
-    }
-
-    public function validarEdicao($funcao) {
-        
-    }
-
+    
     public function validar($entidade) {
+        $this->entidade = $entidade;
+        $this->mensagem = new Mensagem(
+                'Dados inválidos', 
+                Mensagem::MSG_TIPO_ERRO, 
+                'Dados do movimentação estão inválidos.');
+        $submensagens = array();
         
+        if ($this->entidade->getDescricao() == null) {
+            $submensagens[] = "Campo Descrição obrigatório!\n";
+            $this->camposInvalidos[] = "campo_descricao";
+        }
+        
+        $this->mensagem->setSubmensagens($submensagens);
+        if (empty($this->camposInvalidos)) {
+            $this->valido = true;
+        }
     }
-
 }

@@ -8,7 +8,7 @@ use controle\tabela\Linha;
 use controle\tabela\ModeloDeTabela;
 use controle\tabela\Paginador;
 use modelo\Assunto;
-use validadores\ValidadorAssunto;
+use controle\validadores\ValidadorAssunto;
 use util\Util;
 
 /**
@@ -88,20 +88,22 @@ class AssuntoCtrl extends Controlador {
     }
 
     private function salvarAssunto() {
-        $resultado = $this->validadorAssunto->validarCadastro($this->entidade);
-        if ($resultado != null) {
-            $this->mensagem = new Mensagem(
-                    "Cadastro de assuntos"
-                    , "msg_tipo_error"
-                    , $resultado);
+        $this->validadorAssunto->validar($this->entidade);
+        if (!$this->validadorAssunto->getValido()) {
+            $this->mensagem = $this->validadorAssunto->getMensagem();
+            $this->tab = "tab_form";
         } else {
             $this->entidade->setConstante(true);
-            $this->dao->editar($this->entidade);
+            try {
+                $this->dao->editar($this->entidade);
+            } catch (Exception $ex) {
+                return;
+            }
             $this->entidade = new Assunto("", "");
             $this->modoEditar = false;
             $this->mensagem = new Mensagem(
                     "Cadastro de assuntos"
-                    , "msg_tipo_ok"
+                    , Mensagem::MSG_TIPO_OK
                     , "Dados do Assunto salvo com sucesso.");
         }
     }
@@ -151,6 +153,11 @@ class AssuntoCtrl extends Controlador {
             $p->setContagem($p->getContagem() - 1);
             $this->pesquisar();
         }
+    }
+
+    public function resetar() {
+        $this->mensagem = null;
+        $this->validadorAssunto = new ValidadorAssunto();
     }
 
 }

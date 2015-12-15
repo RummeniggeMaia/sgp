@@ -16,9 +16,7 @@
         {% if ctrl.mensagem != null %}
             {% include 'fragmentos/frag_mensagem.twig'
                 with {
-                    'cabecalho' : ctrl.mensagem.cabecalho,
-                    'tipo_msg' : ctrl.mensagem.tipo,
-                    'descricao' : ctrl.mensagem.descricao
+                    'mensagem' : ctrl.mensagem
                 }
             %}
         {% endif %}
@@ -30,17 +28,17 @@
               action="front_controller.php"> 
             <div class="ui bottom attached tab segment {{ ctrl.tab == 'tab_form' ? 'active' : '' }}" data-tab="form">
 
-                <div class="field">
+                <div class="field {{ 'campo_nome' in ctrl.validadorFuncionario.camposInvalidos ? 'error' : '' }}">
                     <label>Nome:</label>
                     <input type="text" name="campo_nome" 
                            placeholder="nome" value="{{ ctrl.entidade.nome }}">
                 </div>
-                <div class="field">
+                <div class="field {{ 'campo_cpf' in ctrl.validadorFuncionario.camposInvalidos ? 'error' : ''}}">
                     <label>CPF:</label>
                     <input type="text" id="campoCpf" name="campo_cpf" 
                            placeholder="___.___.___-__" value="{{ ctrl.entidade.cpf }}">
                 </div>
-                <div class="field">
+                <div class="field {{ 'campo_rg' in ctrl.validadorFuncionario.camposInvalidos ? 'error' : ''}}">
                     <label>RG:</label>
                     <input type="text" id="campoRg" name="campo_rg" 
                            placeholder="___.___.___" value="{{ ctrl.entidade.rg }}">

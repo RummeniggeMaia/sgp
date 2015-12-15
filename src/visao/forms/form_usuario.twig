@@ -31,7 +31,7 @@
                   action="front_controller.php"> 
                 <div class="field">
                     <label>Login:</label>
-                    <input type="text" name="campo_usuario" value="{{ ctrl.usuario.login }}" />
+                    <input type="text" name="campo_login" value="{{ ctrl.entidade.login }}" />
                 </div>
                 <div class="field">
                     <label>Senha:</label>
@@ -40,8 +40,8 @@
                 <div class="fields">
                     <div class="field">
                         <div class="ui submit black button"
-                             onClick="submeterForm('form_usuario', 'funcao_gerenciar_usuario', 'logar');">
-                            <i class="unlock icon"></i>Login
+                             onClick="submeterForm('form_usuario', 'funcao_gerenciar_usuario', 'salvar');">
+                            <i class="unlock icon"></i>Salvar
                         </div>
                     </div>
                 </div>

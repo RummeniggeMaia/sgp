@@ -1,5 +1,5 @@
 {# empty Twig template #}
-{% extends "templates/base.twig"%}
+{% extends "templates/base.twig" %}
 
 {% block title %}Gerenciamento de processos {% endblock %}
 
@@ -16,9 +16,7 @@
         {% if ctrl.mensagem != null %}
             {% include 'fragmentos/frag_mensagem.twig'
                 with {
-                    'cabecalho' : ctrl.mensagem.cabecalho,
-                    'tipo_msg' : ctrl.mensagem.tipo,
-                    'descricao' : ctrl.mensagem.descricao
+                    'mensagem' : ctrl.mensagem
                 }
             %}
         {% endif %}
@@ -30,13 +28,13 @@
               action="front_controller.php">
             <div class="ui bottom attached tab segment {{ ctrl.tab == 'tab_form' ? 'active' : ''}}" data-tab="form">
 
-                <div class="field">
+                <div class="field {{ 'campo_numero_processo' in ctrl.validadorProcesso.camposInvalidos ? 'error' : '' }}">
                     <label>Nº Processo:</label>
                     <input type="text" name="campo_numero_processo" placeholder="Número do Processo" 
                            value="{{ ctrl.entidade.numeroProcesso }}">
                 </div>
                 <div class="two fields">
-                    <div class="field">
+                    <div class="field {{ 'drop_assunto' in ctrl.validadorProcesso.camposInvalidos ? 'error' : '' }}">
                         <label>Assunto:</label>
                         <div class="ui fluid search selection dropdown">
                             <input type="hidden" name="assunto" value="{{ ctrl.entidade.assunto.descricao }}">
@@ -53,7 +51,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="field">
+                    <div class="field {{ 'drop_departamento' in ctrl.validadorProcesso.camposInvalidos ? 'error' : '' }}">
                         <label>Departamento:</label>
                         <div class="ui fluid search selection dropdown">
                             <input type="hidden" name="departamento" value="{{ ctrl.entidade.departamento.descricao }}">
@@ -70,7 +68,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="field">
+                <div class="field {{ 'campo_funcionario' in ctrl.validadorProcesso.camposInvalidos ? 'error' : '' }}">
                     <label>Funcionário:</label>
                     <div class="ui action input">
                         <input type="text" placeholder="Buscar um funcionário" 

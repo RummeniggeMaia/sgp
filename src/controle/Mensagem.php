@@ -1,6 +1,7 @@
 <?php
 
 namespace controle;
+
 /**
  * Description of Mensagem
  *
@@ -12,11 +13,18 @@ class Mensagem {
     private $cabecalho;
     private $tipo;
     private $descricao;
+    private $submensagens;
+
+    const MSG_TIPO_OK = 'msg_tipo_ok';
+    const MSG_TIPO_INFO = 'msg_tipo_info';
+    const MSG_TIPO_AVISO = 'msg_tipo_aviso';
+    const MSG_TIPO_ERRO = 'msg_tipo_erro';
 
     function __construct($cabecalho, $tipo, $descricao) {
         $this->cabecalho = $cabecalho;
         $this->tipo = $tipo;
         $this->descricao = $descricao;
+        $this->submensagens = array();
     }
 
     public function getCabecalho() {
@@ -42,5 +50,13 @@ class Mensagem {
     public function setDescricao($descricao) {
         $this->descricao = $descricao;
     }
-    
+
+    public function getSubmensagens() {
+        return $this->submensagens;
+    }
+
+    public function setSubmensagens($submensagens) {
+        $this->submensagens = $submensagens;
+    }
+
 }

@@ -8,7 +8,7 @@ use controle\tabela\Linha;
 use controle\tabela\ModeloDeTabela;
 use controle\tabela\Paginador;
 use modelo\Departamento;
-use validadores\ValidadorDepartamento;
+use controle\validadores\ValidadorDepartamento;
 use util\Util;
 
 /**
@@ -78,20 +78,18 @@ class DepartamentoCtrl extends Controlador {
     }
 
     private function salvarDepartamento() {
-        $resultado = $this->validadorMovimentacao->validarCadastro($this->entidade);
-        if ($resultado != null) {
-            $this->mensagem = new Mensagem(
-                    "Cadastro de departamento"
-                    , "msg_tipo_error"
-                    , $resultado);
+        $this->validadorDepartamento->validar($this->entidade);
+        if (!$this->validadorDepartamento->getValido()) {
+            $this->mensagem = $this->validadorDepartamento->getMensagem();
+            $this->tab = "tab_form";
         } else {
             $this->dao->editar($this->entidade);
-            $this->entidade = new Departamento("", "");
+            $this->entidade = new Movimentacao("", "");
             $this->modoEditar = false;
             $this->mensagem = new Mensagem(
-                    "Cadastro de departamento"
-                    , "msg_tipo_ok"
-                    , "Dados do departamento salvos com sucesso.");
+                    "Cadastro de movimentação"
+                    , Mensagem::MSG_TIPO_OK
+                    , "Dados de Departamento salvo com sucesso.");
         }
     }
 
@@ -124,4 +122,10 @@ class DepartamentoCtrl extends Controlador {
             $this->pesquisar();
         }
     }
+
+    public function resetar() {
+        $this->mensagem = null;
+        $this->validadorDepartamento = new ValidadorDepartamento();
+    }
+
 }

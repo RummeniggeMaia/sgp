@@ -16,9 +16,7 @@
         {% if ctrl.mensagem != null %}
             {% include 'fragmentos/frag_mensagem.twig'
                 with {
-                    'cabecalho' : ctrl.mensagem.cabecalho,
-                    'tipo_msg' : ctrl.mensagem.tipo,
-                    'descricao' : ctrl.mensagem.descricao
+                    'mensagem' : ctrl.mensagem
                 }
             %}
         {% endif %}
@@ -29,7 +27,7 @@
         <div class="ui bottom attached tab segment {{ ctrl.tab == 'tab_form' ? 'active' : '' }}" data-tab="form">
             <form id="form_departamento" class="ui form" method="post" 
                   action="front_controller.php">                            
-                <div class="field">
+                <div class="field {{ 'campo_descricao' in ctrl.validadorDepartamento.camposInvalidos ? 'error' : ''}}">
                     <label>Descrição:</label>
                     <input type="text" name="campo_descricao" 
                            placeholder="descricao" value="{{ctrl.entidade.descricao}}">

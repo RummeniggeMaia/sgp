@@ -2,10 +2,12 @@
 
 namespace dao;
 
-use dao\Dql;
 use Doctrine\ORM\QueryBuilder;
+use modelo\Assunto;
+use modelo\Departamento;
 use modelo\Entidade;
 use modelo\Funcionario;
+use modelo\Movimentacao;
 use modelo\Usuario;
 
 /**
@@ -32,6 +34,18 @@ class DqlBuilder {
         }
         if ($entidade->getClassName() == "modelo\Usuario") {
             $this->gerarClausulaWhereUsuario(
+                    $entidade, $queryBuilder);
+        }
+        if ($entidade->getClassName() == "modelo\Assunto") {
+            $this->gerarClausulaWhereAssunto(
+                    $entidade, $queryBuilder);
+        }
+        if ($entidade->getClassName() == "modelo\Departamento") {
+            $this->gerarClausulaWhereDepartamento(
+                    $entidade, $queryBuilder);
+        }
+        if ($entidade->getClassName() == "modelo\Movimentacao") {
+            $this->gerarClausulaWhereMovimentacao(
                     $entidade, $queryBuilder);
         }
     }
@@ -61,7 +75,27 @@ class DqlBuilder {
                 preg_match("/.+/i", $usuario->getSenha())) {
             $qb->andWhere("x.senha = '" . $usuario->getSenha() . "'");
         }
-        
+    }
+
+    private function gerarClausulaWhereAssunto(Assunto $assunto, QueryBuilder $qb) {
+        if ($assunto->getDescricao() != null &&
+                preg_match("/.+/i", $assunto->getDescricao())) {
+            $qb->andWhere("x.descricao like '%" . $assunto->getDescricao() . "%'");
+        }
+    }
+    
+    private function gerarClausulaWhereDepartamento(Departamento $departamento, QueryBuilder $qb) {
+        if ($departamento->getDescricao() != null &&
+                preg_match("/.+/i", $departamento->getDescricao())) {
+            $qb->andWhere("x.descricao like '%" . $departamento->getDescricao() . "%'");
+        }
+    }
+    
+    private function gerarClausulaWhereMovimentacao(Movimentacao $movimentacao, QueryBuilder $qb) {
+        if ($movimentacao->getDescricao() != null &&
+                preg_match("/.+/i", $movimentacao->getDescricao())) {
+            $qb->andWhere("x.descricao like '%" . $movimentacao->getDescricao() . "%'");
+        }
     }
 
 }

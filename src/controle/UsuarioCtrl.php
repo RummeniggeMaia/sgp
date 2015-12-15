@@ -26,18 +26,18 @@ class UsuarioCtrl extends Controlador {
     const LIMITE = 1;
 
     public function __construct() {
-        $this->entidade = new Usuario("", "");
+        $this->entidade = new Usuario("", "", "", "");
         $this->entidades = array();
         $this->mensagem = null;
         $this->modeloTabela = new ModeloDeTabela();
-        $this->modeloTabela->setCabecalhos(array("Login"));
+        $this->modeloTabela->setCabecalhos(array("Nome", "Email", "Login", "Senha"));
         $this->modeloTabela->setModoBusca(false);
         $this->validadorUsuario = new ValidadorUsuario();
     }
 
     public function executarFuncao($post, $funcao, $controladores) {
         $this->gerarUsuario($post);
-        
+
         $redirecionamento = new Redirecionamento();
         $redirecionamento->setDestino('gerenciar_usuario');
         $redirecionamento->setCtrl($this);
@@ -53,18 +53,6 @@ class UsuarioCtrl extends Controlador {
         return $redirecionamento;
     }
 
-    public function gerarLinhas() {
-        $linhas = array();
-        foreach ($this->entidades as $usuario) {
-            $linha = new Linha();
-            $valores = array();
-            $valores[] = $funcionario->getLogin();
-            $linha->setValores($valores);
-            $linhas[] = $linha;
-        }
-        $this->modeloTabela->setLinhas($linhas);
-    }
-
     private function salvarUsuario() {
         $this->validadorUsuario->validar($this->entidade);
         if (!$this->validadorUsuario->getValido()) {
@@ -72,7 +60,7 @@ class UsuarioCtrl extends Controlador {
             $this->tab = "tab_form";
         } else {
             $this->dao->editar($this->entidade);
-            $this->entidade = new Usuario("", "");
+            $this->entidade = new Usuario("", "", "", "");
             $this->modoEditar = false;
             $this->mensagem = new Mensagem(
                     "Cadastro de usuários"
@@ -100,6 +88,12 @@ class UsuarioCtrl extends Controlador {
     }
 
     private function gerarUsuario($post) {
+        if (isset($post['campo_nome'])) {
+            $this->entidade->setNome($post['campo_nome']);
+        }
+        if (isset($post['campo_email'])) {
+            $this->entidade->setEmail($post['campo_email']);
+        }
         if (isset($post['campo_login'])) {
             $this->entidade->setLogin($post['campo_login']);
         }
@@ -110,6 +104,21 @@ class UsuarioCtrl extends Controlador {
 
     public function resetar() {
         $this->mensagem = null;
+    }
+
+    public function gerarLinhas() {
+        $linhas = array();
+        foreach ($this->entidades as $usuario) {
+            $linha = new Linha();
+            $valores = array();
+            $valores[] = $usuario->getNome();
+            $valores[] = $usuario->getEmail();
+            $valores[] = $usuario->getLogin();
+            $valores[] = $usuario->getSenha();
+            $linha->setValores($valores);
+            $linhas[] = $linha;
+        }
+        $this->modeloTabela->setLinhas($linhas);
     }
 
 }

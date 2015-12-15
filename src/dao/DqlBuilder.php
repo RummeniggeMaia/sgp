@@ -67,6 +67,14 @@ class DqlBuilder {
     }
 
     private function gerarClausulaWhereUsuario(Usuario $usuario, QueryBuilder $qb) {
+        if ($usuario->getNome() != null &&
+                preg_match("/.+/i", $usuario->getNome())) {
+            $qb->andWhere("x.nome = '" . $usuario->getNome() . "'");
+        }
+        if ($usuario->getEmail() != null &&
+                preg_match("/.+/i", $usuario->getEmail())) {
+            $qb->andWhere("x.email = '" . $usuario->getEmail() . "'");
+        }
         if ($usuario->getLogin() != null &&
                 preg_match("/.+/i", $usuario->getLogin())) {
             $qb->andWhere("x.login = '" . $usuario->getLogin() . "'");
@@ -83,14 +91,14 @@ class DqlBuilder {
             $qb->andWhere("x.descricao like '%" . $assunto->getDescricao() . "%'");
         }
     }
-    
+
     private function gerarClausulaWhereDepartamento(Departamento $departamento, QueryBuilder $qb) {
         if ($departamento->getDescricao() != null &&
                 preg_match("/.+/i", $departamento->getDescricao())) {
             $qb->andWhere("x.descricao like '%" . $departamento->getDescricao() . "%'");
         }
     }
-    
+
     private function gerarClausulaWhereMovimentacao(Movimentacao $movimentacao, QueryBuilder $qb) {
         if ($movimentacao->getDescricao() != null &&
                 preg_match("/.+/i", $movimentacao->getDescricao())) {

@@ -30,6 +30,14 @@
             <form id="form_usuario" class="ui form" method="post" 
                   action="front_controller.php"> 
                 <div class="field">
+                    <label>Nome:</label>
+                    <input type="text" name="campo_nome" value="{{ ctrl.entidade.nome }}" />
+                </div>
+                <div class="field">
+                    <label>Email:</label>
+                    <input type="text" name="campo_email" value="{{ ctrl.entidade.email }}" />
+                </div>
+                <div class="field">
                     <label>Login:</label>
                     <input type="text" name="campo_login" value="{{ ctrl.entidade.login }}" />
                 </div>
@@ -42,6 +50,12 @@
                         <div class="ui submit black button"
                              onClick="submeterForm('form_usuario', 'funcao_gerenciar_usuario', 'salvar');">
                             <i class="unlock icon"></i>Salvar
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui submit black button"
+                             onclick="submeterForm('form_usuario', 'funcao_gerenciar_usuario', 'pesquisar');">
+                            <i class="search icon"></i>Pesquisar
                         </div>
                     </div>
                 </div>

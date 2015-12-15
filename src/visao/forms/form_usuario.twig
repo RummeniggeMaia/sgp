@@ -16,9 +16,7 @@
         {% if ctrl.mensagem != null %}
             {% include 'fragmentos/frag_mensagem.twig'
                 with {
-                    'cabecalho' : ctrl.mensagem.cabecalho,
-                    'tipo_msg' : ctrl.mensagem.tipo,
-                    'descricao' : ctrl.mensagem.descricao
+                    'mensagem' : ctrl.mensagem
                 }
             %}
         {% endif %}

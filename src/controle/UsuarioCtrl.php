@@ -49,6 +49,8 @@ class UsuarioCtrl extends Controlador {
             $this->pesquisarUsuario();
         } else if ($funcao == "login") {
             autenticar();
+        } else if (Util::startsWithString($funcao, "paginador_")) {
+            parent::paginar($funcao);
         }
         return $redirecionamento;
     }

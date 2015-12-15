@@ -4,6 +4,29 @@
 {% block title %}Movimentação Processual{% endblock %}
 
 {% block body %}
+    <script type="text/javascript">
+        var totalPms = {{ ctrl.entidade.processoMovimentacoes|length }};
+                $(document).ready(function() {
+            var selecionados = new Array();
+            for (var i = 1; i <= totalPms; i++) {
+                var val = $("#movimentacao_" + i).find("input").val();
+                if (val != "") {
+                    selecionados.push(val);
+                }
+            }
+            for (var i = 0; i < selecionados.length; i++) {
+                for (var j = 1; j <= totalPms; j++) {
+                    if ($("#movimentacao_" + j).find("input").val() != selecionados[i]) {
+                        $("#movimentacao_" + j).each(function(index) {
+                            if ($(this).text() == selecionados[i]) {
+                                $(this).hide();
+                            }
+                        });
+                    }
+                }
+            }
+        });
+    </script>
     <br/>
     <div class="html ui top right attached segment">
         <br/>
@@ -106,19 +129,19 @@
                                     <tr>
                                         <td>{{ pm.dataMovimentacao|date("d/m/Y") }}</td>
                                         <td>
-                                            <div class="ui fluid search normal selection dropdown">
-                                                <input type="hidden" name="movimentacao_{{ loop.index }}" 
+                                            <div id="movimentacao_{{ loop.index }}"
+                                                 class="ui fluid search normal selection dropdown">
+                                                <input type="hidden" 
+                                                       name="movimentacao_{{ loop.index }}" 
                                                        value="{{ pm.movimentacao.descricao }}">
                                                 <i class="dropdown icon"></i>
                                                 <div class="default text">Selecione a Movimentação</div>
                                                 <div class="menu">
                                                     {% for mov in ctrl.movimentacoes %}
-                                                        {% if mov in %}
-                                                            <div class="item" data-value="{{ mov.descricao }}">
-                                                                <i class="archive icon"></i>
-                                                                {{ mov.descricao }}
-                                                            </div>
-                                                        {% endif %}
+                                                        <div class="item" data-value="{{ mov.descricao }}">
+                                                            <i class="archive icon"></i>
+                                                            {{ mov.descricao }}
+                                                        </div>
                                                     {% endfor %}
                                                 </div>
                                             </div>

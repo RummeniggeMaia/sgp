@@ -19,6 +19,7 @@ if (isset($_SESSION['controladores'])) {
     $assuntoCtrl = new controle\AssuntoCtrl();
     $departamentoCtrl = new controle\DepartamentoCtrl();
     $movimentacaoCtrl = new controle\MovimentacaoCtrl();
+    $usuarioCtrl = new controle\UsuarioCtrl();
     //No contrutor do ProcessoCtrl e ProcessoMovimentacaoCtrlsao pesquisadas as 
     //listas de assuntos, departamentos e movimentacoes, por isso passa-se o 
     //DAO pelo contrutor
@@ -27,6 +28,7 @@ if (isset($_SESSION['controladores'])) {
     $homeCtrl = new controle\HomeCtrl();
     
     $controladores['gerenciar_funcionario'] = $funcionarioCtrl;
+    $controladores['gerenciar_usuario'] = $usuarioCtrl;
     $controladores['gerenciar_assunto'] = $assuntoCtrl;
     $controladores['gerenciar_departamento'] = $departamentoCtrl;
     $controladores['gerenciar_movimentacao'] = $movimentacaoCtrl;
@@ -43,6 +45,7 @@ if (isset($_SESSION['visoes_navegacao'])) {
     //Nesse vetor sao colocas as páginas de navegacao do sitema
     $visoes_navegacao = array(
         'gerenciar_funcionario' => 'forms/form_funcionario.twig',
+        'gerenciar_usuario' => 'forms/form_usuario.twig',
         'gerenciar_assunto' => 'forms/form_assunto.twig',
         'gerenciar_departamento' => 'forms/form_departamento.twig',
         'gerenciar_movimentacao' => 'forms/form_movimentacao.twig',

@@ -28,7 +28,7 @@ class ValidadorFuncionario extends Validador {
             $submensagens[] = "Campo Nome tem que ter ao menos 4 letras!\n";
             $this->camposInvalidos[] = "campo_nome";
         }
-
+        
         if ($this->entidade->getCpf() == null) {
             $submensagens[] = "Campo CPF obrigatório!\n";
             $this->camposInvalidos[] = "campo_cpf";

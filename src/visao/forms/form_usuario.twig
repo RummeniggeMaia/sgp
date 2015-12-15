@@ -1,34 +1,60 @@
 {# empty Twig template #}
 {% extends "templates/base.twig"%}
 
-{% block title %}Gerenciamento de Login{% endblock %}
+{% block title %}Gerenciamento de assunto{% endblock %}
 
 {% block body %}
     <br/>
-    {% include 'fragmentos/frag_titulo.twig' 
-            with {
-                'titulo' : 'Gerenciamento de Login', 
-                'sub_titulo' : 'Interface para gerenciar login no sistema'
-            }
-    %}
     <div class="html ui top right attached segment">
-        {% if error %}
-            <div>{{ error.message }}</div>
+        <br/>
+        {% include 'fragmentos/frag_titulo.twig' 
+            with {
+                'titulo' : 'Gerenciamento de usuário', 
+                'sub_titulo' : 'Interface para gerenciar os usuários no sistema'
+            }
+        %}
+        {% if ctrl.mensagem != null %}
+            {% include 'fragmentos/frag_mensagem.twig'
+                with {
+                    'cabecalho' : ctrl.mensagem.cabecalho,
+                    'tipo_msg' : ctrl.mensagem.tipo,
+                    'descricao' : ctrl.mensagem.descricao
+                }
+            %}
         {% endif %}
-
-         <form id="form_usuario" class="ui form" method="post" 
+        <div class="ui top attached tabular menu">
+            <div class="item {{ ctrl.tab == 'tab_form' ? 'active' : '' }}" data-tab="form">Formulário</div>
+            <div class="item {{ ctrl.tab == 'tab_tabela' ? 'active' : '' }}" data-tab="tabela">Tabela</div>
+        </div>
+        <div class="ui bottom attached tab segment {{ ctrl.tab == 'tab_form' ? 'active' : '' }}" data-tab="form">
+            <form id="form_usuario" class="ui form" method="post" 
                   action="front_controller.php"> 
-            <label>Login:</label>
-            <input type="text" name="campo_usuario" value="{{ ctrl.usuario.login }}" />
-
-            <label>Senha:</label>
-            <input type="password" name="campo_senha" />
-
-            <div class="ui submit black button"
-                 onClick="submeterForm('form_usuario', 'funcao_gerenciar_usuario', 'logar');">
-                <i class="unlock icon"></i>Login
-            </div>
-        </form>
+                <div class="field">
+                    <label>Login:</label>
+                    <input type="text" name="campo_login" value="{{ ctrl.entidade.login }}" />
+                </div>
+                <div class="field">
+                    <label>Senha:</label>
+                    <input type="password" name="campo_senha" />
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        <div class="ui submit black button"
+                             onClick="submeterForm('form_usuario', 'funcao_gerenciar_usuario', 'salvar');">
+                            <i class="unlock icon"></i>Salvar
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="ui bottom attached tab segment {{ ctrl.tab == 'tab_tabela' ? 'active' : '' }}" data-tab="tabela">
+            {% include 'fragmentos/frag_tabela.twig' 
+                with {
+                    'modelo' : ctrl.modeloTabela,
+                    'formulario' : 'form_usuario',
+                    'funcao' : 'funcao_gerenciar_usuario'
+                }
+            %}
+        </div>
     </div>
 {% endblock %}
-{# empty Twig template #}

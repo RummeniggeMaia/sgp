@@ -5,27 +5,27 @@
 
 {% block body %}
     <script type="text/javascript">
-        var totalPms = {{ ctrl.entidade.processoMovimentacoes|length }};
-                $(document).ready(function() {
-            var selecionados = new Array();
-            for (var i = 1; i <= totalPms; i++) {
-                var val = $("#movimentacao_" + i).find("input").val();
-                if (val != "") {
-                    selecionados.push(val);
-                }
-            }
-            for (var i = 0; i < selecionados.length; i++) {
-                for (var j = 1; j <= totalPms; j++) {
-                    if ($("#movimentacao_" + j).find("input").val() != selecionados[i]) {
-                        $("#movimentacao_" + j).each(function(index) {
-                            if ($(this).text() == selecionados[i]) {
-                                $(this).hide();
-                            }
-                        });
-                    }
-                }
-            }
-        });
+        /*var totalPms = {#{{ ctrl.entidade.processoMovimentacoes|length }}#};
+         $(document).ready(function() {
+         var selecionados = new Array();
+         for (var i = 1; i <= totalPms; i++) {
+         var val = $("#movimentacao_" + i).find("input").val();
+         if (val != "") {
+         selecionados.push(val);
+         }
+         }
+         for (var i = 0; i < selecionados.length; i++) {
+         for (var j = 1; j <= totalPms; j++) {
+         if ($("#movimentacao_" + j).find("input").val() != selecionados[i]) {
+         $.each($("#movimentacao_" + j), function(key, value) {
+         if ($(this).text() == selecionados[i]) {
+         $(this).hide();
+         }
+         });
+         }
+         }
+         }
+         });*/
     </script>
     <br/>
     <div class="html ui top right attached segment">

@@ -2,6 +2,8 @@
 
 namespace dao;
 
+use Doctrine\ORM\EntityManager;
+
 /**
  *
  * @author Rummenigge
@@ -39,7 +41,9 @@ class Dao {
     }
 
     public function excluir($entidade) {
-        $this->entityManager->remove($entidade);
+        $e = $this->entityManager->find(
+                $entidade->getClassName(), $entidade->getId());
+        $this->entityManager->remove($e);
         $this->entityManager->flush();
     }
 

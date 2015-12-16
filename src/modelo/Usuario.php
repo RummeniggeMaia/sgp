@@ -15,10 +15,10 @@ class Usuario extends Entidade {
 
     /** @Column(type="string") */
     protected $nome;
-    
+
     /** @Column(type="string") */
     protected $email;
-    
+
     /** @Column(type="string", unique=true) */
     protected $login;
 
@@ -30,6 +30,10 @@ class Usuario extends Entidade {
         $this->email = $email;
         $this->login = $login;
         $this->senha = $senha;
+    }
+
+    public function getId() {
+        return $this->id;
     }
 
     public function getLogin() {
@@ -53,10 +57,6 @@ class Usuario extends Entidade {
         return $rc->getName();
     }
 
-    public function clonar() {
-        
-    }
-    
     public function getNome() {
         return $this->nome;
     }
@@ -72,4 +72,26 @@ class Usuario extends Entidade {
     public function setEmail($email) {
         $this->email = $email;
     }
+
+    public function getAtivo() {
+        return $this->ativo;
+    }
+
+    public function setAtivo($ativo) {
+        $this->ativo = $ativo;
+    }
+
+    public function clonar() {
+        $clone = new Usuario("", "", "", "");
+
+        $clone->setId($this->id);
+        $clone->setSelecionado($this->selecionado);
+        $clone->setNome($this->nome);
+        $clone->setEmail($this->email);
+        $clone->setLogin($this->login);
+        $clone->setSenha($this->senha);
+
+        return $clone;
+    }
+
 }

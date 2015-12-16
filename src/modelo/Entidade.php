@@ -23,7 +23,7 @@ abstract class Entidade {
     /** Esse campo é transiente, por isso não tem anotação. 
      * Usado para indicar se essa entidade foi selecionada em uma tabela */
     protected $selecionado;
-    
+
     public function getId() {
         return $this->id;
     }
@@ -36,14 +36,14 @@ abstract class Entidade {
         $this->id = $id;
     }
 
-        public function setAtivo($ativo) {
+    public function setAtivo($ativo) {
         $this->ativo = $ativo;
     }
 
     public function setSelecionado($selecionado) {
         $this->selecionado = $selecionado;
     }
-    
+
     public abstract function getClassName();
 
     public abstract function clonar();

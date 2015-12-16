@@ -49,6 +49,12 @@ class UsuarioCtrl extends Controlador {
             $this->pesquisarUsuario();
         } else if ($funcao == "login") {
             autenticar();
+        } else if (Util::startsWithString($funcao, "editar_")) {
+            $index = intval(str_replace("editar_", "", $funcao));
+            $this->editarUsuario($index);
+        } else if (Util::startsWithString($funcao, "excluir_")) {
+            $index = intval(str_replace("excluir_", "", $funcao));
+            $this->excluirUsuario($index);
         } else if (Util::startsWithString($funcao, "paginador_")) {
             parent::paginar($funcao);
         }
@@ -106,6 +112,7 @@ class UsuarioCtrl extends Controlador {
 
     public function resetar() {
         $this->mensagem = null;
+        $this->validadorUsuario = new ValidadorUsuario();
     }
 
     public function gerarLinhas() {
@@ -123,4 +130,24 @@ class UsuarioCtrl extends Controlador {
         $this->modeloTabela->setLinhas($linhas);
     }
 
+    private function editarUsuario($index) {
+        if ($index != 0) {
+            $this->entidade = $this->entidades[$index - 1];
+            $this->modoEditar = true;
+            $this->tab = "tab_form";
+        }
+    }
+
+    private function excluirUsuario($index) {
+        if ($index != 0) {
+            $aux = $this->entidades[$index - 1];
+            $this->dao->merge($aux);
+            $p = $this->modeloTabela->getPaginador();
+            if ($p->getOffset() == $p->getContagem()) {
+                $p->anterior();
+            }
+            $p->setContagem($p->getContagem() - 1);
+            $this->pesquisar();
+        }
+    }
 }

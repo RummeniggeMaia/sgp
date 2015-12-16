@@ -32,6 +32,10 @@ class Usuario extends Entidade {
         $this->senha = $senha;
     }
 
+    public function getId() {
+        return $this->id;
+    }
+
     public function getLogin() {
         return $this->login;
     }
@@ -69,11 +73,19 @@ class Usuario extends Entidade {
         $this->email = $email;
     }
 
+    public function getAtivo() {
+        return $this->ativo;
+    }
+
+    public function setAtivo($ativo) {
+        $this->ativo = $ativo;
+    }
+
     public function clonar() {
-        $clone = new Usuario("","","","");
+        $clone = new Usuario("", "", "", "");
 
         $clone->setId($this->id);
-        $clone->setSelecionado($this->selecionado);       
+        $clone->setSelecionado($this->selecionado);
         $clone->setNome($this->nome);
         $clone->setEmail($this->email);
         $clone->setLogin($this->login);

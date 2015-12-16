@@ -19,7 +19,7 @@ use util\Util;
  */
 class UsuarioCtrl extends Controlador {
 
-    protected $dao;
+    //protected $dao;
     public $validadorUsuario;
 
     const OFFSET = 0;

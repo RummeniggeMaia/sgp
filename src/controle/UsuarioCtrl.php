@@ -32,7 +32,7 @@ class UsuarioCtrl extends Controlador {
         $this->modeloTabela = new ModeloDeTabela();
         $this->modeloTabela->setCabecalhos(array("Nome", "Email", "Login", "Senha"));
         $this->modeloTabela->setModoBusca(false);
-        $this->validadorUsuario = new ValidadorUsuario();
+        $this->validadorUsuario = new ValidadorUsuario();         
     }
 
     public function executarFuncao($post, $funcao, $controladores) {
@@ -141,7 +141,8 @@ class UsuarioCtrl extends Controlador {
     private function excluirUsuario($index) {
         if ($index != 0) {
             $aux = $this->entidades[$index - 1];
-            $this->dao->merge($aux);
+            $this->dao->editar($aux);
+            $this->dao->excluir($aux);
             $p = $this->modeloTabela->getPaginador();
             if ($p->getOffset() == $p->getContagem()) {
                 $p->anterior();

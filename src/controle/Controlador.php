@@ -11,6 +11,8 @@ use util\Util;
 abstract class Controlador {
 
     protected $entidade;
+//    Copia da entidade utilizada apenas para armazenar o estado anterior no log
+    protected $copiaEntidade;
     protected $entidades;
     protected $dao;
     protected $mensagem;

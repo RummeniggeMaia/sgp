@@ -9,6 +9,7 @@ use controle\tabela\ModeloDeTabela;
 use controle\tabela\Paginador;
 use controle\validadores\ValidadorFuncionario;
 use modelo\Funcionario;
+use modelo\Log;
 use util\Util;
 
 /**
@@ -18,7 +19,9 @@ use util\Util;
  */
 class FuncionarioCtrl extends Controlador {
 
-    public $validadorFuncionario;
+    private $validadorFuncionario;
+    private $controladores;
+    private $post;
 
     public function __construct() {
         $this->entidade = new Funcionario("", "", "");
@@ -33,20 +36,23 @@ class FuncionarioCtrl extends Controlador {
     /**
      * Factory method para gerar funcionarios baseado a partir do POST
      */
-    public function gerarFuncionario($post) {
-        if (isset($post['campo_nome'])) {
-            $this->entidade->setNome($post['campo_nome']);
+    public function gerarFuncionario() {
+        if (isset($this->post['campo_nome'])) {
+            $this->entidade->setNome($this->post['campo_nome']);
         }
-        if (isset($post['campo_cpf'])) {
-            $this->entidade->setCpf($post['campo_cpf']);
+        if (isset($this->post['campo_cpf'])) {
+            $this->entidade->setCpf($this->post['campo_cpf']);
         }
-        if (isset($post['campo_rg'])) {
-            $this->entidade->setRg($post['campo_rg']);
+        if (isset($this->post['campo_rg'])) {
+            $this->entidade->setRg($this->post['campo_rg']);
         }
     }
 
     public function executarFuncao($post, $funcao, $controladores) {
-        $this->gerarFuncionario($post);
+        $this->post = $post;
+        $this->controladores = $controladores;
+
+        $this->gerarFuncionario();
 
         $redirecionamento = new Redirecionamento();
         $redirecionamento->setDestino('gerenciar_funcionario');
@@ -61,7 +67,7 @@ class FuncionarioCtrl extends Controlador {
             $this->modoEditar = false;
             $this->entidade = new Funcionario("", "", "");
         } else if ($funcao == 'enviar_funcionarios') {
-            return $this->enviarFuncionarios($post, $controladores);
+            return $this->enviarFuncionarios();
         } else if ($funcao == 'cancelar_enviar') {
             $this->setCtrlDestino("");
             $this->setModoBusca(false);
@@ -97,13 +103,16 @@ class FuncionarioCtrl extends Controlador {
             $this->mensagem = $this->validadorFuncionario->getMensagem();
             $this->tab = "tab_form";
         } else {
-            $this->dao->editar($this->entidade);
+            $this->copiaEntidade = $this->dao->editar($this->entidade);
+            $log = $this->gerarLog(
+                    $this->modoEditar ? Log::TIPO_EDICAO : Log::TIPO_CADASTRO);
+            $this->dao->editar($log);
             $this->entidade = new Funcionario("", "", "");
             $this->modoEditar = false;
             $this->mensagem = new Mensagem(
                     "Cadastro de funcionários"
                     , Mensagem::MSG_TIPO_OK
-                    , "Dados do Funcionário salvo com sucesso.");
+                    , "Dados do Funcionário salvos com sucesso.");
         }
     }
 
@@ -116,26 +125,27 @@ class FuncionarioCtrl extends Controlador {
         $this->pesquisar();
     }
 
-    private function enviarFuncionarios($post, $controladores) {
+    private function enviarFuncionarios() {
         $redirecionamento = new Funcionario();
         $selecionados = array();
-        foreach ($post as $valor) {
+        foreach ($this->post as $valor) {
             if (Util::startsWithString($valor, "radio_")) {
                 $index = str_replace("radio_", "", $valor);
                 $selecionados[] = clone $this->entidades[$index - 1];
             }
         }
-        $ctrl = $controladores[$this->ctrlDestino];
+        $ctrl = $this->controladores[$this->ctrlDestino];
         $ctrl->setFuncionarios($selecionados);
         $this->modoBusca = false;
         $redirecionamento->setDestino($this->getCtrlDestino());
-        $redirecionamento->setCtrl($controladores[$this->getCtrlDestino()]);
+        $redirecionamento->setCtrl($this->controladores[$this->getCtrlDestino()]);
         return $redirecionamento;
     }
 
     private function editarFuncionario($index) {
         if ($index != 0) {
             $this->entidade = $this->entidades[$index - 1];
+            $this->copiaEntidade = $this->entidade->clonar();
             $this->modoEditar = true;
             $this->tab = "tab_form";
         }
@@ -143,8 +153,9 @@ class FuncionarioCtrl extends Controlador {
 
     private function excluirFuncionario($index) {
         if ($index != 0) {
-            $aux = $this->entidades[$index - 1];
-            $this->dao->excluir($aux);
+            $this->copiaEntidade = $this->entidades[$index - 1];
+            $this->dao->excluir($this->copiaEntidade);
+            $this->dao->editar($this->gerarLog(Log::TIPO_REMOCAO));
             $p = $this->modeloTabela->getPaginador();
             if ($p->getOffset() == $p->getContagem()) {
                 $p->anterior();
@@ -157,6 +168,41 @@ class FuncionarioCtrl extends Controlador {
     public function resetar() {
         $this->mensagem = null;
         $this->validadorFuncionario = new ValidadorFuncionario();
+        $this->post = null;
+        $this->controladores = null;
+    }
+
+    private function gerarLog($tipo) {
+        $log = new Log();
+        $log->setTipo($tipo);
+        $usuarioCtrl = $this->controladores["gerenciar_usuario"];
+        $log->setUsuario($usuarioCtrl->getEntidade());
+        $entidade = array();
+        $campos = array();
+        $entidade["classe"] = $this->copiaEntidade->getClassName();
+        $entidade["id"] = $this->copiaEntidade->getId();
+        if ($log->getTipo() == Log::TIPO_CADASTRO) {
+            $log->setDadosAlterados(json_encode($entidade));
+        } else if ($log->getTipo() == Log::TIPO_EDICAO) {
+            if ($this->copiaEntidade->getNome() != $this->entidade->getNome()) {
+                $campos["nome"] = $this->copiaEntidade->getNome();
+            }
+            if ($this->copiaEntidade->getCpf() != $this->entidade->getCpf()) {
+                $campos["cpf"] = $this->copiaEntidade->getCpf();
+            }
+            if ($this->copiaEntidade->getRg() != $this->entidade->getRg()) {
+                $campos["rg"] = $this->copiaEntidade->getRg();
+            }
+            $entidade["campos"] = $campos;
+            $log->setDadosAlterados(json_encode($entidade));
+        } else if ($log->getTipo() == Log::TIPO_REMOCAO) {
+            $campos["nome"] = $this->copiaEntidade->getNome();
+            $campos["rg"] = $this->copiaEntidade->getRg();
+            $campos["cpf"] = $this->copiaEntidade->getCpf();
+            $entidade["campos"] = $campos;
+            $log->setDadosAlterados(json_encode($entidade));
+        }
+        return $log;
     }
 
 }

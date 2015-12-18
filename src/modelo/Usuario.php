@@ -3,6 +3,7 @@
 namespace modelo;
 
 use modelo\Entidade;
+use modelo\Log;
 
 /**
  * Description of Usuario
@@ -24,6 +25,9 @@ class Usuario extends Entidade {
 
     /** @Column(type="string") */
     protected $senha;
+    
+    /** @OneToMany(targetEntity="Log", mappedBy="usuario") */
+    protected $logs;
 
     function __construct($nome, $email, $login, $senha) {
         $this->nome = $nome;
@@ -72,15 +76,15 @@ class Usuario extends Entidade {
     public function setEmail($email) {
         $this->email = $email;
     }
-
-    public function getAtivo() {
-        return $this->ativo;
+    
+    public function getLogs() {
+        return $this->logs;
     }
 
-    public function setAtivo($ativo) {
-        $this->ativo = $ativo;
+    public function setLogs($logs) {
+        $this->logs = $logs;
     }
-
+    
     public function clonar() {
         $clone = new Usuario("", "", "", "");
 

@@ -4,6 +4,7 @@ namespace modelo;
 
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Table;
+use ReflectionClass;
 
 /**
  *
@@ -13,18 +14,18 @@ use Doctrine\ORM\Mapping\Table;
  */
 class Log extends Entidade {
 
-    /*
-     * Usuario logado no sistema
-     */
+    /** @ManyToOne(targetEntity="Usuario", inversedBy="logs") */
     private $usuario;
     /**
      * Os tipos sao CADASTRO, EDICAO, REMOCAO e NULO, 
      */
+    /** @Column(type="string") */
     private $tipo;
     /*
      * Dados serão armazenados como uma string em JSON
      */
-    private $dadosAltarados;
+    /** @Column(type="string") */
+    private $dadosAlterados;
     
     const TIPO_CADASTRO = "TIPO_CADASTRO";
     const TIPO_EDICAO = "TIPO_EDICAO";
@@ -38,8 +39,8 @@ class Log extends Entidade {
         return $this->tipo;
     }
 
-    public function getDadosAltarados() {
-        return $this->dadosAltarados;
+    public function getDadosAlterados() {
+        return $this->dadosAlterados;
     }
 
     public function setUsuario($usuario) {
@@ -49,9 +50,9 @@ class Log extends Entidade {
     public function setTipo($tipo) {
         $this->tipo = $tipo;
     }
-
-    public function setDadosAltarados($dadosAltarados) {
-        $this->dadosAltarados = $dadosAltarados;
+    
+    public function setDadosAlterados($dadoAlterados) {
+        $this->dadosAlterados = $dadoAlterados;
     }
 
     public function clonar() {
@@ -68,7 +69,7 @@ class Log extends Entidade {
     }
 
     public function getClassName() {
-        $rc = new \ReflectionClass($this);
+        $rc = new ReflectionClass($this);
         return $rc->getName();
     }
 

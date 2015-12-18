@@ -36,15 +36,17 @@ class Dao {
     }
 
     public function editar($entidade) {
-        $this->entityManager->merge($entidade);
+        $e = $this->entityManager->merge($entidade);
         $this->entityManager->flush();
+        return $e;
     }
 
     public function excluir($entidade) {
         $e = $this->entityManager->find(
                 $entidade->getClassName(), $entidade->getId());
-        $this->entityManager->remove($e);
+        $e = $this->entityManager->remove($e);
         $this->entityManager->flush();
+        return $e;
     }
 
     public function pesquisar($entidade, $limit, $offset) {
@@ -63,6 +65,12 @@ class Dao {
                 $queryBuilder, $entidade, DqlBuilder::FUNCAO_CONTAR);
         $result = $queryBuilder->getQuery()->getSingleScalarResult();
         return $result;
+    }
+
+    public function pesquisarPorId($entidade) {
+        return $this->entityManager->find(
+                        $entidade->getClassName()
+                        , $entidade->getId());
     }
 
     /**

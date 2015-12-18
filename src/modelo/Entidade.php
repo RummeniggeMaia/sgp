@@ -36,10 +36,6 @@ abstract class Entidade {
         $this->id = $id;
     }
 
-    public function setAtivo($ativo) {
-        $this->ativo = $ativo;
-    }
-
     public function setSelecionado($selecionado) {
         $this->selecionado = $selecionado;
     }

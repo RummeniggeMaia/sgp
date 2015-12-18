@@ -1,7 +1,10 @@
 <?php
 
 namespace controle;
+namespace phpemail;
 
+use phpemail\Phpmailer;
+use phpemail\Smtp;
 use controle\Controlador;
 use modelo\Usuario;
 use dao\Dao;
@@ -32,7 +35,7 @@ class UsuarioCtrl extends Controlador {
         $this->modeloTabela = new ModeloDeTabela();
         $this->modeloTabela->setCabecalhos(array("Nome", "Email", "Login", "Senha"));
         $this->modeloTabela->setModoBusca(false);
-        $this->validadorUsuario = new ValidadorUsuario();         
+        $this->validadorUsuario = new ValidadorUsuario();
     }
 
     public function executarFuncao($post, $funcao, $controladores) {
@@ -67,6 +70,7 @@ class UsuarioCtrl extends Controlador {
             $this->mensagem = $this->validadorUsuario->getMensagem();
             $this->tab = "tab_form";
         } else {
+            $this->criptografarSenha();
             $this->dao->editar($this->entidade);
             $this->entidade = new Usuario("", "", "", "");
             $this->modoEditar = false;
@@ -84,6 +88,10 @@ class UsuarioCtrl extends Controlador {
         $this->modeloTabela->getPaginador()->setPesquisa(
                 clone $this->entidade);
         $this->pesquisar();
+    }
+
+    private function criptografarSenha() {
+        $this->entidade->setSenha(hash("sha256", $this->entidade->getSenha()));
     }
 
     private function autenticar() {
@@ -151,4 +159,54 @@ class UsuarioCtrl extends Controlador {
             $this->pesquisar();
         }
     }
+
+    private function enviarEmail() {
+
+// Inclui o arquivo class.phpmailer.php localizado na pasta phpmailer
+        
+// Inicia a classe PHPMailer
+        $mail = new PHPMailer();
+// Define os dados do servidor e tipo de conexão
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+        $mail->IsSMTP(); // Define que a mensagem será SMTP
+        $mail->Host = "smtp.dominio.net"; // Endereço do servidor SMTP
+//$mail->SMTPAuth = true; // Usa autenticação SMTP? (opcional)
+//$mail->Username = 'seumail@dominio.net'; // Usuário do servidor SMTP
+//$mail->Password = 'senha'; // Senha do servidor SMTP
+// Define o remetente
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+        $mail->From = "rj@st.net"; // Seu e-mail
+        $mail->FromName = "RJ Soluções Tecnológicas"; // Seu nome
+// Define os destinatário(s)
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+        $mail->AddAddress("'" + $this->entidade->getEmail() + "'", "'" + $this->entidade.getNome() + "'");
+        //$mail->AddAddress('ciclano@site.net');
+//$mail->AddCC('ciclano@site.net', 'Ciclano'); // Copia
+//$mail->AddBCC('fulano@dominio.com.br', 'Fulano da Silva'); // Cópia Oculta
+// Define os dados técnicos da Mensagem
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+        $mail->IsHTML(true); // Define que o e-mail será enviado como HTML
+//$mail->CharSet = 'iso-8859-1'; // Charset da mensagem (opcional)
+// Define a mensagem (Texto e Assunto)
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+        $mail->Subject = "Senha cadastrada"; // Assunto da mensagem
+        $mail->Body = "Este é o corpo da mensagem de teste, em <b>HTML</b>!  :)";
+        $mail->AltBody = "Este é o corpo da mensagem de teste, em Texto Plano! \r\n :)";
+// Define os anexos (opcional)
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//$mail->AddAttachment("c:/temp/documento.pdf", "novo_nome.pdf");  // Insere um anexo
+// Envia o e-mail
+        $enviado = $mail->Send();
+// Limpa os destinatários e os anexos
+        $mail->ClearAllRecipients();
+        $mail->ClearAttachments();
+// Exibe uma mensagem de resultado
+        if ($enviado) {
+            echo "E-mail enviado com sucesso!";
+        } else {
+            echo "Não foi possível enviar o e-mail.";
+            echo "<b>Informações do erro:</b> " . $mail->ErrorInfo;
+        }
+    }
+
 }

@@ -20,7 +20,8 @@ use util\Util;
 class UsuarioCtrl extends Controlador {
 
     //protected $dao;
-    public $validadorUsuario;
+    private $validadorUsuario;
+    private $usuarioLogado;
 
     const OFFSET = 0;
     const LIMITE = 1;
@@ -32,7 +33,15 @@ class UsuarioCtrl extends Controlador {
         $this->modeloTabela = new ModeloDeTabela();
         $this->modeloTabela->setCabecalhos(array("Nome", "Email", "Login", "Senha"));
         $this->modeloTabela->setModoBusca(false);
-        $this->validadorUsuario = new ValidadorUsuario();         
+        $this->validadorUsuario = new ValidadorUsuario();
+    }
+
+    public function getUsuarioLogado() {
+        return $this->usuarioLogado;
+    }
+
+    public function setUsuarioLogado($usuarioLogado) {
+        $this->usuarioLogado = $usuarioLogado;
     }
 
     public function executarFuncao($post, $funcao, $controladores) {
@@ -47,8 +56,12 @@ class UsuarioCtrl extends Controlador {
             $this->salvarUsuario();
         } else if ($funcao == "pesquisar") {
             $this->pesquisarUsuario();
-        } else if ($funcao == "login") {
-            autenticar();
+        } else if ($funcao == "autenticar") {
+            $this->autenticar();
+            $redirecionamento->setDestino('gerenciar_home');
+        } else if ($funcao == "sair") {
+            $this->sair();
+            $redirecionamento->setDestino('gerenciar_home');
         } else if (Util::startsWithString($funcao, "editar_")) {
             $index = intval(str_replace("editar_", "", $funcao));
             $this->editarUsuario($index);
@@ -73,7 +86,7 @@ class UsuarioCtrl extends Controlador {
             $this->mensagem = new Mensagem(
                     "Cadastro de usuários"
                     , Mensagem::MSG_TIPO_OK
-                    , "Dados do usuário salvo com sucesso.");
+                    , "Dados do Usuário salvos com sucesso.");
         }
     }
 
@@ -87,12 +100,18 @@ class UsuarioCtrl extends Controlador {
     }
 
     private function autenticar() {
-        $resultado = $this->dao->pesquisar($this->usuario, self::LIMITE, self::OFFSET);
-        if ($resultado != NULL) {
-            $ctrl->setEntidade($resultado);
+        $resultado = $this->dao->pesquisar(
+                $this->entidade, self::LIMITE, self::OFFSET);
+        $this->entidade = new Usuario("", "", "", "");
+        if ($resultado != NULL && count($resultado) > 0) {
+            $this->usuarioLogado = $resultado[0];
         } else {
             // ERRO
         }
+    }
+
+    private function sair() {
+        $this->usuarioLogado = null;
     }
 
     private function gerarUsuario($post) {
@@ -151,4 +170,5 @@ class UsuarioCtrl extends Controlador {
             $this->pesquisar();
         }
     }
+
 }

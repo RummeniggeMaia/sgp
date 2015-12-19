@@ -48,7 +48,7 @@ foreach ($chaves as $requisicao) {
                                 null
                 );
                 //Gera o template e manda renderizar a visao .twig
-                redirecionar($twig, $redirecionamento/*, $controladores['gerenciar_usuario']*/);
+                redirecionar($twig, $redirecionamento, $controladores['gerenciar_usuario']);
                 return;
             }
         } else if (Util::startsWithString($requisicao, "funcao_")) {
@@ -64,7 +64,7 @@ foreach ($chaves as $requisicao) {
                         $visoes_navegacao[$redirecionamento->getDestino()]);
                 $controlador->getDao()->getEntityManager()->close();
                 $controlador->getDao()->setEntityManager(null);
-                redirecionar($twig, $redirecionamento/*, $controladores['gerenciar_usuario']*/);
+                redirecionar($twig, $redirecionamento, $controladores['gerenciar_usuario']);
                 $_SESSION['controladores'] = serialize($controladores);
                 return;
             }
@@ -72,11 +72,11 @@ foreach ($chaves as $requisicao) {
     }
 }
 
-function redirecionar($twig, $redirecionamento/*, $usuarioCtrl*/) {
+function redirecionar($twig, $redirecionamento, $usuarioCtrl) {
     $template = $twig->loadTemplate($redirecionamento->getDestino());
     if ($redirecionamento->getCtrl() != null) {
         print $template->render(array("ctrl" => $redirecionamento->getCtrl(),
-                    /*"usuarioCtrl" => $usuarioCtrl*/));
+                    "usuarioCtrl" => $usuarioCtrl));
         //Apos o template ser renderizado com as informacoes do ctrl, alguns dados
         //como mensagem e validador sao apagados, pois so serve para exibida apenas 
         //uma vez

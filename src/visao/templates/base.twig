@@ -69,17 +69,40 @@
                 <a class="item">
                     <i class="info circle icon"></i> Sobre
                 </a>
-                <div class="ui right dropdown item">
-                    <i class="user icon"></i>
-                    {#{{ usuarioCtrl.entidade.nome }}#}
-                    <i class="dropdown icon"></i>
-                    <div class="menu">
-                        <div class="item">
-                            <i class ="sign in icon"></i>
-                                Sair
+                {% if usuarioCtrl.usuarioLogado is null %}
+                    <div class="right item" style="padding: 0px">
+                        <form id="form_autenticar" method="post" action="front_controller.php">
+                            <span class="inverted" style="padding: 0px 10px 0px 0px">Login:</span>
+                            <div class="ui small input">
+                                <input type="text" name="campo_login" placeholder="login">
+                            </div>
+                            <span class="inverted" style="padding: 0px 10px 0px 10px">Senha:</span>
+                            <div class="ui small input">
+                                <input type="password" name="campo_senha" placeholder="senha">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="item">
+                        <div class="ui submit button" 
+                             onClick="submeterForm('form_autenticar', 'funcao_gerenciar_usuario', 'autenticar');" >
+                            <i class="key icon"></i>Entrar
                         </div>
                     </div>
-                </div>
+                {% else %}
+                    <form id="form_autenticar" method="post" action="front_controller.php"></form>
+                    <div class="ui right dropdown item">
+                        <i class="user icon"></i>
+                        {{ usuarioCtrl.usuarioLogado.nome }}
+                        <i class="dropdown icon"></i>
+                        <div class="menu">
+                            <div class="item"
+                                 onClick="submeterForm('form_autenticar', 'funcao_gerenciar_usuario', 'sair');">
+                                <i class ="sign out icon"></i>
+                                Sair
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
             {% block body %}
 

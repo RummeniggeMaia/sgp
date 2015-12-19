@@ -8,6 +8,8 @@ use controle\tabela\Linha;
 use controle\tabela\ModeloDeTabela;
 use controle\tabela\Paginador;
 use controle\validadores\ValidadorFuncionario;
+use DateTime;
+use DateTimeZone;
 use modelo\Funcionario;
 use modelo\Log;
 use util\Util;
@@ -176,7 +178,8 @@ class FuncionarioCtrl extends Controlador {
         $log = new Log();
         $log->setTipo($tipo);
         $usuarioCtrl = $this->controladores["gerenciar_usuario"];
-        $log->setUsuario($usuarioCtrl->getEntidade());
+        $log->setUsuario($usuarioCtrl->getUsuarioLogado());
+        $log->setDataHora(new DateTime("now", new DateTimeZone('America/Sao_Paulo')));
         $entidade = array();
         $campos = array();
         $entidade["classe"] = $this->copiaEntidade->getClassName();

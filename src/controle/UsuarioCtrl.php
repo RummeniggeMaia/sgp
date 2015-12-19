@@ -2,18 +2,15 @@
 
 namespace controle;
 
-namespace phpemail;
-
-use phpemail\Phpmailer;
-use phpemail\Smtp;
 use controle\Controlador;
-use modelo\Usuario;
-use dao\Dao;
 use controle\Mensagem;
+use controle\Redirecionamento;
 use controle\tabela\Linha;
 use controle\tabela\ModeloDeTabela;
 use controle\tabela\Paginador;
 use controle\validadores\ValidadorUsuario;
+use modelo\Usuario;
+//use PHPMailer;
 use util\Util;
 
 /**
@@ -180,7 +177,7 @@ class UsuarioCtrl extends Controlador {
         }
     }
 
-    private function enviarEmail() {
+    /*private function enviarEmail() {
 
 // Inclui o arquivo class.phpmailer.php localizado na pasta phpmailer
 // Inicia a classe PHPMailer
@@ -226,6 +223,6 @@ class UsuarioCtrl extends Controlador {
             echo "Não foi possível enviar o e-mail.";
             echo "<b>Informações do erro:</b> " . $mail->ErrorInfo;
         }
-    }
+    }*/
 
 }

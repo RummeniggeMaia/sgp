@@ -27,6 +27,9 @@ class Log extends Entidade {
     /** @Column(type="string") */
     private $dadosAlterados;
     
+    /** @Column(type="datetime") */
+    private $dataHora;
+    
     const TIPO_CADASTRO = "TIPO_CADASTRO";
     const TIPO_EDICAO = "TIPO_EDICAO";
     const TIPO_REMOCAO = "TIPO_REMOCAO";
@@ -53,6 +56,14 @@ class Log extends Entidade {
     
     public function setDadosAlterados($dadoAlterados) {
         $this->dadosAlterados = $dadoAlterados;
+    }
+    
+    public function getDataHora() {
+        return $this->dataHora;
+    }
+
+    public function setDataHora($data) {
+        $this->dataHora = $data;
     }
 
     public function clonar() {

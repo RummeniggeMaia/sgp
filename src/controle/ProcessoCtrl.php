@@ -25,7 +25,9 @@ class ProcessoCtrl extends Controlador {
     private $departamentos;
     private $funcionarios;
     private $validadorProcesso;
-
+    private $post;
+    private $controladores;
+    
     function __construct($dao) {
         $this->descricao = "gerenciar_processo";
         $this->dao = $dao;
@@ -100,24 +102,27 @@ class ProcessoCtrl extends Controlador {
         }
     }
 
-    public function gerarProcesso($post) {
-        if (isset($post['campo_numero_processo'])) {
-            $this->entidade->setNumeroProcesso($post['campo_numero_processo']);
+    public function gerarProcesso() {
+        if (isset($this->post['campo_numero_processo'])) {
+            $this->entidade->setNumeroProcesso($this->post['campo_numero_processo']);
         }
-        if (isset($post['assunto']) &&
-                isset($this->assuntos[$post['assunto']])) {
+        if (isset($this->post['assunto']) &&
+                isset($this->assuntos[$this->post['assunto']])) {
             $this->entidade->setAssunto(
-                    $this->assuntos[$post['assunto']]->clonar());
+                    $this->assuntos[$this->post['assunto']]->clonar());
         }
-        if (isset($post['departamento']) &&
-                isset($this->departamentos[$post['departamento']])) {
+        if (isset($this->post['departamento']) &&
+                isset($this->departamentos[$this->post['departamento']])) {
             $this->entidade->setDepartamento(
-                    $this->departamentos[$post['departamento']]->clonar());
+                    $this->departamentos[$this->post['departamento']]->clonar());
         }
     }
 
     public function executarFuncao($post, $funcao, $controladores) {
-        $this->gerarProcesso($post);
+        $this->post = $post;
+        $this->controladores = $controladores;
+        
+        $this->gerarProcesso();
 
         $redirecionamento = new Redirecionamento();
         $redirecionamento->setDestino('gerenciar_processo');
@@ -133,7 +138,7 @@ class ProcessoCtrl extends Controlador {
             $this->modoEditar = false;
             $this->entidade = new Funcionario("", "", "");
         } else if ($funcao == 'enviar_processos') {
-            return $this->enviarProcessos($post, $controladores);
+            return $this->enviarProcessos();
         } else if ($funcao == 'cancelar_enviar') {
             $this->setCtrlDestino("");
             $this->setModoBusca(false);
@@ -150,7 +155,7 @@ class ProcessoCtrl extends Controlador {
         } else if (Util::startsWithString($funcao, "paginador_")) {
             parent::paginar($funcao);
         } else if ($funcao == 'buscar_funcionario') {
-            return $this->buscarFuncionario($controladores);
+            return $this->buscarFuncionario();
         }
         return $redirecionamento;
     }
@@ -227,22 +232,22 @@ class ProcessoCtrl extends Controlador {
         $redirecionamento = new Redirecionamento();
 
         $selecionados = array();
-        foreach ($post as $valor) {
+        foreach ($this->post as $valor) {
             if (Util::startsWithString($valor, "radio_")) {
                 $index = str_replace("radio_", "", $valor);
                 $selecionados[] = clone $this->entidades[$index - 1];
             }
         }
-        $ctrl = $controladores[$this->ctrlDestino];
+        $ctrl = $this->controladores[$this->ctrlDestino];
         $ctrl->setProcessos($selecionados);
         $this->modoBusca = false;
         $redirecionamento->setDestino($this->ctrlDestino);
-        $redirecionamento->setCtrl($controladores[$this->ctrlDestino]);
+        $redirecionamento->setCtrl($this->controladores[$this->ctrlDestino]);
         return $redirecionamento;
     }
 
     private function buscarFuncionario($controladores) {
-        $funcCtrl = $controladores['gerenciar_funcionario'];
+        $funcCtrl = $this->controladores['gerenciar_funcionario'];
         $funcCtrl->setModoBusca(true);
         $funcCtrl->setCtrlDestino('gerenciar_processo');
         $redirecionamento = new Redirecionamento();

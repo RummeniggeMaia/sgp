@@ -22,7 +22,9 @@ class UsuarioCtrl extends Controlador {
 
     //protected $dao;
     private $validadorUsuario;
-
+    private $post;
+    private $controladores;
+    
     public function __construct() {
         $this->descricao = "gerenciar_usuario";
         $this->entidade = new Usuario("", "", "", "");
@@ -43,7 +45,10 @@ class UsuarioCtrl extends Controlador {
     }
 
     public function executarFuncao($post, $funcao, $controladores) {
-        $this->gerarUsuario($post);
+        $this->post = $post;
+        $this->controladores = $controladores;
+        
+        $this->gerarUsuario();
 
         $redirecionamento = new Redirecionamento();
         $redirecionamento->setDestino('gerenciar_usuario');
@@ -73,7 +78,15 @@ class UsuarioCtrl extends Controlador {
             $this->tab = "tab_form";
         } else {
             $this->criptografarSenha();
-            $this->dao->editar($this->entidade);
+            $$log = new Log();
+            if ($this->modoEditar) {
+                $log = $this->gerarLog(Log::TIPO_EDICAO);
+                $this->dao->editar($this->entidade);
+            } else {
+                $this->copiaEntidade = $this->dao->editar($this->entidade);
+                $log = $this->gerarLog(Log::TIPO_CADASTRO);
+            }
+            $this->dao->editar($log);
             $this->entidade = new Usuario("", "", "", "");
             $this->modoEditar = false;
             $this->mensagem = new Mensagem(
@@ -96,18 +109,18 @@ class UsuarioCtrl extends Controlador {
         $this->entidade->setSenha(hash("sha256", $this->entidade->getSenha()));
     }
 
-    private function gerarUsuario($post) {
-        if (isset($post['campo_nome'])) {
-            $this->entidade->setNome($post['campo_nome']);
+    private function gerarUsuario() {
+        if (isset($this->post['campo_nome'])) {
+            $this->entidade->setNome($this->post['campo_nome']);
         }
-        if (isset($post['campo_email'])) {
-            $this->entidade->setEmail($post['campo_email']);
+        if (isset($this->post['campo_email'])) {
+            $this->entidade->setEmail($this->post['campo_email']);
         }
-        if (isset($post['campo_login'])) {
-            $this->entidade->setLogin($post['campo_login']);
+        if (isset($this->post['campo_login'])) {
+            $this->entidade->setLogin($this->post['campo_login']);
         }
-        if (isset($post['campo_senha'])) {
-            $this->entidade->setSenha($post['campo_senha']);
+        if (isset($this->post['campo_senha'])) {
+            $this->entidade->setSenha($this->post['campo_senha']);
         }
     }
 
@@ -134,6 +147,7 @@ class UsuarioCtrl extends Controlador {
     private function editarUsuario($index) {
         if ($index != 0) {
             $this->entidade = $this->entidades[$index - 1];
+            $this->copiaEntidade = $this->entidade->clonar();
             $this->modoEditar = true;
             $this->tab = "tab_form";
         }
@@ -141,9 +155,9 @@ class UsuarioCtrl extends Controlador {
 
     private function excluirUsuario($index) {
         if ($index != 0) {
-            $aux = $this->entidades[$index - 1];
-            $this->dao->editar($aux);
-            $this->dao->excluir($aux);
+             $this->copiaEntidade = $this->entidades[$index - 1];
+            $this->dao->excluir($this->copiaEntidade);
+            $this->dao->editar($this->gerarLog(Log::TIPO_REMOCAO));
             $p = $this->modeloTabela->getPaginador();
             if ($p->getOffset() == $p->getContagem()) {
                 $p->anterior();
@@ -151,6 +165,44 @@ class UsuarioCtrl extends Controlador {
             $p->setContagem($p->getContagem() - 1);
             $this->pesquisar();
         }
+    }
+    
+    private function gerarLog($tipo) {
+        $log = new Log();
+        $log->setTipo($tipo);
+        $autenticacaoCtrl = $this->controladores["gerenciar_autenticacao"];
+        $log->setUsuario($autenticacaoCtrl->getEntidade());
+        $log->setDataHora(new DateTime("now", new DateTimeZone('America/Sao_Paulo')));
+        $entidade = array();
+        $campos = array();
+        $entidade["classe"] = $this->copiaEntidade->getClassName();
+        $entidade["id"] = $this->copiaEntidade->getId();
+        if ($log->getTipo() == Log::TIPO_CADASTRO) {
+            $log->setDadosAlterados(json_encode($entidade));
+        } else if ($log->getTipo() == Log::TIPO_EDICAO) {
+            if ($this->copiaEntidade->getNome() != $this->entidade->getNome()) {
+                $campos["nome"] = $this->copiaEntidade->getNome();
+            }
+            if ($this->copiaEntidade->getEmail() != $this->entidade->getEmail()) {
+                $campos["email"] = $this->copiaEntidade->getEmail();
+            }
+            if ($this->copiaEntidade->getLogin() != $this->entidade->getLogin()) {
+                $campos["login"] = $this->copiaEntidade->getLogin();
+            }
+            if ($this->copiaEntidade->getSenha() != $this->entidade->getSenha()) {
+                $campos["senha"] = $this->copiaEntidade->getSenha();
+            }
+            $entidade["campos"] = $campos;
+            $log->setDadosAlterados(json_encode($entidade));
+        } else if ($log->getTipo() == Log::TIPO_REMOCAO) {
+            $campos["nome"] = $this->copiaEntidade->getNome();
+            $campos["email"] = $this->copiaEntidade->getEmail();
+            $campos["login"] = $this->copiaEntidade->getLogin();
+            $campos["senha"] = $this->copiaEntidade->getSenha();
+            $entidade["campos"] = $campos;
+            $log->setDadosAlterados(json_encode($entidade));
+        }
+        return $log;
     }
 
     /*private function enviarEmail() {

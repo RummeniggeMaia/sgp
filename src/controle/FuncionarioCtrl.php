@@ -106,7 +106,7 @@ class FuncionarioCtrl extends Controlador {
             $this->mensagem = $this->validadorFuncionario->getMensagem();
             $this->tab = "tab_form";
         } else {
-           $log = new Log();
+            $log = new Log();
             if ($this->modoEditar) {
                 $log = $this->gerarLog(Log::TIPO_EDICAO);
                 $this->dao->editar($this->entidade);

@@ -15,11 +15,12 @@ class Autorizacao extends Entidade {
 
     /** @Column(type="string") */
     protected $descricao;
-    /** @ManyToMany(targetEntity="usuario", mappedBy="autorizacao") */
+    /** @ManyToMany(targetEntity="usuario", mappedBy="autorizacoes") */
     protected $usuarios;
 
     function __construct($descricao){
         $this->descricao = $descricao;
+        $this->usuarios = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     public function getId() {

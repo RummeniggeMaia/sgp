@@ -228,7 +228,7 @@ class ProcessoCtrl extends Controlador {
         }
     }
 
-    private function enviarProcessos($post, $controladores) {
+    private function enviarProcessos() {
         $redirecionamento = new Redirecionamento();
 
         $selecionados = array();
@@ -246,7 +246,7 @@ class ProcessoCtrl extends Controlador {
         return $redirecionamento;
     }
 
-    private function buscarFuncionario($controladores) {
+    private function buscarFuncionario() {
         $funcCtrl = $this->controladores['gerenciar_funcionario'];
         $funcCtrl->setModoBusca(true);
         $funcCtrl->setCtrlDestino('gerenciar_processo');

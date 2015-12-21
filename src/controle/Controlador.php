@@ -142,9 +142,24 @@ abstract class Controlador {
         $this->pesquisar();
     }
 
+    /**
+     * Todas as funcoes dos controladores sao executadas a partir daqui, 
+     * qualquer funcao do sistema q nao esteja dentro desta nao será executada.
+     */
     public abstract function executarFuncao($post, $funcao, $controladores);
 
+    /**
+     * Cada entidade tem seus campos, entao essa funcao é utilizada para gerar 
+     * a estrutura de colunas e linhas da tabela de pesquisa
+     */
     public abstract function gerarLinhas();
     
+    /**
+     * Funcao invocada no front_controller para resetar o controle. 
+     * Ela é chamada apos a tela ser renderizada. 
+     * Serve apenas para apagar a mensagem, validadores, $_POST, array 
+     * controladores, etc. Essas informacoes nao podem ser armazenadas na 
+     * sessao, por isso sao apagadas no reset.
+     */
     public abstract function resetar();
 }

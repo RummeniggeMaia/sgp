@@ -20,6 +20,7 @@ if (isset($_SESSION['controladores'])) {
     $departamentoCtrl = new controle\DepartamentoCtrl();
     $movimentacaoCtrl = new controle\MovimentacaoCtrl();
     $usuarioCtrl = new controle\UsuarioCtrl();
+    $autenticacaoCtrl = new controle\AutenticacaoCtrl();
     //No contrutor do ProcessoCtrl e ProcessoMovimentacaoCtrlsao pesquisadas as 
     //listas de assuntos, departamentos e movimentacoes, por isso passa-se o 
     //DAO pelo contrutor
@@ -35,6 +36,7 @@ if (isset($_SESSION['controladores'])) {
     $controladores['gerenciar_processo'] = $processoCtrl;
     $controladores['gerenciar_processo_movimentacao'] = $processoMovimentacaoCtrl;
     $controladores['gerenciar_home'] = $homeCtrl;
+    $controladores['gerenciar_autenticacao'] = $autenticacaoCtrl;
     $_SESSION['controladores'] = serialize($controladores);
 }
 

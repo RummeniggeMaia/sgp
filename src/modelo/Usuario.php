@@ -26,7 +26,7 @@ class Usuario extends Entidade {
     /** @Column(type="string") */
     protected $senha;
     
-    /** @OneToMany(targetEntity="Log", mappedBy="usuario") */
+    /** @OneToMany(targetEntity="Log", mappedBy="usuario", cascade={"remove"}) */
     protected $logs;
 
     function __construct($nome, $email, $login, $senha) {

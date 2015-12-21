@@ -94,11 +94,10 @@ class AssuntoCtrl extends Controlador {
             $this->tab = "tab_form";
         } else {
             $this->entidade->setConstante(true);
-            try {
-                $this->dao->editar($this->entidade);
-            } catch (Exception $ex) {
-                return;
-            }
+            $this->dao->editar($this->entidade);
+            $log = $this->gerarLog(
+                    $this->modoEditar ? Log::TIPO_EDICAO : Log::TIPO_CADASTRO);
+            $this->dao->editar($log);
             $this->entidade = new Assunto("", "");
             $this->modoEditar = false;
             $this->mensagem = new Mensagem(
@@ -137,6 +136,7 @@ class AssuntoCtrl extends Controlador {
     public function editarAssunto($index) {
         if ($index != 0) {
             $this->entidade = $this->entidades[$index - 1];
+            $this->copiaEntidade = $this->entidade->clonar();
             $this->modoEditar = true;
             $this->tab = "tab_form";
         }
@@ -158,6 +158,32 @@ class AssuntoCtrl extends Controlador {
     public function resetar() {
         $this->mensagem = null;
         $this->validadorAssunto = new ValidadorAssunto();
+    }
+
+    private function gerarLog($tipo) {
+        $log = new Log();
+        $log->setTipo($tipo);
+        $usuarioCtrl = $this->controladores["gerenciar_usuario"];
+        $log->setUsuario($usuarioCtrl->getUsuarioLogado());
+        $log->setDataHora(new DateTime("now", new DateTimeZone('America/Sao_Paulo')));
+        $entidade = array();
+        $campos = array();
+        $entidade["classe"] = $this->copiaEntidade->getClassName();
+        $entidade["id"] = $this->copiaEntidade->getId();
+        if ($log->getTipo() == Log::TIPO_CADASTRO) {
+            $log->setDadosAlterados(json_encode($entidade));
+        } else if ($log->getTipo() == Log::TIPO_EDICAO) {
+            if ($this->copiaEntidade->getNome() != $this->entidade->getNome()) {
+                $campos["descricao"] = $this->copiaEntidade->getDescricao();
+            }
+            $entidade["campos"] = $campos;
+            $log->setDadosAlterados(json_encode($entidade));
+        } else if ($log->getTipo() == Log::TIPO_REMOCAO) {
+            $campos["descricao"] = $this->copiaEntidade->getNome();
+            $entidade["campos"] = $campos;
+            $log->setDadosAlterados(json_encode($entidade));
+        }
+        return $log;
     }
 
 }

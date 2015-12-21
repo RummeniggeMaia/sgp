@@ -3,16 +3,16 @@
     <head>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <title>{% block title %}Home{% endblock %}</title>
-        <script type="text/javascript" src="{{jquerylib|default('../../web/jquery.min.js')}}"></script>
-        <script type="text/javascript" src="{{semantic_js|default('../../web/semantic_ui/semantic.min.js')}}"></script>
-        <script type="text/javascript" src="{{jquerylib|default('../../web/jquery.maskedinput.js')}}"></script>
-        <link href="{{semantic_css|default('../../web/semantic_ui/semantic.min.css')}}" rel="stylesheet" type="text/css"/>
+        <script type="text/javascript" src="../../web/jquery.min.js"></script>
+        <script type="text/javascript" src="../../web/semantic_ui/semantic.min.js"></script>
+        <script type="text/javascript" src="../../web/jquery.maskedinput.js"></script>
+        <link href="../../web/semantic_ui/semantic.min.css" rel="stylesheet" type="text/css"/>
 
         <script type="text/javascript">
 
             $(document).ready(function() {
                 $('a').click(function(event) {
-                    var form = $('<form method="post" action="{{front_ctrl|default('front_controller.php')}}"></form>');
+                    var form = $('<form method="post" action="front_controller.php"></form>');
                     var campo = document.createElement('input');
                     campo.type = "hidden";
                     campo.name = $(this).attr('name');
@@ -48,15 +48,15 @@
 
         <div class="ui vertical sidebar inverted menu left" id="menu_principal">
             <div class="item">
-                <img src="{{logo|default('../../web/imagens/icon-process-white.png')}}" width="100px" />
+                <img src="../../web/imagens/icon-process-white.png" width="100px" />
             </div>
             <a class="item" name="navegador_gerenciar_funcionario"><i class="users icon"></i>Funcionários</a>
             <a class="item" name="navegador_gerenciar_assunto"><i class="archive icon"></i>Assuntos</a>
             <a class="item" name="navegador_gerenciar_departamento"><i class="building icon"></i>Departamentos</a>
             <a class="item" name="navegador_gerenciar_movimentacao"><i class="exchange icon"></i>Movimentações</a>
             <a class="item" name="navegador_gerenciar_processo"><i class="flag icon"></i>Processos</a>
+            <a class="item" name="navegador_gerenciar_usuario"><i class="privacy icon"></i>Usuários</a>
             <a class="item" name="navegador_gerenciar_processo_movimentacao"><i class="legal icon"></i>Movimentação Processual</a>
-            <a class="item" name="navegador_gerenciar_usuario"><i class="privacy icon"></i>Usuário</a>
         </div>
         <div class="pusher">
             <div class="ui fixed main menu inverted">
@@ -69,7 +69,7 @@
                 <a class="item">
                     <i class="info circle icon"></i> Sobre
                 </a>
-                {% if usuarioCtrl.usuarioLogado is null %}
+                {% if autenticacaoCtrl.entidade.id is null %}
                     <div class="right item" style="padding: 0px">
                         <form id="form_autenticar" method="post" action="front_controller.php">
                             <span class="inverted" style="padding: 0px 10px 0px 0px">Login:</span>
@@ -84,7 +84,7 @@
                     </div>
                     <div class="item">
                         <div class="ui submit button" 
-                             onClick="submeterForm('form_autenticar', 'funcao_gerenciar_usuario', 'autenticar');" >
+                             onClick="submeterForm('form_autenticar', 'funcao_gerenciar_autenticacao', 'autenticar');" >
                             <i class="key icon"></i>Entrar
                         </div>
                     </div>
@@ -92,11 +92,11 @@
                     <form id="form_autenticar" method="post" action="front_controller.php"></form>
                     <div class="ui right dropdown item">
                         <i class="user icon"></i>
-                        {{ usuarioCtrl.usuarioLogado.nome }}
+                        {{ autenticacaoCtrl.entidade.nome }}
                         <i class="dropdown icon"></i>
                         <div class="menu">
                             <div class="item"
-                                 onClick="submeterForm('form_autenticar', 'funcao_gerenciar_usuario', 'sair');">
+                                 onClick="submeterForm('form_autenticar', 'funcao_gerenciar_autenticacao', 'sair');">
                                 <i class ="sign out icon"></i>
                                 Sair
                             </div>

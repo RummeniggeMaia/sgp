@@ -22,10 +22,6 @@ class UsuarioCtrl extends Controlador {
 
     //protected $dao;
     private $validadorUsuario;
-    private $usuarioLogado;
-
-    const OFFSET = 0;
-    const LIMITE = 1;
 
     public function __construct() {
         $this->entidade = new Usuario("", "", "", "");
@@ -57,12 +53,6 @@ class UsuarioCtrl extends Controlador {
             $this->salvarUsuario();
         } else if ($funcao == "pesquisar") {
             $this->pesquisarUsuario();
-        } else if ($funcao == "autenticar") {
-            $this->autenticar();
-            $redirecionamento->setDestino('gerenciar_home');
-        } else if ($funcao == "sair") {
-            $this->sair();
-            $redirecionamento->setDestino('gerenciar_home');
         } else if (Util::startsWithString($funcao, "editar_")) {
             $index = intval(str_replace("editar_", "", $funcao));
             $this->editarUsuario($index);
@@ -103,21 +93,6 @@ class UsuarioCtrl extends Controlador {
 
     private function criptografarSenha() {
         $this->entidade->setSenha(hash("sha256", $this->entidade->getSenha()));
-    }
-
-    private function autenticar() {
-        $resultado = $this->dao->pesquisar(
-                $this->entidade, self::LIMITE, self::OFFSET);
-        $this->entidade = new Usuario("", "", "", "");
-        if ($resultado != NULL && count($resultado) > 0) {
-            $this->usuarioLogado = $resultado[0];
-        } else {
-            // ERRO
-        }
-    }
-
-    private function sair() {
-        $this->usuarioLogado = null;
     }
 
     private function gerarUsuario($post) {

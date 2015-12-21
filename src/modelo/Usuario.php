@@ -25,9 +25,12 @@ class Usuario extends Entidade {
 
     /** @Column(type="string") */
     protected $senha;
-    
+
     /** @OneToMany(targetEntity="Log", mappedBy="usuario") */
     protected $logs;
+
+    /** @ManyToMany(targetEntity="Autorizacao", mappedBy="usuario") */
+    protected $autorizacoes;
 
     function __construct($nome, $email, $login, $senha) {
         $this->nome = $nome;
@@ -76,7 +79,7 @@ class Usuario extends Entidade {
     public function setEmail($email) {
         $this->email = $email;
     }
-    
+
     public function getLogs() {
         return $this->logs;
     }
@@ -84,7 +87,15 @@ class Usuario extends Entidade {
     public function setLogs($logs) {
         $this->logs = $logs;
     }
-    
+
+    public function setAutorizacoes($autorizacoes) {
+        $this->autorizacoes = $autorizacoes;
+    }
+
+    public function getAutorizacoes() {
+        return $this->autorizacoes;
+    }
+
     public function clonar() {
         $clone = new Usuario("", "", "", "");
 

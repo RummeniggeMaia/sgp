@@ -10,7 +10,7 @@ use modelo\Log;
  *
  * @author Rummenigge
  * @Entity
- * @JoinTable(name="usuario_autorizacao")
+ * @Table(name="usuario")
  */
 class Usuario extends Entidade {
 
@@ -25,11 +25,13 @@ class Usuario extends Entidade {
 
     /** @Column(type="string") */
     protected $senha;
-    
+
     /** @OneToMany(targetEntity="Log", mappedBy="usuario", cascade={"remove"}) */
     protected $logs;
 
-    /** @ManyToMany(targetEntity="Autorizacao", mappedBy="usuarios") */
+    /** @ManyToMany(targetEntity="Autorizacao", inversedBy="usuarios", fetch="EAGER") 
+     *  @JoinTable(name="usuario_autorizacao")
+     */
     protected $autorizacoes;
 
     function __construct($nome, $email, $login, $senha) {

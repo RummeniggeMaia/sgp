@@ -35,6 +35,7 @@ foreach ($chaves as $requisicao) {
         //Os link do sistema tem que começar com 'navegador_' seguido da visao 
         // a ser acessada
         $redirecionamento = new Redirecionamento();
+        $autenticacaoCtrl = $controladores["gerenciar_autenticacao"];
         if (Util::startsWithString($requisicao, "navegador_")) {
             //remove a palavra navegador_
             $visao = str_replace("navegador_", "", $requisicao);
@@ -47,10 +48,9 @@ foreach ($chaves as $requisicao) {
                                 $controladores[$visao] :
                                 null
                 );
-                $autenticacaoCtrl = $controladores["gerenciar_autenticacao"];
-                $autenticacaoCtrl->setVisaoAtual($visao);
                 //Gera o template e manda renderizar a visao .twig
                 redirecionar($twig, $redirecionamento, $autenticacaoCtrl);
+                $_SESSION['controladores'] = serialize($controladores);
                 return;
             }
         } else if (Util::startsWithString($requisicao, "funcao_")) {
@@ -66,7 +66,7 @@ foreach ($chaves as $requisicao) {
                         $visoes_navegacao[$redirecionamento->getDestino()]);
                 $controlador->getDao()->getEntityManager()->close();
                 $controlador->getDao()->setEntityManager(null);
-                redirecionar($twig, $redirecionamento, $controladores['gerenciar_autenticacao']);
+                redirecionar($twig, $redirecionamento, $autenticacaoCtrl);
                 $_SESSION['controladores'] = serialize($controladores);
                 return;
             }
@@ -79,6 +79,7 @@ function redirecionar($twig, $redirecionamento, $autenticacaoCtrl) {
     if ($redirecionamento->getCtrl() != null) {
         print $template->render(array("ctrl" => $redirecionamento->getCtrl(),
                     "autenticacaoCtrl" => $autenticacaoCtrl));
+        $autenticacaoCtrl->setVisaoAtual($redirecionamento->getCtrl()->getDescricao());
         //Apos o template ser renderizado com as informacoes do ctrl, alguns dados
         //como mensagem e validador sao apagados, pois so serve para exibida apenas 
         //uma vez

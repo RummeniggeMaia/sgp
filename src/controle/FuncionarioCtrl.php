@@ -26,6 +26,7 @@ class FuncionarioCtrl extends Controlador {
     private $post;
 
     public function __construct() {
+        $this->descricao = "gerenciar_funcionario";
         $this->entidade = new Funcionario("", "", "");
         $this->entidades = array();
         $this->mensagem = null;
@@ -105,9 +106,14 @@ class FuncionarioCtrl extends Controlador {
             $this->mensagem = $this->validadorFuncionario->getMensagem();
             $this->tab = "tab_form";
         } else {
-            $this->copiaEntidade = $this->dao->editar($this->entidade);
-            $log = $this->gerarLog(
-                    $this->modoEditar ? Log::TIPO_EDICAO : Log::TIPO_CADASTRO);
+           $log = new Log();
+            if ($this->modoEditar) {
+                $log = $this->gerarLog(Log::TIPO_EDICAO);
+                $this->dao->editar($this->entidade);
+            } else {
+                $this->copiaEntidade = $this->dao->editar($this->entidade);
+                $log = $this->gerarLog(Log::TIPO_CADASTRO);
+            }
             $this->dao->editar($log);
             $this->entidade = new Funcionario("", "", "");
             $this->modoEditar = false;
@@ -177,8 +183,8 @@ class FuncionarioCtrl extends Controlador {
     private function gerarLog($tipo) {
         $log = new Log();
         $log->setTipo($tipo);
-        $usuarioCtrl = $this->controladores["gerenciar_usuario"];
-        $log->setUsuario($usuarioCtrl->getUsuarioLogado());
+        $autenticacaoCtrl = $this->controladores["gerenciar_autenticacao"];
+        $log->setUsuario($autenticacaoCtrl->getEntidade());
         $log->setDataHora(new DateTime("now", new DateTimeZone('America/Sao_Paulo')));
         $entidade = array();
         $campos = array();

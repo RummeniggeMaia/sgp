@@ -24,6 +24,7 @@ class UsuarioCtrl extends Controlador {
     private $validadorUsuario;
 
     public function __construct() {
+        $this->descricao = "gerenciar_usuario";
         $this->entidade = new Usuario("", "", "", "");
         $this->entidades = array();
         $this->mensagem = null;

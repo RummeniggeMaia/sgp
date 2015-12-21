@@ -7,8 +7,11 @@ use controle\Mensagem;
 use controle\tabela\Linha;
 use controle\tabela\ModeloDeTabela;
 use controle\tabela\Paginador;
-use modelo\Departamento;
 use controle\validadores\ValidadorDepartamento;
+use DateTime;
+use DateTimeZone;
+use modelo\Departamento;
+use modelo\Log;
 use util\Util;
 
 /**
@@ -18,9 +21,12 @@ use util\Util;
  */
 class DepartamentoCtrl extends Controlador {
 
-    public $validadorDepartamento;
+    private $validadorDepartamento;
+    private $post;
+    private $controladores;
 
     public function __construct() {
+        $this->descricao = "gerenciar_departamento";
         $this->entidade = new Departamento("", "");
         $this->entidades = array();
         $this->mensagem = null;
@@ -29,22 +35,36 @@ class DepartamentoCtrl extends Controlador {
         $this->modeloTabela->setModoBusca(false);
         $this->validadorDepartamento = new ValidadorDepartamento();
     }
+    
+    public function getValidadorDepartamento() {
+        return $this->validadorDepartamento;
+    }
+
+    public function setValidadorDepartamento($validadorDepartamento) {
+        $this->validadorDepartamento = $validadorDepartamento;
+    }
+    
 
     /**
      * Factory method para gerar departamentos baseado a partir do POST
      */
-    public function gerarDepartamento($post) {
-        if (isset($post['campo_descricao'])) {
-            $this->entidade->setDescricao($post['campo_descricao']);
-            $this->entidade->setConstante(false);
+    public function gerarDepartamento() {
+        if (isset($this->post['campo_descricao'])) {
+            $this->entidade->setDescricao(
+                    strtoupper($this->post['campo_descricao']));
         }
     }
 
     public function executarFuncao($post, $funcao, $controladores) {
-        $this->gerarDepartamento($post);
+        $this->post = $post;
+        $this->controladores = $controladores;
+
+        $this->gerarDepartamento();
+
         $redirecionamento = new Redirecionamento();
         $redirecionamento->setDestino('gerenciar_departamento');
         $redirecionamento->setCtrl($this);
+        $this->tab = "tab_tabela";
 
         if ($funcao == "salvar") {
             $this->salvarDepartamento();
@@ -83,13 +103,22 @@ class DepartamentoCtrl extends Controlador {
             $this->mensagem = $this->validadorDepartamento->getMensagem();
             $this->tab = "tab_form";
         } else {
-            $this->dao->editar($this->entidade);
-            $this->entidade = new Movimentacao("", "");
+            $this->entidade->setConstante(true);
+            $log = new Log();
+            if ($this->modoEditar) {
+                $log = $this->gerarLog(Log::TIPO_EDICAO);
+                $this->dao->editar($this->entidade);
+            } else {
+                $this->copiaEntidade = $this->dao->editar($this->entidade);
+                $log = $this->gerarLog(Log::TIPO_CADASTRO);
+            }
+            $this->dao->editar($log);
+            $this->entidade = new Departamento("", "");
             $this->modoEditar = false;
             $this->mensagem = new Mensagem(
-                    "Cadastro de movimentação"
+                    "Cadastro de departamento"
                     , Mensagem::MSG_TIPO_OK
-                    , "Dados de Departamento salvo com sucesso.");
+                    , "Dados do Departamento salvos com sucesso.");
         }
     }
 
@@ -105,6 +134,7 @@ class DepartamentoCtrl extends Controlador {
     private function editarDepartamento($index) {
         if ($index != 0) {
             $this->entidade = $this->entidades[$index - 1];
+            $this->copiaEntidade = $this->entidade->clonar();
             $this->modoEditar = true;
             $this->tab = "tab_form";
         }
@@ -112,8 +142,9 @@ class DepartamentoCtrl extends Controlador {
 
     private function excluirDepartamento($index) {
         if ($index != 0) {
-            $aux = $this->entidades[$index - 1];
-            $this->dao->excluir($aux);
+            $this->copiaEntidade = $this->entidades[$index - 1];
+            $this->dao->excluir($this->copiaEntidade);
+            $this->dao->editar($this->gerarLog(Log::TIPO_REMOCAO));
             $p = $this->modeloTabela->getPaginador();
             if ($p->getOffset() == $p->getContagem()) {
                 $p->anterior();
@@ -126,6 +157,35 @@ class DepartamentoCtrl extends Controlador {
     public function resetar() {
         $this->mensagem = null;
         $this->validadorDepartamento = new ValidadorDepartamento();
+        $this->post = null;
+        $this->controladores = null;
+    }
+
+    private function gerarLog($tipo) {
+        $log = new Log();
+        $log->setTipo($tipo);
+        $autenticacaoCtrl = $this->controladores["gerenciar_autenticacao"];
+        $log->setUsuario($autenticacaoCtrl->getEntidade());
+        $log->setDataHora(new DateTime("now", new DateTimeZone('America/Sao_Paulo')));
+        $entidade = array();
+        $campos = array();
+        $entidade["classe"] = $this->copiaEntidade->getClassName();
+        $entidade["id"] = $this->copiaEntidade->getId();
+        if ($log->getTipo() == Log::TIPO_CADASTRO) {
+            $log->setDadosAlterados(json_encode($entidade));
+        } else if ($log->getTipo() == Log::TIPO_EDICAO) {
+            if ($this->copiaEntidade->getDescricao() !=
+                    $this->entidade->getDescricao()) {
+                $campos["descricao"] = $this->copiaEntidade->getDescricao();
+            }
+            $entidade["campos"] = $campos;
+            $log->setDadosAlterados(json_encode($entidade));
+        } else if ($log->getTipo() == Log::TIPO_REMOCAO) {
+            $campos["descricao"] = $this->copiaEntidade->getDescricao();
+            $entidade["campos"] = $campos;
+            $log->setDadosAlterados(json_encode($entidade));
+        }
+        return $log;
     }
 
 }

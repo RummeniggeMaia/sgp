@@ -7,8 +7,11 @@ use controle\Mensagem;
 use controle\tabela\Linha;
 use controle\tabela\ModeloDeTabela;
 use controle\tabela\Paginador;
-use modelo\Assunto;
 use controle\validadores\ValidadorAssunto;
+use DateTime;
+use DateTimeZone;
+use modelo\Assunto;
+use modelo\Log;
 use util\Util;
 
 /**
@@ -18,9 +21,12 @@ use util\Util;
  */
 class AssuntoCtrl extends Controlador {
 
-    public $validadorAssunto;
+    private $validadorAssunto;
+    private $post;
+    private $controladores;
 
     public function __construct() {
+        $this->descricao = "gerenciar_assunto";
         $this->entidade = new Assunto("", "");
         $this->entidades = array();
         $this->mensagem = null;
@@ -30,20 +36,25 @@ class AssuntoCtrl extends Controlador {
         $this->validadorAssunto = new ValidadorAssunto();
     }
 
-    // modificado
+    public function getValidadorAssunto() {
+        return $this->validadorAssunto;
+    }
+
+    public function setValidadorAssunto($validadorAssunto) {
+        $this->validadorAssunto = $validadorAssunto;
+    }
 
     /**
      * Factory method para gerar assuntos baseado a partir do POST
      */
-    public function gerarAssunto($post) {
-        if (isset($post['campo_descricao'])) {
-            $this->entidade->setDescricao($post['campo_descricao']);
-            $this->entidade->setConstante(false);
+    public function gerarAssunto() {
+        if (isset($this->post['campo_descricao'])) {
+            $this->entidade->setDescricao(strtoupper($this->post['campo_descricao']));
         }
     }
 
     public function executarFuncao($post, $funcao, $controladores) {
-        $this->gerarAssunto($post);
+        $this->gerarAssunto();
 
         $redirecionamento = new Redirecionamento();
         $redirecionamento->setDestino('gerenciar_assunto');
@@ -58,12 +69,7 @@ class AssuntoCtrl extends Controlador {
         } else if ($funcao == "cancelar_edicao") {
             $this->modoEditar = false;
             $this->entidade = new Assunto("", "");
-        } /* else if ($funcao == 'enviar_assuntos') {
-          return $this->enviarAssuntos();
-          } else if ($funcao == 'cancelar_enviar') {
-          $this->setCtrlDestino("");
-          $this->setModoBusca(false);
-          } */ else if (Util::startsWithString($funcao, "editar_")) {
+        } else if (Util::startsWithString($funcao, "editar_")) {
             $index = intval(str_replace("editar_", "", $funcao));
             $this->editarAssunto($index);
         } else if (Util::startsWithString($funcao, "excluir_")) {
@@ -94,9 +100,14 @@ class AssuntoCtrl extends Controlador {
             $this->tab = "tab_form";
         } else {
             $this->entidade->setConstante(true);
-            $this->dao->editar($this->entidade);
-            $log = $this->gerarLog(
-                    $this->modoEditar ? Log::TIPO_EDICAO : Log::TIPO_CADASTRO);
+            $log = new Log();
+            if ($this->modoEditar) {
+                $log = $this->gerarLog(Log::TIPO_EDICAO);
+                $this->dao->editar($this->entidade);
+            } else {
+                $this->copiaEntidade = $this->dao->editar($this->entidade);
+                $log = $this->gerarLog(Log::TIPO_CADASTRO);
+            }
             $this->dao->editar($log);
             $this->entidade = new Assunto("", "");
             $this->modoEditar = false;
@@ -116,23 +127,6 @@ class AssuntoCtrl extends Controlador {
         $this->pesquisar();
     }
 
-    /* public function enviarAssuntos($post, $controladores) {
-      $redirecionamento = new Redirecionamento();
-      $selecionados = array();
-      foreach ($post as $valor) {
-      if (Util::startsWithString($valor, "radio_")) {
-      $index = str_replace("radio_", "", $valor);
-      $selecionados[] = clone $this->entidades[$index - 1];
-      }
-      }
-      $ctrl = $controladores[$this->ctrlDestino];
-      $ctrl->setAssuntos($selecionados);
-      $this->modoBusca = false;
-      $redirecionamento->setDestino($this->getCtrlDestino());
-      $redirecionamento->setCtrl($controladores[$this->getCtrlDestino()]);
-      return $redirecionamento;
-      } */
-
     public function editarAssunto($index) {
         if ($index != 0) {
             $this->entidade = $this->entidades[$index - 1];
@@ -144,8 +138,9 @@ class AssuntoCtrl extends Controlador {
 
     public function excluirAssunto($index) {
         if ($index != 0) {
-            $aux = $this->entidades[$index - 1];
-            $this->dao->excluir($aux);
+            $this->copiaEntidade = $this->entidades[$index - 1];
+            $this->dao->excluir($this->copiaEntidade);
+            $this->dao->editar($this->gerarLog(Log::TIPO_REMOCAO));
             $p = $this->modeloTabela->getPaginador();
             if ($p->getOffset() == $p->getContagem()) {
                 $p->anterior();
@@ -157,14 +152,16 @@ class AssuntoCtrl extends Controlador {
 
     public function resetar() {
         $this->mensagem = null;
-        $this->validadorAssunto = new ValidadorAssunto();
+        $this->validadorMovimentacao = new ValidadorMovimentacao();
+        $this->controladores = null;
+        $this->post = null;
     }
 
     private function gerarLog($tipo) {
         $log = new Log();
         $log->setTipo($tipo);
-        $usuarioCtrl = $this->controladores["gerenciar_usuario"];
-        $log->setUsuario($usuarioCtrl->getUsuarioLogado());
+        $autenticacaoCtrl = $this->controladores["gerenciar_autenticacao"];
+        $log->setUsuario($autenticacaoCtrl->getEntidade());
         $log->setDataHora(new DateTime("now", new DateTimeZone('America/Sao_Paulo')));
         $entidade = array();
         $campos = array();

@@ -15,13 +15,17 @@ class AutenticacaoCtrl extends Controlador {
 
     const OFFSET = 0;
     const LIMITE = 1;
-    
+
     private $visaoAtual;
+    private $post;
+    private $controladores;
 
     public function __construct() {
+        $this->descricao = "gerenciar_autenticacao";
         $this->entidade = new Usuario("", "", "", "");
         $this->visaoAtual = "gerenciar_home";
     }
+
     public function getVisaoAtual() {
         return $this->visaoAtual;
     }
@@ -31,14 +35,24 @@ class AutenticacaoCtrl extends Controlador {
     }
 
     public function executarFuncao($post, $funcao, $controladores) {
-        $this->gerarUsuario($post);
-        
+        $this->post = $post;
+        $this->controladores = $controladores;
+
+        $this->gerarUsuario();
+
         $redirecionamento = new Redirecionamento();
         $redirecionamento->setDestino($this->visaoAtual);
         $redirecionamento->setCtrl($controladores[$this->visaoAtual]);
-        
+
         if ($funcao == "autenticar") {
-            $this->autenticar();
+            if ($this->autenticar()) {
+                $redirecionamento->getCtrl()->setMensagem(
+                        new Mensagem(
+                        "Autenticação"
+                        , Mensagem::MSG_TIPO_OK
+                        , "Usuário logado com sucesso."
+                ));
+            }
         } else if ($funcao == "sair") {
             $this->sair();
         }
@@ -51,8 +65,9 @@ class AutenticacaoCtrl extends Controlador {
                 $this->entidade, self::LIMITE, self::OFFSET);
         if ($resultado != NULL && count($resultado) > 0) {
             $this->entidade = $resultado[0];
+            return true;
         } else {
-            // ERRO
+            return false;
         }
     }
 
@@ -64,21 +79,22 @@ class AutenticacaoCtrl extends Controlador {
         $this->entidade->setSenha(hash("sha256", $this->entidade->getSenha()));
     }
 
-    private function gerarUsuario($post) {
-        if (isset($post['campo_login'])) {
-            $this->entidade->setLogin($post['campo_login']);
+    private function gerarUsuario() {
+        if (isset($this->post['campo_login'])) {
+            $this->entidade->setLogin($this->post['campo_login']);
         }
-        if (isset($post['campo_senha'])) {
-            $this->entidade->setSenha($post['campo_senha']);
+        if (isset($this->post['campo_senha'])) {
+            $this->entidade->setSenha($this->post['campo_senha']);
         }
     }
-    
+
     public function gerarLinhas() {
         
     }
 
     public function resetar() {
-        
+        $this->post = null;
+        $this->controladores = null;
     }
 
 //put your code here

@@ -27,6 +27,7 @@ class ProcessoCtrl extends Controlador {
     private $validadorProcesso;
 
     function __construct($dao) {
+        $this->descricao = "gerenciar_processo";
         $this->dao = $dao;
         $this->entidade = new Processo("");
         $this->entidades = array();

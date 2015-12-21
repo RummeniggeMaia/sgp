@@ -22,6 +22,7 @@ class ProcessoMovimentacaoCtrl extends Controlador {
      * $dao usado para buscar a lista de movimentacoes do sistema
      */
     function __construct($dao) {
+        $this->descricao = "gerenciar_processo_movimentacao";
         $this->dao = $dao;
         $this->entidade = new Processo("");
         $movimentacao = new Movimentacao(null, "", true);

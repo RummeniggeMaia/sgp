@@ -11,6 +11,10 @@ use controle\Controlador;
  */
 class HomeCtrl extends Controlador {
 
+    public function __construct() {
+        $this->descricao = "gerenciar_home";
+    }
+
     public function executarFuncao($post, $funcao, $controladores) {
         
     }

@@ -10,6 +10,7 @@ use util\Util;
  */
 abstract class Controlador {
 
+    protected $descricao;
     protected $entidade;
 //    Copia da entidade utilizada apenas para armazenar o estado anterior no log
     protected $copiaEntidade;
@@ -27,6 +28,10 @@ abstract class Controlador {
     // da tab que contem a tabela
     protected $tab = "tab_tabela";
 
+    public function getDescricao() {
+        return $this->descricao;
+    }
+    
     public function getEntidade() {
         return $this->entidade;
     }
@@ -153,7 +158,7 @@ abstract class Controlador {
      * a estrutura de colunas e linhas da tabela de pesquisa
      */
     public abstract function gerarLinhas();
-    
+
     /**
      * Funcao invocada no front_controller para resetar o controle. 
      * Ela é chamada apos a tela ser renderizada. 

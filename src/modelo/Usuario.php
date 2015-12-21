@@ -29,7 +29,7 @@ class Usuario extends Entidade {
     /** @OneToMany(targetEntity="Log", mappedBy="usuario") */
     protected $logs;
 
-    /** @ManyToMany(targetEntity="Autorizacao", mappedBy="usuarios") */
+    /** @ManyToMany(targetEntity="Autorizacao", inversedBy="usuarios", fetch="EAGER") */
     protected $autorizacoes;
 
     function __construct($nome, $email, $login, $senha) {

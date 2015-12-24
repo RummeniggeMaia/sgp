@@ -34,7 +34,7 @@ class Processo extends Entidade {
     /** @ManyToOne(targetEntity="Departamento", inversedBy="processos") */
     protected $departamento;
 
-    /** @OneToMany(targetEntity="ProcessoMovimentacao", mappedBy="processo", fetch="EAGER", cascade={"ALL"}) */
+    /** @OneToMany(targetEntity="ProcessoMovimentacao", mappedBy="processo", fetch="EAGER", cascade={"merge", "remove"}) */
     protected $processoMovimentacoes;
 
     function __construct($numeroProcesso) {

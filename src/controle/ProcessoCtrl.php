@@ -248,15 +248,14 @@ class ProcessoCtrl extends Controlador {
         foreach ($this->post as $valor) {
             if (Util::startsWithString($valor, "radio_")) {
                 $index = str_replace("radio_", "", $valor);
-                if ($index > 0) {
-                    $selecionados[] = clone $this->entidades[$index - 1];
-                }
+                $selecionados[] = $this->entidades[$index - 1]->clonar();
             }
         }
         $ctrl = $this->controladores[$this->ctrlDestino];
         $ctrl->setProcessos($selecionados);
         $this->modoBusca = false;
         $this->entidades = array();
+        $this->modeloTabela->setLinhas(array());
         $redirecionamento->setDestino($this->ctrlDestino);
         $redirecionamento->setCtrl($this->controladores[$this->ctrlDestino]);
         return $redirecionamento;

@@ -139,12 +139,14 @@ class FuncionarioCtrl extends Controlador {
         foreach ($this->post as $valor) {
             if (Util::startsWithString($valor, "radio_")) {
                 $index = str_replace("radio_", "", $valor);
-                $selecionados[] = clone $this->entidades[$index - 1];
+                $selecionados[] = $this->entidades[$index - 1]->clonar();
             }
         }
         $ctrl = $this->controladores[$this->ctrlDestino];
         $ctrl->setFuncionarios($selecionados);
         $this->modoBusca = false;
+        $this->entidades = array();
+        $this->modeloTabela->setLinhas(array());
         $redirecionamento->setDestino($this->getCtrlDestino());
         $redirecionamento->setCtrl($this->controladores[$this->getCtrlDestino()]);
         return $redirecionamento;

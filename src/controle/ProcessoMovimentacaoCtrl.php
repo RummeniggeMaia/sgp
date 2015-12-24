@@ -20,6 +20,7 @@ class ProcessoMovimentacaoCtrl extends Controlador {
     private $movimentacoes;
     private $controladores;
     private $post;
+
     /**
      * $dao usado para buscar a lista de movimentacoes do sistema
      */
@@ -75,7 +76,9 @@ class ProcessoMovimentacaoCtrl extends Controlador {
                 //index representa a posicao do processoMovimentacao alterado
                 $index = intval(str_replace("movimentacao_", "", $k));
                 //$v é valor do dropdown e movimentacao_ é nome do mesmo
-                $mov = $this->movimentacoes[$v]->clonar();
+                $mov = isset($this->movimentacoes[$v]) ?
+                        $this->movimentacoes[$v]->clonar() :
+                        new Movimentacao("", "");
                 $pms = $this->entidade->getProcessoMovimentacoes();
                 //O {{ loop.index }} sempre retorna valores acima de 0, entao a 
                 //opcao selecionada na posicao 0 do drop tem o index 1,

@@ -15,10 +15,7 @@ class Autorizacao extends Entidade {
 
     /** @Column(type="string") */
     protected $descricao;
-<<<<<<< HEAD
 
-=======
->>>>>>> fc1281d9da010839f8e14bcff16549103ccd4d5c
     /** @ManyToMany(targetEntity="Usuario", mappedBy="autorizacoes") */
     protected $usuarios;
 

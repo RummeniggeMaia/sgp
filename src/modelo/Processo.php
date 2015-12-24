@@ -2,11 +2,17 @@
 
 namespace modelo;
 
-use modelo\Entidade;
-use modelo\Funcionario;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\Table;
 use modelo\Assunto;
 use modelo\Departamento;
+use modelo\Entidade;
+use modelo\Funcionario;
 use modelo\ProcessoMovimentacao;
+use ReflectionClass;
 
 /**
  *
@@ -33,7 +39,7 @@ class Processo extends Entidade {
 
     function __construct($numeroProcesso) {
         $this->numeroProcesso = $numeroProcesso;
-        $this->processoMovimentacoes = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->processoMovimentacoes = new ArrayCollection();
         $this->funcionario = new Funcionario("", "", "");
         $this->assunto = new Assunto("", false);
         $this->departamento = new Departamento("", false);
@@ -80,7 +86,7 @@ class Processo extends Entidade {
     }
 
     public function getClassName() {
-        $rc = new \ReflectionClass($this);
+        $rc = new ReflectionClass($this);
         return $rc->getName();
     }
 
@@ -104,7 +110,7 @@ class Processo extends Entidade {
                         new Departamento("", false) :
                         $this->departamento->clonar());
 
-        $pms = new \Doctrine\Common\Collections\ArrayCollection();
+        $pms = new ArrayCollection();
         foreach ($this->processoMovimentacoes->toArray() as $pm) {
             $clonePm = $pm->clonar();
             $clonePm->setProcesso($clone);

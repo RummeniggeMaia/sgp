@@ -14,7 +14,7 @@ use ReflectionClass;
  */
 class Log extends Entidade {
 
-    /** @ManyToOne(targetEntity="Usuario", inversedBy="logs") */
+    /** @ManyToOne(targetEntity="Usuario", inversedBy="logs", cascade={"persist"}) */
     private $usuario;
     /**
      * Os tipos sao CADASTRO, EDICAO, REMOCAO e NULO, 

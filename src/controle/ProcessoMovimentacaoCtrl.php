@@ -4,6 +4,7 @@ namespace controle;
 
 use DateTime;
 use DateTimeZone;
+use modelo\Log;
 use modelo\Movimentacao;
 use modelo\Processo;
 use modelo\ProcessoMovimentacao;
@@ -17,7 +18,8 @@ use util\Util;
 class ProcessoMovimentacaoCtrl extends Controlador {
 
     private $movimentacoes;
-
+    private $controladores;
+    private $post;
     /**
      * $dao usado para buscar a lista de movimentacoes do sistema
      */
@@ -94,10 +96,12 @@ class ProcessoMovimentacaoCtrl extends Controlador {
      * @param type $funcao A funcionalidae do controller que sera executada.
      * @param type $controladores Representa os demais controladores do sistema,
      * caso haja necessi de comicao entre eles.
-     * @return \controle\Redirecionamento O controle a quem esse vai se 
+     * @return Redirecionamento O controle a quem esse vai se 
      * direcionar apos executar as funcoes.
      */
     public function executarFuncao($post, $funcao, $controladores) {
+        $this->controladores = $controladores;
+        $this->post = $post;
         //Verifica o que mudou na pagina de gerenciarMovimentacao
         $this->gerarProcessoMovimentacao($post);
 
@@ -109,7 +113,7 @@ class ProcessoMovimentacaoCtrl extends Controlador {
 
         if ($funcao == "salvar") {
             //Salva as alteracoes na basde
-            $this->salvar();
+            $this->salvarProcessoMovimentacao();
         } else if ($funcao == 'adicionar_movimentacao') {
             //Adiciona um processoMovimentacao no Processo ($this->entidade).
             $this->adicionarMovimentacao();
@@ -118,7 +122,7 @@ class ProcessoMovimentacaoCtrl extends Controlador {
             //usuario selecionar o processo la, a funcao setProcessos deste 
             //controle sera chamada la, entao o sistema redireciona para ca 
             //novamente.
-            return $this->buscarProcesso($controladores['gerenciar_processo']);
+            return $this->buscarProcesso();
         } else if ($funcao == "remover_processo") {
             //Caso o usuario queira remover o processo que ele acabou de 
             //pesquisar, essa funcao sera chamada.
@@ -133,7 +137,7 @@ class ProcessoMovimentacaoCtrl extends Controlador {
         //nao tem tabela para pesquisa
     }
 
-    //Funcao execata no ProcessoCtrl apos usuario selecionar o processo.
+    //Funcao executada ProcessoCtrl apos usuario selecionar o processo.
     public function setProcessos($list) {
         //É possivel retornar uma lista, mas este controle precisa apenas da 
         //primeira entidade.
@@ -142,10 +146,12 @@ class ProcessoMovimentacaoCtrl extends Controlador {
         }
     }
 
-    private function salvar() {
+    private function salvarProcessoMovimentacao() {
         //Usa a funcao merge do Dao, pos estamos trabalhando com entidade
         // desanexadas.
+        $log = $this->gerarLog(Log::TIPO_EDICAO);
         $this->dao->editar($this->entidade);
+        $this->dao->editar($log);
         $this->entidade = new Processo("");
         $this->modoEditar = false;
         $this->mensagem = new Mensagem(
@@ -165,7 +171,8 @@ class ProcessoMovimentacaoCtrl extends Controlador {
         $this->entidade->setProcessoMovimentacoes($pms);
     }
 
-    private function buscarProcesso($processoCtrl) {
+    private function buscarProcesso() {
+        $processoCtrl = $this->controladores["gerenciar_processo"];
         //Configura o controle de processo e redireciona para la
         $processoCtrl->setModoBusca(true);
         $processoCtrl->setCtrlDestino('gerenciar_processo_movimentacao');
@@ -177,6 +184,31 @@ class ProcessoMovimentacaoCtrl extends Controlador {
 
     public function resetar() {
         $this->mensagem = null;
+        $this->controladores = null;
+        $this->post = null;
+    }
+
+    private function gerarLog($tipo) {
+        $log = new Log();
+        $log->setTipo($tipo);
+        $autenticacaoCtrl = $this->controladores["gerenciar_autenticacao"];
+        $log->setUsuario($autenticacaoCtrl->getEntidade());
+        $log->setDataHora(new DateTime("now", new DateTimeZone('America/Sao_Paulo')));
+        $entidade = array();
+        $campos = array();
+        $entidade["classe"] = $this->entidade->getClassName();
+        $entidade["id"] = $this->entidade->getId();
+        $movs = array();
+        foreach ($this->entidade->getProcessoMovimentacoes() as $pm) {
+            $id = $pm->getId();
+            if ($id == null) {
+                $movs[] = $pm->getMovimentacao()->getId();
+            }
+        }
+        $campos["movimentacoes"] = $movs;
+        $entidade["campos"] = $campos;
+        $log->setDadosAlterados(json_encode($entidade));
+        return $log;
     }
 
 }

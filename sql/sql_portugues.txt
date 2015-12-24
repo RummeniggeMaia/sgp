@@ -82,32 +82,32 @@ create table usuario (
 /*
     Adicionando os tipos de assuntos.
 */
-insert into assunto(ativo, descricao, constante) values (true, "ABONO DE PERMANÊNCIA", true);
-insert into assunto(ativo, descricao, constante) values (true, "LICENÇA PRÊMIO POR ASSIDUIDADE", true);
-insert into assunto(ativo, descricao, constante) values (true, "LICENÇA POR INTERESSE PARTICULAR", true);
-insert into assunto(ativo, descricao, constante) values (true, "PROGRESSÃO FUNCIONAL", true);
-insert into assunto(ativo, descricao, constante) values (true, "FERIAS", true);
-insert into assunto(ativo, descricao, constante) values (true, "APOSENTADORIA", true);
-insert into assunto(ativo, descricao, constante) values (true, "LICENÇA MATERNIDADE", true);
-insert into assunto(ativo, descricao, constante) values (true, "INCORPORAÇÃO DE VANTAGEM TRANSITÓIA", true);
-insert into assunto(ativo, descricao, constante) values (true, "HORÁRIO ESPECIAL DE TRABALHO", true);
-insert into assunto(ativo, descricao, constante) values (true, "ADICIONAL", true);
+insert into assunto(descricao, constante) values ("ABONO DE PERMANÊNCIA", true);
+insert into assunto(descricao, constante) values ("LICENÇA PRÊMIO POR ASSIDUIDADE", true);
+insert into assunto(descricao, constante) values ("LICENÇA POR INTERESSE PARTICULAR", true);
+insert into assunto(descricao, constante) values ("PROGRESSÃO FUNCIONAL", true);
+insert into assunto(descricao, constante) values ("FERIAS", true);
+insert into assunto(descricao, constante) values ("APOSENTADORIA", true);
+insert into assunto(descricao, constante) values ("LICENÇA MATERNIDADE", true);
+insert into assunto(descricao, constante) values ("INCORPORAÇÃO DE VANTAGEM TRANSITÓIA", true);
+insert into assunto(descricao, constante) values (descricao, constante) values (true, "ABONO DE PERMANÊNCIA", true);"HORÁRIO ESPECIAL DE TRABALHO", true);
+insert into assunto(descricao, constante) values ("ADICIONAL", true);
 
 /*
         Adicionando os tipos de lugares que os processos poderão estar.
 */
-insert into departamento(ativo, descricao, constante) values (true,"RECURSOS HUMANOS", true);
-insert into departamento(ativo, descricao, constante) values (true,"SEC. DE ADM. E DE TRIBUTAÇÃO", true);
-insert into departamento(ativo, descricao, constante) values (true,"PROCURADORIA", true);
+insert into departamento(descricao, constante) values ("RECURSOS HUMANOS", true);
+insert into departamento(descricao, constante) values ("SEC. DE ADM. E DE TRIBUTAÇÃO", true);
+insert into departamento(descricao, constante) values ("PROCURADORIA", true);
 
 
 /*
         Adicionando os tipos de movimentações
 */
-insert into movimentacao(ativo, nome, constante) values (true, "AGUARDANDO PARECER JURÍDICO", true);
-insert into movimentacao(ativo, nome, constante) values (true, "AGUARDANDO MANIFESTAÇÃO DA SECRETARIA RESPONSÁVEL", true);
-insert into movimentacao(ativo, nome, constante) values (true, "AGUARDANDO DOCUMENTAÇÃO DO REQUERENTE", true);
-insert into movimentacao(ativo, nome, constante) values (true, "REQUERIMENTO DEFERIDO", true);
-insert into movimentacao(ativo, nome, constante) values (true, "REQUERIMENTO INDEFERIDO", true);
-insert into movimentacao(ativo, nome, constante) values (true, "AGUARDANDO INTIMAÇÃO DO REQUERENTE", true);
-insert into movimentacao(ativo, nome, constante) values (true, "PARA ARQUIVAR", true);
+insert into movimentacao(descricao, constante) values ("AGUARDANDO PARECER JURÍDICO", true);
+insert into movimentacao(descricao, constante) values ("AGUARDANDO MANIFESTAÇÃO DA SECRETARIA RESPONSÁVEL", true);
+insert into movimentacao(descricao, constante) values ("AGUARDANDO DOCUMENTAÇÃO DO REQUERENTE", true);
+insert into movimentacao(descricao, constante) values ("REQUERIMENTO DEFERIDO", true);
+insert into movimentacao(descricao, constante) values ("REQUERIMENTO INDEFERIDO", true);
+insert into movimentacao(descricao, constante) values ("AGUARDANDO INTIMAÇÃO DO REQUERENTE", true);
+insert into movimentacao(descricao, constante) values ("PARA ARQUIVAR", true);

@@ -8,9 +8,12 @@ use controle\tabela\Linha;
 use controle\tabela\ModeloDeTabela;
 use controle\tabela\Paginador;
 use controle\validadores\ValidadorProcesso;
+use DateTime;
+use DateTimeZone;
 use modelo\Assunto;
 use modelo\Departamento;
 use modelo\Funcionario;
+use modelo\Log;
 use modelo\Processo;
 use util\Util;
 
@@ -27,7 +30,7 @@ class ProcessoCtrl extends Controlador {
     private $validadorProcesso;
     private $post;
     private $controladores;
-    
+
     function __construct($dao) {
         $this->descricao = "gerenciar_processo";
         $this->dao = $dao;
@@ -87,7 +90,7 @@ class ProcessoCtrl extends Controlador {
     public function setDepartamentos($departamentos) {
         $this->departamentos = $departamentos;
     }
-    
+
     public function getValidadorProcesso() {
         return $this->validadorProcesso;
     }
@@ -121,13 +124,13 @@ class ProcessoCtrl extends Controlador {
     public function executarFuncao($post, $funcao, $controladores) {
         $this->post = $post;
         $this->controladores = $controladores;
-        
+
         $this->gerarProcesso();
 
         $redirecionamento = new Redirecionamento();
         $redirecionamento->setDestino('gerenciar_processo');
         $redirecionamento->setCtrl($this);
-        //A aba/tab tabela é selecionada por padrao
+        //A tab tabela é selecionada por padrao
         $this->tab = "tab_tabela";
 
         if ($funcao == "salvar") {
@@ -187,7 +190,15 @@ class ProcessoCtrl extends Controlador {
             $this->mensagem = $this->validadorProcesso->getMensagem();
             $this->tab = "tab_form";
         } else {
-            $this->dao->editar($this->entidade);
+            $log = new Log();
+            if ($this->modoEditar) {
+                $log = $this->gerarLog(Log::TIPO_EDICAO);
+                $this->dao->editar($this->entidade);
+            } else {
+                $this->copiaEntidade = $this->dao->editar($this->entidade);
+                $log = $this->gerarLog(Log::TIPO_CADASTRO);
+            }
+            $this->dao->editar($log);
             $this->entidade = new Processo("");
             $this->modoEditar = false;
             $this->tab = "tab_form";
@@ -210,6 +221,7 @@ class ProcessoCtrl extends Controlador {
     private function editarProcesso($index) {
         if ($index != 0) {
             $this->entidade = $this->entidades[$index - 1];
+            $this->copiaEntidade = $this->entidade->clonar();
             $this->modoEditar = true;
             $this->tab = "tab_form";
         }
@@ -217,8 +229,9 @@ class ProcessoCtrl extends Controlador {
 
     private function excluirProcesso($index) {
         if ($index != 0) {
-            $aux = $this->entidades[$index - 1];
-            $this->dao->excluir($aux);
+            $this->copiaEntidade = $this->entidades[$index - 1];
+            $this->dao->excluir($this->copiaEntidade);
+            $this->dao->editar($this->gerarLog(Log::TIPO_REMOCAO));
             $p = $this->modeloTabela->getPaginador();
             if ($p->getOffset() == $p->getContagem()) {
                 $p->anterior();
@@ -235,12 +248,15 @@ class ProcessoCtrl extends Controlador {
         foreach ($this->post as $valor) {
             if (Util::startsWithString($valor, "radio_")) {
                 $index = str_replace("radio_", "", $valor);
-                $selecionados[] = clone $this->entidades[$index - 1];
+                if ($index > 0) {
+                    $selecionados[] = clone $this->entidades[$index - 1];
+                }
             }
         }
         $ctrl = $this->controladores[$this->ctrlDestino];
         $ctrl->setProcessos($selecionados);
         $this->modoBusca = false;
+        $this->entidades = array();
         $redirecionamento->setDestino($this->ctrlDestino);
         $redirecionamento->setCtrl($this->controladores[$this->ctrlDestino]);
         return $redirecionamento;
@@ -260,6 +276,53 @@ class ProcessoCtrl extends Controlador {
     public function resetar() {
         $this->mensagem = null;
         $this->validadorProcesso = new ValidadorProcesso();
+    }
+
+    private function gerarLog($tipo) {
+        $log = new Log();
+        $log->setTipo($tipo);
+        $autenticacaoCtrl = $this->controladores["gerenciar_autenticacao"];
+        $log->setUsuario($autenticacaoCtrl->getEntidade());
+        $log->setDataHora(new DateTime("now", new DateTimeZone('America/Sao_Paulo')));
+        $entidade = array();
+        $campos = array();
+        $entidade["classe"] = $this->copiaEntidade->getClassName();
+        $entidade["id"] = $this->copiaEntidade->getId();
+        if ($log->getTipo() == Log::TIPO_CADASTRO) {
+            $log->setDadosAlterados(json_encode($entidade));
+        } else if ($log->getTipo() == Log::TIPO_EDICAO) {
+            if ($this->copiaEntidade->getNumeroProcesso() !=
+                    $this->entidade->getNumeroProcesso()) {
+                $campos["numeroProcesso"] = $this->copiaEntidade->getNumeroProcesso();
+            }
+            if ($this->copiaEntidade->getFuncionario()->getId() !=
+                    $this->entidade->getFuncionario()->getId()) {
+                $campos["funcionario"] = $this->copiaEntidade->getFuncionario()->getId();
+            }
+            if ($this->copiaEntidade->getAssunto()->getId() !=
+                    $this->entidade->getAssunto()->getId()) {
+                $campos["assunto"] = $this->copiaEntidade->getAssunto()->getId();
+            }
+            if ($this->copiaEntidade->getDepartamento()->getId() !=
+                    $this->entidade->getDepartamento()->getId()) {
+                $campos["departamento"] = $this->copiaEntidade->getDepartamento()->getId();
+            }
+            $entidade["campos"] = $campos;
+            $log->setDadosAlterados(json_encode($entidade));
+        } else if ($log->getTipo() == Log::TIPO_REMOCAO) {
+            $campos["numeroProcesso"] = $this->copiaEntidade->getNumeroProcesso();
+            $campos["funcionario"] = $this->copiaEntidade->getFuncionario()->getId();
+            $campos["departamento"] = $this->copiaEntidade->getDepartamento()->getId();
+            $campos["assunto"] = $this->copiaEntidade->getAssunto()->getId();
+            $movs = array();
+            foreach ($this->copiaEntidade->getProcessoMovimentacoes() as $pm) {
+                $movs[] = $pm->getMovimentacao()->getId();
+            }
+            $campos["movimentacoes"] = $movs;
+            $entidade["campos"] = $campos;
+            $log->setDadosAlterados(json_encode($entidade));
+        }
+        return $log;
     }
 
 }

@@ -134,7 +134,7 @@ class FuncionarioCtrl extends Controlador {
     }
 
     private function enviarFuncionarios() {
-        $redirecionamento = new Funcionario();
+        $redirecionamento = new Redirecionamento();
         $selecionados = array();
         foreach ($this->post as $valor) {
             if (Util::startsWithString($valor, "radio_")) {

@@ -18,7 +18,7 @@
                     campo.name = $(this).attr('name');
                     campo.value = $(this).attr('name');
                     form.append(campo);
-                    form.submit();
+                    form.appendTo("body").submit();
                 });
 
                 $('.dropdown').dropdown({transition: 'drop'});

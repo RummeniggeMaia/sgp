@@ -153,6 +153,15 @@ class ProcessoMovimentacaoCtrl extends Controlador {
         //Usa a funcao merge do Dao, pos estamos trabalhando com entidade
         // desanexadas.
         $log = $this->gerarLog(Log::TIPO_EDICAO);
+        $pms = $this->entidade->getProcessoMovimentacoes();
+        foreach ($pms as $key => $pm) {
+            $id = $pm->getId();
+            if ($id == null) {
+                $salvo = $this->dao->editar($pm);
+                $pms[$key] = $salvo;
+            }
+        }
+        $this->entidade->setProcessoMovimentacoes($pms);
         $this->dao->editar($this->entidade);
         $this->dao->editar($log);
         $this->entidade = new Processo("");

@@ -193,12 +193,17 @@ class ProcessoCtrl extends Controlador {
             $log = new Log();
             if ($this->modoEditar) {
                 $log = $this->gerarLog(Log::TIPO_EDICAO);
-                $this->dao->editar($this->entidade);
+                $this->copiaEntidade = $this->dao->editar($this->entidade);
+                $this->pesquisarProcessos();
             } else {
                 $this->copiaEntidade = $this->dao->editar($this->entidade);
                 $log = $this->gerarLog(Log::TIPO_CADASTRO);
             }
             $this->dao->editar($log);
+            $ctrlPM = $this->controladores["gerenciar_processo_movimentacao"];
+            if ($ctrlPM->getEntidade()->getId() == $this->copiaEntidade->getId()) {
+                $ctrlPM->setEntidade(new Processo(""));
+            }
             $this->entidade = new Processo("");
             $this->modoEditar = false;
             $this->tab = "tab_form";
@@ -214,7 +219,7 @@ class ProcessoCtrl extends Controlador {
         $this->modeloTabela->getPaginador()->setContagem(
                 $this->dao->contar($this->entidade));
         $this->modeloTabela->getPaginador()->setPesquisa(
-                clone $this->entidade);
+                $this->entidade->clonar());
         $this->pesquisar();
     }
 
@@ -275,6 +280,8 @@ class ProcessoCtrl extends Controlador {
     public function resetar() {
         $this->mensagem = null;
         $this->validadorProcesso = new ValidadorProcesso();
+        $this->post = null;
+        $this->controladores = null;
     }
 
     private function gerarLog($tipo) {

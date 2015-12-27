@@ -8,6 +8,7 @@ use modelo\Departamento;
 use modelo\Entidade;
 use modelo\Funcionario;
 use modelo\Movimentacao;
+use modelo\Processo;
 use modelo\Usuario;
 
 /**
@@ -46,6 +47,10 @@ class DqlBuilder {
         }
         if ($entidade->getClassName() == "modelo\Movimentacao") {
             $this->gerarClausulaWhereMovimentacao(
+                    $entidade, $queryBuilder);
+        }
+        if ($entidade->getClassName() == "modelo\Processo") {
+            $this->gerarClausulaWhereProcesso(
                     $entidade, $queryBuilder);
         }
     }
@@ -103,6 +108,23 @@ class DqlBuilder {
         if ($movimentacao->getDescricao() != null &&
                 preg_match("/.+/i", $movimentacao->getDescricao())) {
             $qb->andWhere("x.descricao like '%" . $movimentacao->getDescricao() . "%'");
+        }
+    }
+    
+    private function gerarClausulaWhereProcesso(Processo $p, QueryBuilder $qb) {
+        if ($p->getNumeroProcesso() != null &&
+                preg_match("/.+/i", $p->getNumeroProcesso())) {
+            $qb->andWhere("x.numeroProcesso = '" . $p->getNumeroProcesso() . "'");
+            //$qb->andWhere("x.numeroProcesso like '%" . $p->getNumeroProcesso() . "%'");
+        }
+        if ($p->getAssunto()->getId() != null) {
+            $qb->andWhere("x.assunto = " . $p->getAssunto()->getId());
+        }
+        if ($p->getDepartamento()->getId() != null) {
+            $qb->andWhere("x.departamento = " . $p->getDepartamento()->getId());
+        }
+        if ($p->getFuncionario()->getId() != null) {
+            $qb->andWhere("x.funcionario = " . $p->getFuncionario()->getId());
         }
     }
 

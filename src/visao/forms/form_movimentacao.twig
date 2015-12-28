@@ -34,12 +34,15 @@
                 </div>
 
                 <div class="fields">
+                    {% if autenticacaoCtrl.contemAutorizacao('admin') %}
                     <div class="field">
                         <div class="ui submit black button"
                              onClick="submeterForm('form_movimentacao', 'funcao_gerenciar_movimentacao', 'salvar');">
                             <i class="save icon"></i>Salvar
                         </div>
                     </div>
+                    {% endif %}
+                    {% if autenticacaoCtrl.contemAutorizacao('admin') %}
                     {% if ctrl.modoEditar%}
                         <div class="field">
                             <div class="ui submit black button" 
@@ -47,6 +50,7 @@
                                 <i class="remove circle outline icon"></i>Cancelar Edição
                             </div>
                         </div>
+                    {% endif %}
                     {% endif %}
                     <div class="field">
                         <div class="ui submit black button"

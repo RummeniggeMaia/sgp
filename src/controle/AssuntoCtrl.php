@@ -49,11 +49,15 @@ class AssuntoCtrl extends Controlador {
      */
     public function gerarAssunto() {
         if (isset($this->post['campo_descricao'])) {
-            $this->entidade->setDescricao(strtoupper($this->post['campo_descricao']));
+            $this->entidade->setDescricao(
+                    strtoupper($this->post['campo_descricao']));
         }
     }
 
     public function executarFuncao($post, $funcao, $controladores) {
+        $this->post = $post;
+        $this->controladores = $controladores;
+
         $this->gerarAssunto();
 
         $redirecionamento = new Redirecionamento();

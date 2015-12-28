@@ -51,7 +51,8 @@ class AssuntoCtrl extends Controlador {
      */
     public function gerarAssunto() {
         if (isset($this->post['campo_descricao'])) {
-            $this->entidade->setDescricao(strtoupper($this->post['campo_descricao']));
+            $this->entidade->setDescricao(
+                    strtoupper($this->post['campo_descricao']));
         }
     }
 

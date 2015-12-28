@@ -45,26 +45,25 @@
                 </div>
                 <div class="fields">
                     {% if autenticacaoCtrl.contemAutorizacao('admin') %}
-                    {% if not ctrl.modoBusca %}
-                        <div class="field">
-                            <div class="ui submit black button" 
-                                 onclick="submeterForm('form_funcionario', 'funcao_gerenciar_funcionario', 'salvar');">
-                                <i class="save icon"></i>Salvar
+                        {% if not ctrl.modoBusca %}
+                            <div class="field">
+                                <div class="ui submit black button" 
+                                     onclick="submeterForm('form_funcionario', 'funcao_gerenciar_funcionario', 'salvar');">
+                                    <i class="save icon"></i>Salvar
+                                </div>
                             </div>
-                        </div>
-                    {% endif %}
+                        {% endif %}
                     {% endif %}
                     {% if autenticacaoCtrl.contemAutorizacao('admin') %}
-                    {% if ctrl.modoEditar%}
-                        <div class="field">
-                            <div class="ui submit black button" 
-                                 onclick="submeterForm('form_funcionario', 'funcao_gerenciar_funcionario', 'cancelar_edicao');">
-                                <i class="remove circle outline icon"></i>Cancelar Edição
+                        {% if ctrl.modoEditar%}
+                            <div class="field">
+                                <div class="ui submit black button" 
+                                     onclick="submeterForm('form_funcionario', 'funcao_gerenciar_funcionario', 'cancelar_edicao');">
+                                    <i class="remove circle outline icon"></i>Cancelar Edição
+                                </div>
                             </div>
-                        </div>
+                        {% endif %}
                     {% endif %}
-                    {% endif %}
-                    {% if autenticacaoCtrl.contemAutorizacao('admin') %}
                     {% if ctrl.modoBusca %}
                         <div class="field">
                             <div class="ui submit black button" 
@@ -73,8 +72,6 @@
                             </div>
                         </div>
                     {% endif %}
-                    {% endif %}
-                    {% if autenticacaoCtrl.contemAutorizacao('admin') %}
                     {% if ctrl.modoBusca %}
                         <div class="field">
                             <div class="ui submit black button" 
@@ -82,7 +79,6 @@
                                 <i class="remove circle outline icon"></i>Cancelar envio
                             </div>
                         </div>
-                    {% endif %}
                     {% endif %}
                     <div class="field">
                         <div class="ui submit black button"

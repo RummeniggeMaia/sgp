@@ -12,6 +12,7 @@ use controle\validadores\ValidadorUsuario;
 use modelo\Usuario;
 //use PHPMailer;
 use util\Util;
+use controle\Log;
 
 /**
  * Description of UsuarioCtrl
@@ -77,8 +78,8 @@ class UsuarioCtrl extends Controlador {
             $this->mensagem = $this->validadorUsuario->getMensagem();
             $this->tab = "tab_form";
         } else {
-            $this->criptografarSenha();
-            $$log = new Log();
+            //$this->criptografarSenha();
+            $log = new Log();
             if ($this->modoEditar) {
                 $log = $this->gerarLog(Log::TIPO_EDICAO);
                 $this->dao->editar($this->entidade);

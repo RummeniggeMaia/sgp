@@ -58,6 +58,7 @@
                     <td>{{ valor }}</td>
                 {% endfor %}
                 {% if not modo_busca %}
+                {% if autenticacaoCtrl.contemAutorizacao('admin') %}
                     <td style="text-align: center;width:1%;white-space:nowrap;">
                         <div class="ui submit black button" 
                              onclick="submeterForm(
@@ -67,6 +68,8 @@
                             <i class="edit icon"></i>Editar
                         </div>
                     </td>
+                {% endif %}
+                {% if autenticacaoCtrl.contemAutorizacao('admin') %}
                     <td style="text-align: center;width:1%;white-space:nowrap;">
                         <div class="ui submit black button" 
                              onclick="submeterForm(
@@ -76,6 +79,7 @@
                             <i class="delete icon"></i>Excluir
                         </div>
                     </td>
+                {% endif %}
                 {% endif %}
             </tr>
         {% endfor %}

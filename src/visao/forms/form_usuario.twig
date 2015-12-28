@@ -44,12 +44,14 @@
                     <input type="password" name="campo_senha" />
                 </div>
                 <div class="fields">
+                    {% if autenticacaoCtrl.contemAutorizacao('admin') %}
                     <div class="field">
                         <div class="ui submit black button"
                              onClick="submeterForm('form_usuario', 'funcao_gerenciar_usuario', 'salvar');">
                             <i class="unlock icon"></i>Salvar
                         </div>
                     </div>
+                    {% endif %}
                     <div class="field">
                         <div class="ui submit black button"
                              onclick="submeterForm('form_usuario', 'funcao_gerenciar_usuario', 'pesquisar');">

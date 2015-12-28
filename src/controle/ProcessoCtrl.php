@@ -41,34 +41,15 @@ class ProcessoCtrl extends Controlador {
         $this->modeloTabela->setCabecalhos(
                 array("Nº Processo", "Funcionário", "Departamento", "Assunto"
         /* , "Movimentações" */        ));
-        $assunto = new Assunto(null, true);
-        $this->assuntos = $this->dao->pesquisar($assunto, PHP_INT_MAX, 0);
-        $departamento = new Departamento(null, true);
-        $this->departamentos = $this->dao->pesquisar($departamento, PHP_INT_MAX, 0);
-        //Indexa todas os assuntos para serem buscados pela descricao
-        $aux = array();
-        foreach ($this->assuntos as $a) {
-            $aux[$a->getDescricao()] = $a;
-        }
-        $this->assuntos = $aux;
-        //Indexa todas os departamentos para ser buscada pela descricao
-        $aux = array();
-        foreach ($this->departamentos as $d) {
-            $aux[$d->getDescricao()] = $d;
-        }
-        $this->departamentos = $aux;
         //Como o controle de processos tem apenas um funcinario que é 
         //buscado na pagina de genrenciamento de funcionarios, entao nao 
         //há necessidade de indexar essa lista, pois ela nao vai ficar em 
         //um dropdown.
         $this->funcionarios = array();
-        //Depois q esse contrutor for chamado no index.php, esse controlador vai 
-        //ser serializado, por isso o objeto dao tem q ser nulado pois o mesmo 
-        //nao pode ser serializado
-        $this->dao = null;
         //Validador utilizado para validar os campos assim como os 
         //relacionamentos do processo
         $this->validadorProcesso = new ValidadorProcesso();
+        $this->atualizarListas();
     }
 
     public function getAssuntos() {
@@ -331,4 +312,26 @@ class ProcessoCtrl extends Controlador {
         return $log;
     }
 
+    private function atualizarListas() {
+        $assunto = new Assunto(null, true);
+        $this->assuntos = $this->dao->pesquisar($assunto, PHP_INT_MAX, 0);
+        $departamento = new Departamento(null, true);
+        $this->departamentos = $this->dao->pesquisar($departamento, PHP_INT_MAX, 0);
+        //Indexa todas os assuntos para serem buscados pela descricao
+        $aux = array();
+        foreach ($this->assuntos as $a) {
+            $aux[$a->getDescricao()] = $a;
+        }
+        $this->assuntos = $aux;
+        //Indexa todas os departamentos para ser buscada pela descricao
+        $aux = array();
+        foreach ($this->departamentos as $d) {
+            $aux[$d->getDescricao()] = $d;
+        }
+        $this->departamentos = $aux;
+        //Depois q esse contrutor for chamado no index.php, esse controlador vai 
+        //ser serializado, por isso o objeto dao tem q ser nulado pois o mesmo 
+        //nao pode ser serializado
+        $this->dao = null;
+    }
 }

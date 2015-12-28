@@ -1,6 +1,8 @@
 <?php
 
 namespace controle;
+//use PHPMailer;
+
 
 use controle\Controlador;
 use controle\Mensagem;
@@ -9,8 +11,10 @@ use controle\tabela\Linha;
 use controle\tabela\ModeloDeTabela;
 use controle\tabela\Paginador;
 use controle\validadores\ValidadorUsuario;
+use DateTime;
+use DateTimeZone;
+use modelo\Log;
 use modelo\Usuario;
-//use PHPMailer;
 use util\Util;
 
 /**
@@ -78,7 +82,7 @@ class UsuarioCtrl extends Controlador {
             $this->tab = "tab_form";
         } else {
             $this->criptografarSenha();
-            $$log = new Log();
+            $log = new Log();
             if ($this->modoEditar) {
                 $log = $this->gerarLog(Log::TIPO_EDICAO);
                 $this->dao->editar($this->entidade);

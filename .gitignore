@@ -7,3 +7,4 @@
 !bootstrap.php
 !cli-config.php
 !/sql/
+!.htaccess

@@ -40,6 +40,13 @@ class Autorizacao extends Entidade {
     public function setUsuarios($usuario) {
         $this->usuarios = $usuario;
     }
+    public function getDescricao() {
+        return $this->descricao;
+    }
+
+    public function setDescricao($descricao) {
+        $this->descricao = $descricao;
+    }
 
     public function clonar() {
         $clone = new Autorizacao("");

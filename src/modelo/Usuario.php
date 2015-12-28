@@ -108,8 +108,11 @@ class Usuario extends Entidade {
         $clone->setEmail($this->email);
         $clone->setLogin($this->login);
         $clone->setSenha($this->senha);
-
+        $auts = array();
+        foreach ($this->autorizacoes as $a) {
+            $auts[] = $a->clonar();
+        }
+        $clone->setAutorizacoes($auts);
         return $clone;
     }
-
 }

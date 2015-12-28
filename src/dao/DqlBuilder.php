@@ -74,7 +74,7 @@ class DqlBuilder {
     private function gerarClausulaWhereUsuario(Usuario $usuario, QueryBuilder $qb) {
         if ($usuario->getNome() != null &&
                 preg_match("/.+/i", $usuario->getNome())) {
-            $qb->andWhere("x.nome = '" . $usuario->getNome() . "'");
+            $qb->andWhere("x.nome like '%" . $usuario->getNome() . "%'");
         }
         if ($usuario->getEmail() != null &&
                 preg_match("/.+/i", $usuario->getEmail())) {

@@ -97,5 +97,13 @@ class AutenticacaoCtrl extends Controlador {
         $this->controladores = null;
     }
 
+    public function contemAutorizacao($a) {
+        foreach ($this->entidade->getAutorizacoes() as $atual) {
+            if ($atual->getDescricao() == $a) {
+                return true;
+            }
+        }
+        return false;
+    }
 //put your code here
 }

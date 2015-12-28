@@ -28,10 +28,20 @@ abstract class Controlador {
     // da tab que contem a tabela
     protected $tab = "tab_tabela";
 
+    const CTRL_USUARIO = "gerenciar_usuario";
+    const CTRL_FUNCIONARIO = "gerenciar_funcionario";
+    const CTRL_ASSUNTO = "gerenciar_assunto";
+    const CTRL_DEPARTAMENTO = "gerenciar_departamento";
+    const CTRL_MOVIMENTACAO = "gerenciar_movimentacao";
+    const CTRL_PROCESSO = "gerenciar_processo";
+    const CTRL_PROCESSO_MOVIMENTACAO = "gerenciar_processo_movimentacao";
+    const CTRL_HOME = "gerenciar_home";
+    const CTRL_AUTENTICACAO = "gerenciar_autenticacao";
+
     public function getDescricao() {
         return $this->descricao;
     }
-    
+
     public function getEntidade() {
         return $this->entidade;
     }

@@ -14,7 +14,6 @@ use modelo\Assunto;
 use modelo\Log;
 use util\Util;
 use validadores\ValidadorMovimentacao;
-use dao\Dao;
 
 /**
  * Description of AssuntoCtrl
@@ -195,7 +194,7 @@ class AssuntoCtrl extends Controlador {
     private function assuntoInserido() {
         $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
         $assuntos = $processoCtrl->getAssuntos();
-        $assuntos[] = $this->copiaEntidade;
+        $assuntos[] = $this->copiaEntidade->clonar();
         $processoCtrl->setAssuntos($assuntos);
     }
 

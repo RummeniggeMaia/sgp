@@ -175,6 +175,7 @@ class ProcessoCtrl extends Controlador {
             if ($this->modoEditar) {
                 $log = $this->gerarLog(Log::TIPO_EDICAO);
                 $this->copiaEntidade = $this->dao->editar($this->entidade);
+                $this->processoEditado();
                 $this->pesquisarProcessos();
             } else {
                 $this->copiaEntidade = $this->dao->editar($this->entidade);
@@ -217,6 +218,7 @@ class ProcessoCtrl extends Controlador {
         if ($index != 0) {
             $this->copiaEntidade = $this->entidades[$index - 1];
             $this->dao->excluir($this->copiaEntidade);
+            $this->processoRemovido();
             $this->dao->editar($this->gerarLog(Log::TIPO_REMOCAO));
             $p = $this->modeloTabela->getPaginador();
             if ($p->getOffset() == $p->getContagem()) {
@@ -333,5 +335,25 @@ class ProcessoCtrl extends Controlador {
         //ser serializado, por isso o objeto dao tem q ser nulado pois o mesmo 
         //nao pode ser serializado
         $this->dao = null;
+    }
+
+    private function processoInserido() {
+        
+    }
+
+    private function processoEditado() {
+        $proMovCtrl = $this->controladores[Controlador::CTRL_PROCESSO_MOVIMENTACAO];
+        $pro = $proMovCtrl->getEntidade();
+        if ($pro != null && $pro->getId() == $this->copiaEntidade->getId()) {
+            $proMovCtrl->setEntidade($this->copiaEntidade->clonar());
+        }
+    }
+
+    private function processoRemovido() {
+        $proMovCtrl = $this->controladores[Controlador::CTRL_PROCESSO_MOVIMENTACAO];
+        $pro = $proMovCtrl->getEntidade();
+        if ($pro != null && $pro->getId() == $this->copiaEntidade->getId()) {
+            $proMovCtrl->setEntidade(new Processo(""));
+        }
     }
 }

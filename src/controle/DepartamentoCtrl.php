@@ -44,7 +44,6 @@ class DepartamentoCtrl extends Controlador {
         $this->validadorDepartamento = $validadorDepartamento;
     }
     
-
     /**
      * Factory method para gerar departamentos baseado a partir do POST
      */
@@ -108,8 +107,10 @@ class DepartamentoCtrl extends Controlador {
             if ($this->modoEditar) {
                 $log = $this->gerarLog(Log::TIPO_EDICAO);
                 $this->dao->editar($this->entidade);
+                $this->departamentoEditado();
             } else {
                 $this->copiaEntidade = $this->dao->editar($this->entidade);
+                $this->departamentoInserido();
                 $log = $this->gerarLog(Log::TIPO_CADASTRO);
             }
             $this->dao->editar($log);
@@ -144,6 +145,7 @@ class DepartamentoCtrl extends Controlador {
         if ($index != 0) {
             $this->copiaEntidade = $this->entidades[$index - 1];
             $this->dao->excluir($this->copiaEntidade);
+            $this->departamentoRemovido();
             $this->dao->editar($this->gerarLog(Log::TIPO_REMOCAO));
             $p = $this->modeloTabela->getPaginador();
             if ($p->getOffset() == $p->getContagem()) {
@@ -188,4 +190,34 @@ class DepartamentoCtrl extends Controlador {
         return $log;
     }
 
+    private function departamentoInserido() {
+        $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
+        $deps = $processoCtrl->getDepartamentos();
+        $deps[] = $this->copiaEntidade->clonar();
+        $processoCtrl->setDepartamentos($deps);
+    }
+
+    private function departamentoEditado() {
+        $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
+        $deps = $processoCtrl->getDepartamentos();
+        foreach ($deps as $i => $d) {
+            if ($d->getId() == $this->copiaEntidade->getId()) {
+                $deps[$i] = $this->copiaEntidade->clonar();
+                break;
+            }
+        }
+        $processoCtrl->setDepartamentos($deps);
+    }
+
+    private function departamentoRemovido() {
+        $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
+        $deps = $processoCtrl->getDepartamentos();
+        foreach ($deps as $i => $d) {
+            if ($d->getId() == $this->copiaEntidade->getId()) {
+                unset($deps[$i]);
+                break;
+            }
+        }
+        $processoCtrl->setDepartamentos($deps);
+    }
 }

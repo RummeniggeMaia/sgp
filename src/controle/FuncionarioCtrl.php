@@ -109,7 +109,8 @@ class FuncionarioCtrl extends Controlador {
             $log = new Log();
             if ($this->modoEditar) {
                 $log = $this->gerarLog(Log::TIPO_EDICAO);
-                $this->dao->editar($this->entidade);
+                $this->copiaEntidade = $this->dao->editar($this->entidade);
+                $this->funcionarioEditado();
             } else {
                 $this->copiaEntidade = $this->dao->editar($this->entidade);
                 $log = $this->gerarLog(Log::TIPO_CADASTRO);
@@ -165,6 +166,7 @@ class FuncionarioCtrl extends Controlador {
         if ($index != 0) {
             $this->copiaEntidade = $this->entidades[$index - 1];
             $this->dao->excluir($this->copiaEntidade);
+            $this->funcionarioRemovido();
             $this->dao->editar($this->gerarLog(Log::TIPO_REMOCAO));
             $p = $this->modeloTabela->getPaginador();
             if ($p->getOffset() == $p->getContagem()) {
@@ -214,6 +216,28 @@ class FuncionarioCtrl extends Controlador {
             $log->setDadosAlterados(json_encode($entidade));
         }
         return $log;
+    }
+
+    private function funcionarioInserido() {
+        
+    }
+
+    private function funcionarioEditado() {
+        $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
+        $func = $processoCtrl->getEntidade()->getFuncionario();
+        if ($func != null && $func->getId() == $this->copiaEntidade->getId()) {
+            $processoCtrl->getEntidade()->setFuncionario(
+                    $this->copiaEntidade->clonar());
+        }
+    }
+
+    private function funcionarioRemovido() {
+        $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
+        $func = $processoCtrl->getEntidade()->getFuncionario();
+        if ($func != null && $func->getId() == $this->copiaEntidade->getId()) {
+            $processoCtrl->getEntidade()->setFuncionario(
+                    new Funcionario("", "", ""));
+        }
     }
 
 }

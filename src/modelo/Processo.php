@@ -4,6 +4,7 @@ namespace modelo;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\Table;
@@ -25,7 +26,9 @@ class Processo extends Entidade {
     /** @Column(type="string", unique=true) */
     protected $numeroProcesso;
 
-    /** @ManyToOne(targetEntity="Funcionario", inversedBy="processos") */
+    /** @ManyToOne(targetEntity="Funcionario", inversedBy="processos") 
+     *  @JoinColumn(name="funcionario_id", referencedColumnName="id", onDelete="SET NULL")
+     */
     protected $funcionario;
 
     /** @ManyToOne(targetEntity="Assunto", inversedBy="processos") */

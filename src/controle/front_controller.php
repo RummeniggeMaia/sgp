@@ -43,11 +43,7 @@ foreach ($chaves as $requisicao) {
             //de visões
             if (isset($visoes_navegacao[$visao])) {
                 $redirecionamento->setDestino($visoes_navegacao[$visao]);
-                $redirecionamento->setCtrl(
-                        isset($controladores[$visao]) ?
-                                $controladores[$visao] :
-                                null
-                );
+                $redirecionamento->setCtrl($controladores[$visao]);
                 //Gera o template e manda renderizar a visao .twig
                 redirecionar($twig, $redirecionamento, $autenticacaoCtrl);
                 $_SESSION['controladores'] = serialize($controladores);

@@ -13,6 +13,7 @@ use DateTimeZone;
 use modelo\Assunto;
 use modelo\Log;
 use util\Util;
+use validadores\ValidadorMovimentacao;
 
 /**
  * Description of AssuntoCtrl
@@ -78,7 +79,7 @@ class AssuntoCtrl extends Controlador {
             $this->editarAssunto($index);
         } else if (Util::startsWithString($funcao, "excluir_")) {
             $index = intval(str_replace("excluir_", "", $funcao));
-            $this->excluirAssunto();
+            $this->excluirAssunto($index);
         } else if (Util::startsWithString($funcao, "paginador_")) {
             parent::paginar($funcao);
         }
@@ -107,9 +108,11 @@ class AssuntoCtrl extends Controlador {
             $log = new Log();
             if ($this->modoEditar) {
                 $log = $this->gerarLog(Log::TIPO_EDICAO);
-                $this->dao->editar($this->entidade);
+                $this->copiaEntidade = $this->dao->editar($this->entidade);
+                $this->assuntoEditado();
             } else {
                 $this->copiaEntidade = $this->dao->editar($this->entidade);
+                $this->assuntoInserido();
                 $log = $this->gerarLog(Log::TIPO_CADASTRO);
             }
             $this->dao->editar($log);
@@ -127,7 +130,7 @@ class AssuntoCtrl extends Controlador {
         $this->modeloTabela->getPaginador()->setContagem(
                 $this->dao->contar($this->entidade));
         $this->modeloTabela->getPaginador()->setPesquisa(
-                clone $this->entidade);
+                $this->entidade->clonar());
         $this->pesquisar();
     }
 
@@ -144,6 +147,7 @@ class AssuntoCtrl extends Controlador {
         if ($index != 0) {
             $this->copiaEntidade = $this->entidades[$index - 1];
             $this->dao->excluir($this->copiaEntidade);
+            $this->assuntoRemovido();
             $this->dao->editar($this->gerarLog(Log::TIPO_REMOCAO));
             $p = $this->modeloTabela->getPaginador();
             if ($p->getOffset() == $p->getContagem()) {
@@ -180,11 +184,42 @@ class AssuntoCtrl extends Controlador {
             $entidade["campos"] = $campos;
             $log->setDadosAlterados(json_encode($entidade));
         } else if ($log->getTipo() == Log::TIPO_REMOCAO) {
-            $campos["descricao"] = $this->copiaEntidade->getNome();
+            $campos["descricao"] = $this->copiaEntidade->getDescricao();
             $entidade["campos"] = $campos;
             $log->setDadosAlterados(json_encode($entidade));
         }
         return $log;
+    }
+
+    private function assuntoInserido() {
+        $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
+        $assuntos = $processoCtrl->getAssuntos();
+        $assuntos[] = $this->copiaEntidade->clonar();
+        $processoCtrl->setAssuntos($assuntos);
+    }
+
+    private function assuntoEditado() {
+        $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
+        $assuntos = $processoCtrl->getAssuntos();
+        foreach ($assuntos as $i => $a) {
+            if ($a->getId() == $this->copiaEntidade->getId()) {
+                $assuntos[$i] = $this->copiaEntidade->clonar();
+                break;
+            }
+        }
+        $processoCtrl->setAssuntos($assuntos);
+    }
+
+    private function assuntoRemovido() {
+        $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
+        $assuntos = $processoCtrl->getAssuntos();
+        foreach ($assuntos as $i => $a) {
+            if ($a->getId() == $this->copiaEntidade->getId()) {
+                unset($assuntos[$i]);
+                break;
+            }
+        }
+        $processoCtrl->setAssuntos($assuntos);
     }
 
 }

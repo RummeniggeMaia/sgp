@@ -31,10 +31,14 @@ class Processo extends Entidade {
      */
     protected $funcionario;
 
-    /** @ManyToOne(targetEntity="Assunto", inversedBy="processos") */
+    /** @ManyToOne(targetEntity="Assunto", inversedBy="processos") 
+     *  @JoinColumn(name="assunto_id", referencedColumnName="id", onDelete="SET NULL")
+     */
     protected $assunto;
 
-    /** @ManyToOne(targetEntity="Departamento", inversedBy="processos") */
+    /** @ManyToOne(targetEntity="Departamento", inversedBy="processos") 
+     *  @JoinColumn(name="departamento_id", referencedColumnName="id", onDelete="SET NULL")
+     */
     protected $departamento;
 
     /** @OneToMany(targetEntity="ProcessoMovimentacao", mappedBy="processo", fetch="EAGER", cascade={"merge", "remove"}) */

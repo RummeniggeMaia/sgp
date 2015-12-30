@@ -226,6 +226,10 @@ class ProcessoCtrl extends Controlador {
             }
             $p->setContagem($p->getContagem() - 1);
             $this->pesquisar();
+            $this->mensagem = new Mensagem(
+                    "Cadastro de processos"
+                    , Mensagem::MSG_TIPO_OK
+                    , "Processo removido com sucesso.");
         }
     }
 
@@ -356,4 +360,5 @@ class ProcessoCtrl extends Controlador {
             $proMovCtrl->setEntidade(new Processo(""));
         }
     }
+
 }

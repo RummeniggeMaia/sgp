@@ -174,6 +174,10 @@ class FuncionarioCtrl extends Controlador {
             }
             $p->setContagem($p->getContagem() - 1);
             $this->pesquisar();
+            $this->mensagem = new Mensagem(
+                    "Cadastro de funcionários"
+                    , Mensagem::MSG_TIPO_OK
+                    , "Funcionário removido com sucesso.");
         }
     }
 

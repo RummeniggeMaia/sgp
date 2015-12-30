@@ -155,6 +155,10 @@ class AssuntoCtrl extends Controlador {
             }
             $p->setContagem($p->getContagem() - 1);
             $this->pesquisar();
+            $this->mensagem = new Mensagem(
+                    "Cadastro de assuntos"
+                    , Mensagem::MSG_TIPO_OK
+                    , "Assunto removido com sucesso.");
         }
     }
 

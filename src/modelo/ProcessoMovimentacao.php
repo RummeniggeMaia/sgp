@@ -18,7 +18,9 @@ class ProcessoMovimentacao extends Entidade {
     /** @ManyToOne(targetEntity="Processo", inversedBy="processoMovimentacoes") */
     protected $processo;
 
-    /** @ManyToOne(targetEntity="Movimentacao", inversedBy="processoMovimentacoes") */
+    /** @ManyToOne(targetEntity="Movimentacao", inversedBy="processoMovimentacoes")
+     *  @JoinColumn(name="movimentacao_id", referencedColumnName="id", onDelete="SET NULL")
+     */
     protected $movimentacao;
 
     public function __construct() {

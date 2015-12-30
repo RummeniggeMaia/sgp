@@ -52,6 +52,13 @@ class AutenticacaoCtrl extends Controlador {
                         , Mensagem::MSG_TIPO_OK
                         , "Usuário logado com sucesso."
                 ));
+            }else{
+                $redirecionamento->getCtrl()->setMensagem(
+                        new Mensagem(
+                        "Autenticação"
+                        , Mensagem::MSG_TIPO_ERRO
+                        , "Autenticação inválida"
+                ));
             }
         } else if ($funcao == "sair") {
             $this->sair();
@@ -60,7 +67,7 @@ class AutenticacaoCtrl extends Controlador {
     }
 
     private function autenticar() {
-        $this->criptografarSenha();
+        //$this->criptografarSenha();
         $resultado = $this->dao->pesquisar(
                 $this->entidade, self::LIMITE, self::OFFSET);
         if ($resultado != NULL && count($resultado) > 0) {

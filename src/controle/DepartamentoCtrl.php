@@ -35,7 +35,7 @@ class DepartamentoCtrl extends Controlador {
         $this->modeloTabela->setModoBusca(false);
         $this->validadorDepartamento = new ValidadorDepartamento();
     }
-    
+
     public function getValidadorDepartamento() {
         return $this->validadorDepartamento;
     }
@@ -43,7 +43,7 @@ class DepartamentoCtrl extends Controlador {
     public function setValidadorDepartamento($validadorDepartamento) {
         $this->validadorDepartamento = $validadorDepartamento;
     }
-    
+
     /**
      * Factory method para gerar departamentos baseado a partir do POST
      */
@@ -153,6 +153,10 @@ class DepartamentoCtrl extends Controlador {
             }
             $p->setContagem($p->getContagem() - 1);
             $this->pesquisar();
+            $this->mensagem = new Mensagem(
+                    "Cadastro de departamento"
+                    , Mensagem::MSG_TIPO_OK
+                    , "Departamento removido com sucesso.");
         }
     }
 
@@ -220,4 +224,5 @@ class DepartamentoCtrl extends Controlador {
         }
         $processoCtrl->setDepartamentos($deps);
     }
+
 }

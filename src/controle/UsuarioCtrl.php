@@ -1,6 +1,7 @@
 <?php
 
 namespace controle;
+
 //use PHPMailer;
 
 
@@ -28,7 +29,7 @@ class UsuarioCtrl extends Controlador {
     private $validadorUsuario;
     private $post;
     private $controladores;
-    
+
     public function __construct() {
         $this->descricao = "gerenciar_usuario";
         $this->entidade = new Usuario("", "", "", "");
@@ -51,7 +52,7 @@ class UsuarioCtrl extends Controlador {
     public function executarFuncao($post, $funcao, $controladores) {
         $this->post = $post;
         $this->controladores = $controladores;
-        
+
         $this->gerarUsuario();
 
         $redirecionamento = new Redirecionamento();
@@ -159,7 +160,7 @@ class UsuarioCtrl extends Controlador {
 
     private function excluirUsuario($index) {
         if ($index != 0) {
-             $this->copiaEntidade = $this->entidades[$index - 1];
+            $this->copiaEntidade = $this->entidades[$index - 1];
             $this->dao->excluir($this->copiaEntidade);
             $this->dao->editar($this->gerarLog(Log::TIPO_REMOCAO));
             $p = $this->modeloTabela->getPaginador();
@@ -168,9 +169,13 @@ class UsuarioCtrl extends Controlador {
             }
             $p->setContagem($p->getContagem() - 1);
             $this->pesquisar();
+            $this->mensagem = new Mensagem(
+                    "Cadastro de usuários"
+                    , Mensagem::MSG_TIPO_OK
+                    , "Usuário removido com sucesso.");
         }
     }
-    
+
     private function gerarLog($tipo) {
         $log = new Log();
         $log->setTipo($tipo);

@@ -77,7 +77,7 @@ class MovimentacaoCtrl extends Controlador {
             $this->editarMovimentacao($index);
         } else if (Util::startsWithString($funcao, "excluir_")) {
             $index = intval(str_replace("excluir_", "", $funcao));
-            $this->excluirMovimentacao();
+            $this->excluirMovimentacao($index);
         } else if (Util::startsWithString($funcao, "paginador_")) {
             parent::paginar($funcao);
         }
@@ -144,6 +144,7 @@ class MovimentacaoCtrl extends Controlador {
         if ($index != 0) {
             $this->copiaEntidade = $this->entidades[$index - 1];
             $this->dao->excluir($this->copiaEntidade);
+            $this->movimentacaoRemovido();
             $this->dao->editar($this->gerarLog(Log::TIPO_REMOCAO));
             $p = $this->modeloTabela->getPaginador();
             if ($p->getOffset() == $p->getContagem()) {
@@ -185,6 +186,15 @@ class MovimentacaoCtrl extends Controlador {
             $log->setDadosAlterados(json_encode($entidade));
         }
         return $log;
+    }
+
+    private function movimentacaoRemovido() {
+        $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
+        $func = $processoCtrl->getEntidade()->getFuncionario();
+        if ($func != null && $func->getId() == $this->copiaEntidade->getId()) {
+            $processoCtrl->getEntidade()->setMovimentacao(
+                    new Movimentacao(""));
+        }
     }
 
 }

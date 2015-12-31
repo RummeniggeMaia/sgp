@@ -175,13 +175,13 @@ class MovimentacaoCtrl extends Controlador {
         if ($log->getTipo() == Log::TIPO_CADASTRO) {
             $log->setDadosAlterados(json_encode($entidade));
         } else if ($log->getTipo() == Log::TIPO_EDICAO) {
-            if ($this->copiaEntidade->getNome() != $this->entidade->getNome()) {
+            if ($this->copiaEntidade->getDescricao() != $this->entidade->getDescricao()) {
                 $campos["descricao"] = $this->copiaEntidade->getDescricao();
             }
             $entidade["campos"] = $campos;
             $log->setDadosAlterados(json_encode($entidade));
         } else if ($log->getTipo() == Log::TIPO_REMOCAO) {
-            $campos["descricao"] = $this->copiaEntidade->getNome();
+            $campos["descricao"] = $this->copiaEntidade->getDescricao();
             $entidade["campos"] = $campos;
             $log->setDadosAlterados(json_encode($entidade));
         }

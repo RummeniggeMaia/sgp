@@ -52,7 +52,7 @@ class AutenticacaoCtrl extends Controlador {
                         , Mensagem::MSG_TIPO_OK
                         , "Usuário logado com sucesso."
                 ));
-            }else{
+            } else {
                 $redirecionamento->getCtrl()->setMensagem(
                         new Mensagem(
                         "Autenticação"
@@ -67,7 +67,7 @@ class AutenticacaoCtrl extends Controlador {
     }
 
     private function autenticar() {
-        $this->criptografarSenha();
+        //$this->criptografarSenha();
         $resultado = $this->dao->pesquisar(
                 $this->entidade, self::LIMITE, self::OFFSET);
         if ($resultado != NULL && count($resultado) > 0) {
@@ -80,6 +80,10 @@ class AutenticacaoCtrl extends Controlador {
 
     private function sair() {
         $this->entidade = new Usuario("", "", "", "");
+        session_destroy();
+        $redirecionamento = new Redirecionamento();
+        $redirecionamento->setDestino('gerenciar_home');
+        $redirecionamento->setCtrl($this);
     }
 
     private function criptografarSenha() {
@@ -112,5 +116,6 @@ class AutenticacaoCtrl extends Controlador {
         }
         return false;
     }
+
 //put your code here
 }

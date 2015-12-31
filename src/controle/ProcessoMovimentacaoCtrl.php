@@ -154,22 +154,34 @@ class ProcessoMovimentacaoCtrl extends Controlador {
         // desanexadas.
         $log = $this->gerarLog(Log::TIPO_EDICAO);
         $pms = $this->entidade->getProcessoMovimentacoes();
+        $estado = false;
         foreach ($pms as $key => $pm) {
             $id = $pm->getId();
             if ($id == null) {
+                if ($pm->getMovimentacao()->getDescricao() == NULL) {
+                    $this->mensagem = new Mensagem(
+                            "Movimentação Processual"
+                            , "msg_tipo_erro"
+                            , "Movimentação não pode ser vazia.");
+                    $estado = false;
+                    break;
+                }
                 $salvo = $this->dao->editar($pm);
                 $pms[$key] = $salvo;
+                $estado = true;
             }
         }
-        $this->entidade->setProcessoMovimentacoes($pms);
-        $this->dao->editar($this->entidade);
-        $this->dao->editar($log);
-        $this->entidade = new Processo("");
-        $this->modoEditar = false;
-        $this->mensagem = new Mensagem(
-                "Movimentação Processual"
-                , "msg_tipo_ok"
-                , "Movimentações cadastradas com sucesso.");
+        if ($estado) {
+            $this->entidade->setProcessoMovimentacoes($pms);
+            $this->dao->editar($this->entidade);
+            $this->dao->editar($log);
+            $this->entidade = new Processo("");
+            $this->modoEditar = false;
+            $this->mensagem = new Mensagem(
+                    "Movimentação Processual"
+                    , "msg_tipo_ok"
+                    , "Movimentações cadastradas com sucesso.");
+        }
     }
 
     private function adicionarMovimentacao() {
@@ -178,7 +190,7 @@ class ProcessoMovimentacaoCtrl extends Controlador {
                 new DateTime("now", new DateTimeZone('America/Sao_Paulo')));
         $pm->setProcesso($this->entidade);
         $pm->setMovimentacao(new Movimentacao("", false));
-        $pms = $this->entidade->getProcessoMovimentacoes();
+        $pms = $this->entidade->getProcessoMovimentacoes;
         $pms->add($pm);
         $this->entidade->setProcessoMovimentacoes($pms);
     }

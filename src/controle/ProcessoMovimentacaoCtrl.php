@@ -130,6 +130,9 @@ class ProcessoMovimentacaoCtrl extends Controlador {
             //Caso o usuario queira remover o processo que ele acabou de 
             //pesquisar, essa funcao sera chamada.
             $this->entidade = new Processo("");
+        } else if (Util::startsWithString($funcao, "remover_movimentacao_")) {
+            $index = intval(str_replace("remover_movimentacao_", "", $funcao));
+            $this->removerMovimentacao($index);
         }
         //Redireciona para esta pagina.
         return $redirecionamento;
@@ -190,7 +193,7 @@ class ProcessoMovimentacaoCtrl extends Controlador {
                 new DateTime("now", new DateTimeZone('America/Sao_Paulo')));
         $pm->setProcesso($this->entidade);
         $pm->setMovimentacao(new Movimentacao("", false));
-        $pms = $this->entidade->getProcessoMovimentacoes;
+        $pms = $this->entidade->getProcessoMovimentacoes();
         $pms->add($pm);
         $this->entidade->setProcessoMovimentacoes($pms);
     }
@@ -233,6 +236,17 @@ class ProcessoMovimentacaoCtrl extends Controlador {
         $entidade["campos"] = $campos;
         $log->setDadosAlterados(json_encode($entidade));
         return $log;
+    }
+
+    private function removerMovimentacao($index) {
+        $pms = $this->entidade->getProcessoMovimentacoes();
+        if ($index > 0 && $index <= count($pms)) {
+            $pm = $pms[$index - 1];
+            if ($pm->getId() == null) {
+                unset($pms[$index - 1]);
+            }
+            $this->entidade->setProcessoMovimentacoes($pms);
+        }
     }
 
 }

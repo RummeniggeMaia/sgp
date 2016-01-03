@@ -150,7 +150,11 @@
                                         </td>
                                         <td style="text-align: center;width:1%;white-space:nowrap;">
                                             {% if pm.id is null %}
-                                                <div class="ui submit red button">
+                                                <div class="ui submit red button" 
+                                                     onclick="submeterForm(
+                                                                     'form_processo_movimentacao',
+                                                                     'funcao_gerenciar_processo_movimentacao',
+                                                                     'remover_movimentacao_{{ loop.index }}');">
                                                     <i class="delete icon"></i>
                                                 </div>
                                             {% endif %}

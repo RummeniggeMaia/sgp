@@ -171,28 +171,35 @@ class ProcessoCtrl extends Controlador {
             $this->mensagem = $this->validadorProcesso->getMensagem();
             $this->tab = "tab_form";
         } else {
-            $log = new Log();
-            if ($this->modoEditar) {
-                $log = $this->gerarLog(Log::TIPO_EDICAO);
-                $this->copiaEntidade = $this->dao->editar($this->entidade);
-                $this->processoEditado();
-                $this->pesquisarProcessos();
-            } else {
-                $this->copiaEntidade = $this->dao->editar($this->entidade);
-                $log = $this->gerarLog(Log::TIPO_CADASTRO);
+            try {
+                $log = new Log();
+                if ($this->modoEditar) {
+                    $log = $this->gerarLog(Log::TIPO_EDICAO);
+                    $this->copiaEntidade = $this->dao->editar($this->entidade);
+                    $this->processoEditado();
+                    $this->pesquisarProcessos();
+                } else {
+                    $this->copiaEntidade = $this->dao->editar($this->entidade);
+                    $log = $this->gerarLog(Log::TIPO_CADASTRO);
+                }
+                $this->dao->editar($log);
+                $ctrlPM = $this->controladores["gerenciar_processo_movimentacao"];
+                if ($ctrlPM->getEntidade()->getId() == $this->copiaEntidade->getId()) {
+                    $ctrlPM->setEntidade(new Processo(""));
+                }
+                $this->entidade = new Processo("");
+                $this->modoEditar = false;
+                $this->tab = "tab_form";
+                $this->mensagem = new Mensagem(
+                        "Cadastro de processos"
+                        , Mensagem::MSG_TIPO_OK
+                        , "Dados do Processo salvos com sucesso.");
+            } catch (Exception $e) {
+                $this->mensagem = new Mensagem(
+                        "Cadastro de processos"
+                        , Mensagem::MSG_TIPO_ERRO
+                        , "Erro ao salvar o processos.");
             }
-            $this->dao->editar($log);
-            $ctrlPM = $this->controladores["gerenciar_processo_movimentacao"];
-            if ($ctrlPM->getEntidade()->getId() == $this->copiaEntidade->getId()) {
-                $ctrlPM->setEntidade(new Processo(""));
-            }
-            $this->entidade = new Processo("");
-            $this->modoEditar = false;
-            $this->tab = "tab_form";
-            $this->mensagem = new Mensagem(
-                    "Cadastro de processos"
-                    , Mensagem::MSG_TIPO_OK
-                    , "Dados do Processo salvos com sucesso.");
         }
     }
 
@@ -211,6 +218,15 @@ class ProcessoCtrl extends Controlador {
             $this->copiaEntidade = $this->entidade->clonar();
             $this->modoEditar = true;
             $this->tab = "tab_form";
+        } else {
+            try {
+                // nada a fazer
+            } catch (Exception $ex) {
+                $this->mensagem = new Mensagem(
+                        "Cadastro de processos"
+                        , Mensagem::MSG_TIPO_ERRO
+                        , "Erro ao editar o processos.");
+            }
         }
     }
 
@@ -230,6 +246,15 @@ class ProcessoCtrl extends Controlador {
                     "Cadastro de processos"
                     , Mensagem::MSG_TIPO_OK
                     , "Processo removido com sucesso.");
+        } else {
+            try {
+                // nada a fazer
+            } catch (Exception $ex) {
+                $this->mensagem = new Mensagem(
+                        "Cadastro de processos"
+                        , Mensagem::MSG_TIPO_ERRO
+                        , "Erro ao excluir o processos.");
+            }
         }
     }
 

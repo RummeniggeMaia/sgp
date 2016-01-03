@@ -162,44 +162,50 @@ class FuncionarioCtrl extends Controlador {
     }
 
     private function editarFuncionario($index) {
-        try {
-            if ($index != 0) {
-                $this->entidade = $this->entidades[$index - 1];
-                $this->copiaEntidade = $this->entidade->clonar();
-                $this->modoEditar = true;
-                $this->tab = "tab_form";
+
+        if ($index != 0) {
+            $this->entidade = $this->entidades[$index - 1];
+            $this->copiaEntidade = $this->entidade->clonar();
+            $this->modoEditar = true;
+            $this->tab = "tab_form";
+        } else {
+            try {
+                // nada a fazer
+            } catch (Exception $e) {
+                $this->mensagem = new Mensagem(
+                        "Cadastro de funcionários"
+                        , Mensagem::MSG_TIPO_ERRO
+                        , "Erro ao editar o funcionário.");
             }
-        } catch (Exception $e) {
-            $this->mensagem = new Mensagem(
-                    "Cadastro de funcionários"
-                    , Mensagem::MSG_TIPO_ERRO
-                    , "Erro ao editar o funcionário.");
         }
     }
 
     private function excluirFuncionario($index) {
-        try {
-            if ($index != 0) {
-                $this->copiaEntidade = $this->entidades[$index - 1];
-                $this->dao->excluir($this->copiaEntidade);
-                $this->funcionarioRemovido();
-                $this->dao->editar($this->gerarLog(Log::TIPO_REMOCAO));
-                $p = $this->modeloTabela->getPaginador();
-                if ($p->getOffset() == $p->getContagem()) {
-                    $p->anterior();
-                }
-                $p->setContagem($p->getContagem() - 1);
-                $this->pesquisar();
-                $this->mensagem = new Mensagem(
-                        "Cadastro de funcionários"
-                        , Mensagem::MSG_TIPO_OK
-                        , "Funcionário removido com sucesso.");
+
+        if ($index != 0) {
+            $this->copiaEntidade = $this->entidades[$index - 1];
+            $this->dao->excluir($this->copiaEntidade);
+            $this->funcionarioRemovido();
+            $this->dao->editar($this->gerarLog(Log::TIPO_REMOCAO));
+            $p = $this->modeloTabela->getPaginador();
+            if ($p->getOffset() == $p->getContagem()) {
+                $p->anterior();
             }
-        } catch (Exception $e) {
+            $p->setContagem($p->getContagem() - 1);
+            $this->pesquisar();
             $this->mensagem = new Mensagem(
                     "Cadastro de funcionários"
-                    , Mensagem::MSG_TIPO_ERRO
-                    , "Erro ao remover o funcionário");
+                    , Mensagem::MSG_TIPO_OK
+                    , "Funcionário removido com sucesso.");
+        } else {
+            try {
+                // nada a fazer
+            } catch (Exception $e) {
+                $this->mensagem = new Mensagem(
+                        "Cadastro de funcionários"
+                        , Mensagem::MSG_TIPO_ERRO
+                        , "Erro ao remover o funcionário");
+            }
         }
     }
 

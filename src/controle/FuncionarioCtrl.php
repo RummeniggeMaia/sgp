@@ -101,27 +101,34 @@ class FuncionarioCtrl extends Controlador {
     }
 
     private function salvarFuncionario() {
-        $this->validadorFuncionario->validar($this->entidade);
-        if (!$this->validadorFuncionario->getValido()) {
-            $this->mensagem = $this->validadorFuncionario->getMensagem();
-            $this->tab = "tab_form";
-        } else {
-            $log = new Log();
-            if ($this->modoEditar) {
-                $log = $this->gerarLog(Log::TIPO_EDICAO);
-                $this->copiaEntidade = $this->dao->editar($this->entidade);
-                $this->funcionarioEditado();
+        try {
+            $this->validadorFuncionario->validar($this->entidade);
+            if (!$this->validadorFuncionario->getValido()) {
+                $this->mensagem = $this->validadorFuncionario->getMensagem();
+                $this->tab = "tab_form";
             } else {
-                $this->copiaEntidade = $this->dao->editar($this->entidade);
-                $log = $this->gerarLog(Log::TIPO_CADASTRO);
+                $log = new Log();
+                if ($this->modoEditar) {
+                    $log = $this->gerarLog(Log::TIPO_EDICAO);
+                    $this->copiaEntidade = $this->dao->editar($this->entidade);
+                    $this->funcionarioEditado();
+                } else {
+                    $this->copiaEntidade = $this->dao->editar($this->entidade);
+                    $log = $this->gerarLog(Log::TIPO_CADASTRO);
+                }
+                $this->dao->editar($log);
+                $this->entidade = new Funcionario("", "", "");
+                $this->modoEditar = false;
+                $this->mensagem = new Mensagem(
+                        "Cadastro de funcionários"
+                        , Mensagem::MSG_TIPO_OK
+                        , "Dados do Funcionário salvos com sucesso.");
             }
-            $this->dao->editar($log);
-            $this->entidade = new Funcionario("", "", "");
-            $this->modoEditar = false;
+        } catch (Exception $e) {
             $this->mensagem = new Mensagem(
                     "Cadastro de funcionários"
-                    , Mensagem::MSG_TIPO_OK
-                    , "Dados do Funcionário salvos com sucesso.");
+                    , Mensagem::MSG_TIPO_ERRO
+                    , "Erro ao salvar o funcionário");
         }
     }
 
@@ -154,30 +161,44 @@ class FuncionarioCtrl extends Controlador {
     }
 
     private function editarFuncionario($index) {
-        if ($index != 0) {
-            $this->entidade = $this->entidades[$index - 1];
-            $this->copiaEntidade = $this->entidade->clonar();
-            $this->modoEditar = true;
-            $this->tab = "tab_form";
+        try {
+            if ($index != 0) {
+                $this->entidade = $this->entidades[$index - 1];
+                $this->copiaEntidade = $this->entidade->clonar();
+                $this->modoEditar = true;
+                $this->tab = "tab_form";
+            }
+        } catch (Exception $e) {
+            $this->mensagem = new Mensagem(
+                    "Cadastro de funcionários"
+                    , Mensagem::MSG_TIPO_ERRO
+                    , "Erro ao editar o funcionário.");
         }
     }
 
     private function excluirFuncionario($index) {
-        if ($index != 0) {
-            $this->copiaEntidade = $this->entidades[$index - 1];
-            $this->dao->excluir($this->copiaEntidade);
-            $this->funcionarioRemovido();
-            $this->dao->editar($this->gerarLog(Log::TIPO_REMOCAO));
-            $p = $this->modeloTabela->getPaginador();
-            if ($p->getOffset() == $p->getContagem()) {
-                $p->anterior();
+        try {
+            if ($index != 0) {
+                $this->copiaEntidade = $this->entidades[$index - 1];
+                $this->dao->excluir($this->copiaEntidade);
+                $this->funcionarioRemovido();
+                $this->dao->editar($this->gerarLog(Log::TIPO_REMOCAO));
+                $p = $this->modeloTabela->getPaginador();
+                if ($p->getOffset() == $p->getContagem()) {
+                    $p->anterior();
+                }
+                $p->setContagem($p->getContagem() - 1);
+                $this->pesquisar();
+                $this->mensagem = new Mensagem(
+                        "Cadastro de funcionários"
+                        , Mensagem::MSG_TIPO_OK
+                        , "Funcionário removido com sucesso.");
             }
-            $p->setContagem($p->getContagem() - 1);
-            $this->pesquisar();
+        } catch (Exception $e) {
             $this->mensagem = new Mensagem(
                     "Cadastro de funcionários"
-                    , Mensagem::MSG_TIPO_OK
-                    , "Funcionário removido com sucesso.");
+                    , Mensagem::MSG_TIPO_ERRO
+                    , "Erro ao remover o funcionário");
         }
     }
 
@@ -189,37 +210,44 @@ class FuncionarioCtrl extends Controlador {
     }
 
     private function gerarLog($tipo) {
-        $log = new Log();
-        $log->setTipo($tipo);
-        $autenticacaoCtrl = $this->controladores["gerenciar_autenticacao"];
-        $log->setUsuario($autenticacaoCtrl->getEntidade());
-        $log->setDataHora(new DateTime("now", new DateTimeZone('America/Sao_Paulo')));
-        $entidade = array();
-        $campos = array();
-        $entidade["classe"] = $this->copiaEntidade->getClassName();
-        $entidade["id"] = $this->copiaEntidade->getId();
-        if ($log->getTipo() == Log::TIPO_CADASTRO) {
-            $log->setDadosAlterados(json_encode($entidade));
-        } else if ($log->getTipo() == Log::TIPO_EDICAO) {
-            if ($this->copiaEntidade->getNome() != $this->entidade->getNome()) {
+        try {
+            $log = new Log();
+            $log->setTipo($tipo);
+            $autenticacaoCtrl = $this->controladores["gerenciar_autenticacao"];
+            $log->setUsuario($autenticacaoCtrl->getEntidade());
+            $log->setDataHora(new DateTime("now", new DateTimeZone('America/Sao_Paulo')));
+            $entidade = array();
+            $campos = array();
+            $entidade["classe"] = $this->copiaEntidade->getClassName();
+            $entidade["id"] = $this->copiaEntidade->getId();
+            if ($log->getTipo() == Log::TIPO_CADASTRO) {
+                $log->setDadosAlterados(json_encode($entidade));
+            } else if ($log->getTipo() == Log::TIPO_EDICAO) {
+                if ($this->copiaEntidade->getNome() != $this->entidade->getNome()) {
+                    $campos["nome"] = $this->copiaEntidade->getNome();
+                }
+                if ($this->copiaEntidade->getCpf() != $this->entidade->getCpf()) {
+                    $campos["cpf"] = $this->copiaEntidade->getCpf();
+                }
+                if ($this->copiaEntidade->getRg() != $this->entidade->getRg()) {
+                    $campos["rg"] = $this->copiaEntidade->getRg();
+                }
+                $entidade["campos"] = $campos;
+                $log->setDadosAlterados(json_encode($entidade));
+            } else if ($log->getTipo() == Log::TIPO_REMOCAO) {
                 $campos["nome"] = $this->copiaEntidade->getNome();
-            }
-            if ($this->copiaEntidade->getCpf() != $this->entidade->getCpf()) {
-                $campos["cpf"] = $this->copiaEntidade->getCpf();
-            }
-            if ($this->copiaEntidade->getRg() != $this->entidade->getRg()) {
                 $campos["rg"] = $this->copiaEntidade->getRg();
+                $campos["cpf"] = $this->copiaEntidade->getCpf();
+                $entidade["campos"] = $campos;
+                $log->setDadosAlterados(json_encode($entidade));
             }
-            $entidade["campos"] = $campos;
-            $log->setDadosAlterados(json_encode($entidade));
-        } else if ($log->getTipo() == Log::TIPO_REMOCAO) {
-            $campos["nome"] = $this->copiaEntidade->getNome();
-            $campos["rg"] = $this->copiaEntidade->getRg();
-            $campos["cpf"] = $this->copiaEntidade->getCpf();
-            $entidade["campos"] = $campos;
-            $log->setDadosAlterados(json_encode($entidade));
+            return $log;
+        } catch (Exception $e) {
+            $this->mensagem = new Mensagem(
+                    "Cadastro de funcionários"
+                    , Mensagem::MSG_TIPO_ERRO
+                    , "Erro durante a geração do Log.");
         }
-        return $log;
     }
 
     private function funcionarioInserido() {

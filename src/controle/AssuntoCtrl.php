@@ -104,24 +104,33 @@ class AssuntoCtrl extends Controlador {
             $this->mensagem = $this->validadorAssunto->getMensagem();
             $this->tab = "tab_form";
         } else {
-            $this->entidade->setConstante(true);
-            $log = new Log();
-            if ($this->modoEditar) {
-                $log = $this->gerarLog(Log::TIPO_EDICAO);
-                $this->copiaEntidade = $this->dao->editar($this->entidade);
-                $this->assuntoEditado();
-            } else {
-                $this->copiaEntidade = $this->dao->editar($this->entidade);
-                $this->assuntoInserido();
-                $log = $this->gerarLog(Log::TIPO_CADASTRO);
+            try {
+
+
+                $this->entidade->setConstante(true);
+                $log = new Log();
+                if ($this->modoEditar) {
+                    $log = $this->gerarLog(Log::TIPO_EDICAO);
+                    $this->copiaEntidade = $this->dao->editar($this->entidade);
+                    $this->assuntoEditado();
+                } else {
+                    $this->copiaEntidade = $this->dao->editar($this->entidade);
+                    $this->assuntoInserido();
+                    $log = $this->gerarLog(Log::TIPO_CADASTRO);
+                }
+                $this->dao->editar($log);
+                $this->entidade = new Assunto("", "");
+                $this->modoEditar = false;
+                $this->mensagem = new Mensagem(
+                        "Cadastro de assuntos"
+                        , Mensagem::MSG_TIPO_OK
+                        , "Dados do Assunto salvo com sucesso.");
+            } catch (Exception $ex) {
+                $this->mensagem = new Mensagem(
+                        "Cadastro de assuntos"
+                        , Mensagem::MSG_TIPO_ERRO
+                        , "Erro ao salvar o assunto");
             }
-            $this->dao->editar($log);
-            $this->entidade = new Assunto("", "");
-            $this->modoEditar = false;
-            $this->mensagem = new Mensagem(
-                    "Cadastro de assuntos"
-                    , Mensagem::MSG_TIPO_OK
-                    , "Dados do Assunto salvo com sucesso.");
         }
     }
 
@@ -140,6 +149,15 @@ class AssuntoCtrl extends Controlador {
             $this->copiaEntidade = $this->entidade->clonar();
             $this->modoEditar = true;
             $this->tab = "tab_form";
+        } else {
+            try {
+                // nada a fazer
+            } catch (Exception $ex) {
+                $this->mensagem = new Mensagem(
+                        "Cadastro de assuntos"
+                        , Mensagem::MSG_TIPO_ERRO
+                        , "Erro ao editar o assunto");
+            }
         }
     }
 
@@ -159,6 +177,15 @@ class AssuntoCtrl extends Controlador {
                     "Cadastro de assuntos"
                     , Mensagem::MSG_TIPO_OK
                     , "Assunto removido com sucesso.");
+        } else {
+            try {
+                // nada a fazer
+            } catch (Exception $ex) {
+                $this->mensagem = new Mensagem(
+                        "Cadastro de assuntos"
+                        , Mensagem::MSG_TIPO_ERRO
+                        , "Erro ao excluir o assunto");
+            }
         }
     }
 

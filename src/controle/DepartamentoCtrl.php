@@ -102,24 +102,31 @@ class DepartamentoCtrl extends Controlador {
             $this->mensagem = $this->validadorDepartamento->getMensagem();
             $this->tab = "tab_form";
         } else {
-            $this->entidade->setConstante(true);
-            $log = new Log();
-            if ($this->modoEditar) {
-                $log = $this->gerarLog(Log::TIPO_EDICAO);
-                $this->dao->editar($this->entidade);
-                $this->departamentoEditado();
-            } else {
-                $this->copiaEntidade = $this->dao->editar($this->entidade);
-                $this->departamentoInserido();
-                $log = $this->gerarLog(Log::TIPO_CADASTRO);
+            try {
+                $this->entidade->setConstante(true);
+                $log = new Log();
+                if ($this->modoEditar) {
+                    $log = $this->gerarLog(Log::TIPO_EDICAO);
+                    $this->dao->editar($this->entidade);
+                    $this->departamentoEditado();
+                } else {
+                    $this->copiaEntidade = $this->dao->editar($this->entidade);
+                    $this->departamentoInserido();
+                    $log = $this->gerarLog(Log::TIPO_CADASTRO);
+                }
+                $this->dao->editar($log);
+                $this->entidade = new Departamento("", "");
+                $this->modoEditar = false;
+                $this->mensagem = new Mensagem(
+                        "Cadastro de departamento"
+                        , Mensagem::MSG_TIPO_OK
+                        , "Dados do Departamento salvos com sucesso.");
+            } catch (Exception $e) {
+                $this->mensagem = new Mensagem(
+                        "Cadastro de departamento"
+                        , Mensagem::MSG_TIPO_ERRO
+                        , "Erro ao salvar o departamento.");
             }
-            $this->dao->editar($log);
-            $this->entidade = new Departamento("", "");
-            $this->modoEditar = false;
-            $this->mensagem = new Mensagem(
-                    "Cadastro de departamento"
-                    , Mensagem::MSG_TIPO_OK
-                    , "Dados do Departamento salvos com sucesso.");
         }
     }
 
@@ -138,6 +145,15 @@ class DepartamentoCtrl extends Controlador {
             $this->copiaEntidade = $this->entidade->clonar();
             $this->modoEditar = true;
             $this->tab = "tab_form";
+        } else {
+            try {
+                // nada a fazer
+            } catch (Exception $ex) {
+                $this->mensagem = new Mensagem(
+                        "Cadastro de departamento"
+                        , Mensagem::MSG_TIPO_ERRO
+                        , "Erro ao editar o departamento.");
+            }
         }
     }
 
@@ -157,6 +173,15 @@ class DepartamentoCtrl extends Controlador {
                     "Cadastro de departamento"
                     , Mensagem::MSG_TIPO_OK
                     , "Departamento removido com sucesso.");
+        } else {
+            try {
+                // nada a fazer
+            } catch (Exception $ex) {
+                $this->mensagem = new Mensagem(
+                        "Cadastro de departamento"
+                        , Mensagem::MSG_TIPO_ERRO
+                        , "Erro ao excluir o departamento.");
+            }
         }
     }
 

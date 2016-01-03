@@ -107,13 +107,13 @@
                     <label>Movimentações:</label>
                     <div class="ui segment">
                         {% if autenticacaoCtrl.contemAutorizacao('admin') %}
-                        <div class="ui submit black button right aligned" 
-                             onclick="submeterForm(
-                                             'form_processo_movimentacao',
-                                             'funcao_gerenciar_processo_movimentacao',
-                                             'adicionar_movimentacao');">
-                            <i class="plus icon"></i>Adicionar nova Movimentação
-                        </div>
+                            <div class="ui submit black button right aligned" 
+                                 onclick="submeterForm(
+                                                 'form_processo_movimentacao',
+                                                 'funcao_gerenciar_processo_movimentacao',
+                                                 'adicionar_movimentacao');">
+                                <i class="plus icon"></i>Adicionar nova Movimentação
+                            </div>
                         {% endif %}
                         <table class="ui celled striped table">
                             <thead>
@@ -147,6 +147,13 @@
                                                     {% endfor %}
                                                 </div>
                                             </div>
+                                        </td>
+                                        <td style="text-align: center;width:1%;white-space:nowrap;">
+                                            {% if pm.id is null %}
+                                                <div class="ui submit red button">
+                                                    <i class="delete icon"></i>
+                                                </div>
+                                            {% endif %}
                                         </td>
                                     </tr>
                                 {% endfor %}

@@ -190,7 +190,7 @@ class ProcessoMovimentacaoCtrl extends Controlador {
                 new DateTime("now", new DateTimeZone('America/Sao_Paulo')));
         $pm->setProcesso($this->entidade);
         $pm->setMovimentacao(new Movimentacao("", false));
-        $pms = $this->entidade->getProcessoMovimentacoes;
+        $pms = $this->entidade->getProcessoMovimentacoes();
         $pms->add($pm);
         $this->entidade->setProcessoMovimentacoes($pms);
     }

@@ -101,12 +101,13 @@ class FuncionarioCtrl extends Controlador {
     }
 
     private function salvarFuncionario() {
-        try {
-            $this->validadorFuncionario->validar($this->entidade);
-            if (!$this->validadorFuncionario->getValido()) {
-                $this->mensagem = $this->validadorFuncionario->getMensagem();
-                $this->tab = "tab_form";
-            } else {
+
+        $this->validadorFuncionario->validar($this->entidade);
+        if (!$this->validadorFuncionario->getValido()) {
+            $this->mensagem = $this->validadorFuncionario->getMensagem();
+            $this->tab = "tab_form";
+        } else {
+            try {
                 $log = new Log();
                 if ($this->modoEditar) {
                     $log = $this->gerarLog(Log::TIPO_EDICAO);
@@ -123,12 +124,12 @@ class FuncionarioCtrl extends Controlador {
                         "Cadastro de funcionários"
                         , Mensagem::MSG_TIPO_OK
                         , "Dados do Funcionário salvos com sucesso.");
+            } catch (Exception $e) {
+                $this->mensagem = new Mensagem(
+                        "Cadastro de funcionários"
+                        , Mensagem::MSG_TIPO_ERRO
+                        , "Erro ao salvar o funcionário");
             }
-        } catch (Exception $e) {
-            $this->mensagem = new Mensagem(
-                    "Cadastro de funcionários"
-                    , Mensagem::MSG_TIPO_ERRO
-                    , "Erro ao salvar o funcionário");
         }
     }
 

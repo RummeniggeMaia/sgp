@@ -2,6 +2,7 @@
 
 namespace controle;
 
+use controle\validadores\ValidadorProcessoMovimentacao;
 use DateTime;
 use DateTimeZone;
 use modelo\Log;
@@ -10,6 +11,7 @@ use modelo\Processo;
 use modelo\ProcessoMovimentacao;
 use util\Util;
 
+
 /**
  * Description of ProcessoMovimentacaoCtrl
  *
@@ -17,6 +19,7 @@ use util\Util;
  */
 class ProcessoMovimentacaoCtrl extends Controlador {
 
+    private $validadorProcessoMovimentacao;
     private $movimentacoes;
     private $controladores;
     private $post;
@@ -31,6 +34,8 @@ class ProcessoMovimentacaoCtrl extends Controlador {
         $movimentacao = new Movimentacao(null, "", true);
         //Inicia lista de movimentacoes fazendo a busca de todas as 
         //movimentacoes constantes do sistema.
+
+        $this->validadorProcessoMovimentacao = new ValidadorProcessoMovimentacao();
         $this->movimentacoes = $this->dao->pesquisar(
                 $movimentacao, PHP_INT_MAX, 0);
         //Indexa todas as movimentacoes para ser buscada pela descricao
@@ -53,6 +58,14 @@ class ProcessoMovimentacaoCtrl extends Controlador {
 
     public function setMovimentacoes($movimentacoes) {
         $this->movimentacoes = $movimentacoes;
+    }
+
+    public function getValidadorProcessoMovimentacao() {
+        return $this->validadorProcessoMovimentacao;
+    }
+
+    public function setValidadorProcessoMovimentacao($validadorProcessoMovimentacao) {
+        $this->validadorProcessoMovimentacao = $validadorProcessoMovimentacao;
     }
 
     /*
@@ -153,28 +166,21 @@ class ProcessoMovimentacaoCtrl extends Controlador {
     }
 
     private function salvarProcessoMovimentacao() {
-        //Usa a funcao merge do Dao, pos estamos trabalhando com entidade
-        // desanexadas.
-        $log = $this->gerarLog(Log::TIPO_EDICAO);
-        $pms = $this->entidade->getProcessoMovimentacoes();
-        $estado = false;
-        foreach ($pms as $key => $pm) {
-            $id = $pm->getId();
-            if ($id == null) {
-                if ($pm->getMovimentacao()->getDescricao() == NULL) {
-                    $this->mensagem = new Mensagem(
-                            "Movimentação Processual"
-                            , "msg_tipo_erro"
-                            , "Movimentação não pode ser vazia.");
-                    $estado = false;
-                    break;
+        $this->validadorProcessoMovimentacao->validar($this->entidade);
+        if (!$this->validadorProcessoMovimentacao->getValido()) {
+            $this->mensagem = $this->validadorProcessoMovimentacao->getMensagem();
+        } else {
+            //Usa a funcao merge do Dao, pos estamos trabalhando com entidade
+            // desanexadas.
+            $log = $this->gerarLog(Log::TIPO_EDICAO);
+            $pms = $this->entidade->getProcessoMovimentacoes();
+            foreach ($pms as $key => $pm) {
+                $id = $pm->getId();
+                if ($id == null) {
+                    $salvo = $this->dao->editar($pm);
+                    $pms[$key] = $salvo;
                 }
-                $salvo = $this->dao->editar($pm);
-                $pms[$key] = $salvo;
-                $estado = true;
             }
-        }
-        if ($estado) {
             $this->entidade->setProcessoMovimentacoes($pms);
             $this->dao->editar($this->entidade);
             $this->dao->editar($log);

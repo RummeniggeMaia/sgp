@@ -132,7 +132,8 @@
                                         <td>{{ pm.dataMovimentacao|date("d/m/Y") }}</td>
                                         <td>
                                             <div id="movimentacao_{{ loop.index }}"
-                                                 class="ui fluid search normal selection dropdown">
+                                                 class="ui fluid search normal selection dropdown 
+                                                 {{ ('movimentacao_' ~ loop.index)  in ctrl.validadorProcessoMovimentacao.camposInvalidos ? 'error' : '' }}">
                                                 <input type="hidden" 
                                                        name="movimentacao_{{ loop.index }}" 
                                                        value="{{ pm.movimentacao.descricao }}">

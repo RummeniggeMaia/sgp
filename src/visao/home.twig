@@ -4,6 +4,13 @@
 {% block title %}Home{% endblock %}
 
 {% block body %}
+    {% if ctrl.mensagem != null %}
+        {% include 'fragmentos/frag_mensagem.twig'
+                with {
+                    'mensagem' : ctrl.mensagem
+                }
+        %}
+    {% endif %}
     <br>
     <br>
     <div class="ui segment">

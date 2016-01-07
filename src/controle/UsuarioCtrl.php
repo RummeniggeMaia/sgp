@@ -162,6 +162,7 @@ class UsuarioCtrl extends Controlador {
         if ($index != 0) {
             $this->copiaEntidade = $this->entidades[$index - 1];
             $this->dao->excluir($this->copiaEntidade);
+            $this->usuarioRemovido();
             $this->dao->editar($this->gerarLog(Log::TIPO_REMOCAO));
             $p = $this->modeloTabela->getPaginador();
             if ($p->getOffset() == $p->getContagem()) {
@@ -214,6 +215,13 @@ class UsuarioCtrl extends Controlador {
         return $log;
     }
 
+    private function usuarioRemovido() {
+        $autCtrl = $this->controladores[Controlador::CTRL_AUTENTICACAO];
+        $usu = $autCtrl->getEntidade();
+        if ($usu != null && $usu->getId() == $this->copiaEntidade->getId()) {
+            $autCtrl->setEntidade(new Usuario());
+        }
+    }
     /* private function enviarEmail() {
 
       // Inclui o arquivo class.phpmailer.php localizado na pasta phpmailer

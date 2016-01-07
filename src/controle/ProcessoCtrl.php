@@ -120,7 +120,7 @@ class ProcessoCtrl extends Controlador {
             $this->pesquisarProcessos();
         } else if ($funcao == "cancelar_edicao") {
             $this->modoEditar = false;
-            $this->entidade = new Funcionario("", "", "");
+            $this->entidade = new Processo("", "", "");
         } else if ($funcao == 'enviar_processos') {
             return $this->enviarProcessos();
         } else if ($funcao == 'cancelar_enviar') {

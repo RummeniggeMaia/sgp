@@ -61,7 +61,7 @@ class AutenticacaoCtrl extends Controlador {
                 ));
             }
         } else if ($funcao == "sair") {
-            $this->sair();
+            return $this->sair();
         }
         return $redirecionamento;
     }
@@ -80,10 +80,10 @@ class AutenticacaoCtrl extends Controlador {
 
     private function sair() {
         $this->entidade = new Usuario("", "", "", "");
-        session_destroy();
         $redirecionamento = new Redirecionamento();
-        $redirecionamento->setDestino('gerenciar_home');
-        $redirecionamento->setCtrl($this);
+        $redirecionamento->setDestino(Controlador::CTRL_HOME);
+        $redirecionamento->setCtrl($this->controladores[Controlador::CTRL_HOME]);
+        return $redirecionamento;
     }
 
     private function criptografarSenha() {

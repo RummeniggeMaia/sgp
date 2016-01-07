@@ -58,12 +58,16 @@
                                data-value="{{ ctrl.entidade.id }}"
                                readonly="true">
                         <div class="ui button" 
-                             onclick="submeterForm('form_processo_movimentacao', 'funcao_gerenciar_processo_movimentacao', 'buscar_processo');">
+                             onclick="submeterForm('form_processo_movimentacao',
+                                             'funcao_gerenciar_processo_movimentacao',
+                                             'buscar_processo');">
                             <i class="search icon"></i>
                             Buscar
                         </div>
                         <div class="ui button red" 
-                             onclick="submeterForm('form_processo_movimentacao', 'funcao_gerenciar_processo_movimentacao', 'remover_processo');">
+                             onclick="submeterForm('form_processo_movimentacao',
+                                             'funcao_gerenciar_processo_movimentacao',
+                                             'remover_processo');">
                             <i class="delete icon"></i>
                         </div>
                     </div>
@@ -131,26 +135,33 @@
                                     <tr>
                                         <td>{{ pm.dataMovimentacao|date("d/m/Y") }}</td>
                                         <td>
-                                            <div id="movimentacao_{{ loop.index }}"
-                                                 class="ui fluid search normal selection dropdown 
-                                                 {{ ('movimentacao_' ~ loop.index)  in ctrl.validadorProcessoMovimentacao.camposInvalidos ? 'error' : '' }}">
-                                                <input type="hidden" 
-                                                       name="movimentacao_{{ loop.index }}" 
-                                                       value="{{ pm.movimentacao.descricao }}">
-                                                <i class="dropdown icon"></i>
-                                                <div class="default text">Selecione a Movimentação</div>
-                                                <div class="menu">
-                                                    {% for mov in ctrl.movimentacoes %}
-                                                        <div class="item" data-value="{{ mov.descricao }}">
-                                                            <i class="archive icon"></i>
-                                                            {{ mov.descricao }}
-                                                        </div>
-                                                    {% endfor %}
+                                            {% if autenticacaoCtrl.contemAutorizacao('admin') %}
+                                                <div id="movimentacao_{{ loop.index }}"
+                                                     class="ui fluid search normal selection dropdown 
+                                                     {{ ('movimentacao_' ~ loop.index)  in ctrl.validadorProcessoMovimentacao.camposInvalidos ? 'error' : '' }}">
+                                                    <input type="hidden" 
+                                                           name="movimentacao_{{ loop.index }}" 
+                                                           value="{{ pm.movimentacao.descricao }}">
+                                                    <i class="dropdown icon"></i>
+                                                    <div class="default text">Selecione a Movimentação</div>
+                                                    <div class="menu">
+                                                        {% for mov in ctrl.movimentacoes %}
+                                                            <div class="item" data-value="{{ mov.descricao }}">
+                                                                <i class="archive icon"></i>
+                                                                {{ mov.descricao }}
+                                                            </div>
+                                                        {% endfor %}
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            {% else %}
+                                                <input type="text" 
+                                                       name="movimentacao_{{ loop.index }}" 
+                                                       value="{{ pm.movimentacao.descricao }}"
+                                                       readonly="true">
+                                            {% endif %}
                                         </td>
                                         <td style="text-align: center;width:1%;white-space:nowrap;">
-                                            {% if pm.id is null %}
+                                            {% if autenticacaoCtrl.contemAutorizacao('admin') %}
                                                 <div class="ui submit red button" 
                                                      onclick="submeterForm(
                                                                      'form_processo_movimentacao',
@@ -166,14 +177,16 @@
                         </table>
                     </div>
                 </div>
-                <div class="fields">
-                    <div class="field">
-                        <div class="ui submit black button"
-                             onClick="submeterForm('form_processo_movimentacao', 'funcao_gerenciar_processo_movimentacao', 'salvar');">
-                            <i class="save icon"></i>Salvar
+                {% if autenticacaoCtrl.contemAutorizacao('admin') %}
+                    <div class="fields">
+                        <div class="field">
+                            <div class="ui submit black button"
+                                 onClick="submeterForm('form_processo_movimentacao', 'funcao_gerenciar_processo_movimentacao', 'salvar');">
+                                <i class="save icon"></i>Salvar
+                            </div>
                         </div>
                     </div>
-                </div>
+                {% endif %}
             </form>
         </div>
     </div>

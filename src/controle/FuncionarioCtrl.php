@@ -36,7 +36,15 @@ class FuncionarioCtrl extends Controlador {
         $this->validadorFuncionario = new ValidadorFuncionario();
     }
 
-    /**
+    public function getValidadorFuncionario() {
+        return $this->validadorFuncionario;
+    }
+
+    public function setValidadorFuncionario($validadorFuncionario) {
+        $this->validadorFuncionario = $validadorFuncionario;
+    }
+
+        /**
      * Factory method para gerar funcionarios baseado a partir do POST
      */
     public function gerarFuncionario() {

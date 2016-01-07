@@ -90,7 +90,7 @@ insert into assunto(descricao, constante) values ("FERIAS", true);
 insert into assunto(descricao, constante) values ("APOSENTADORIA", true);
 insert into assunto(descricao, constante) values ("LICENÇA MATERNIDADE", true);
 insert into assunto(descricao, constante) values ("INCORPORAÇÃO DE VANTAGEM TRANSITÓIA", true);
-insert into assunto(descricao, constante) values (descricao, constante) values (true, "ABONO DE PERMANÊNCIA", true);"HORÁRIO ESPECIAL DE TRABALHO", true);
+insert into assunto(descricao, constante) values ("HORÁRIO ESPECIAL DE TRABALHO", true);
 insert into assunto(descricao, constante) values ("ADICIONAL", true);
 
 /*

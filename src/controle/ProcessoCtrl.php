@@ -10,6 +10,7 @@ use controle\tabela\Paginador;
 use controle\validadores\ValidadorProcesso;
 use DateTime;
 use DateTimeZone;
+use Exception;
 use modelo\Assunto;
 use modelo\Departamento;
 use modelo\Funcionario;
@@ -182,6 +183,7 @@ class ProcessoCtrl extends Controlador {
                     $this->copiaEntidade = $this->dao->editar($this->entidade);
                     $log = $this->gerarLog(Log::TIPO_CADASTRO);
                 }
+
                 $this->dao->editar($log);
                 $ctrlPM = $this->controladores["gerenciar_processo_movimentacao"];
                 if ($ctrlPM->getEntidade()->getId() == $this->copiaEntidade->getId()) {

@@ -3,6 +3,7 @@
 namespace dao;
 
 use Doctrine\ORM\EntityManager;
+use Exception;
 
 /**
  *
@@ -37,7 +38,11 @@ class Dao {
 
     public function editar($entidade) {
         $e = $this->entityManager->merge($entidade);
-        $this->entityManager->flush();
+//        try {
+            $this->entityManager->flush();   
+//        } catch (Exception $ex) {
+//            throw $ex;
+//        }
         return $e;
     }
 

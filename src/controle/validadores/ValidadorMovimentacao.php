@@ -25,6 +25,10 @@ class ValidadorMovimentacao extends Validador {
         if ($this->entidade->getDescricao() == null) {
             $submensagens[] = "Campo Descrição obrigatório!\n";
             $this->camposInvalidos[] = "campo_descricao";
+        } else if (!preg_match("/^([ a-zA-Z'\-áéíóúÁÉÍÓÚâêîôûÂÊÎÔÛãõçÇ])+$/i"
+                        , $this->entidade->getDescricao())) {
+            $submensagens[] = "Caracteres inválidos na descrição!\n";
+            $this->camposInvalidos[] = "campo_descricao";
         }
         
         $this->mensagem->setSubmensagens($submensagens);

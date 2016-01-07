@@ -13,7 +13,6 @@ use DateTimeZone;
 use modelo\Assunto;
 use modelo\Log;
 use util\Util;
-use validadores\ValidadorMovimentacao;
 
 /**
  * Description of AssuntoCtrl
@@ -189,7 +188,7 @@ class AssuntoCtrl extends Controlador {
 
     public function resetar() {
         $this->mensagem = null;
-        $this->validadorMovimentacao = new ValidadorMovimentacao();
+        $this->validadorAssunto = new ValidadorAssunto();
         $this->controladores = null;
         $this->post = null;
     }

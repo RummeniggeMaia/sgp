@@ -10,6 +10,7 @@ use controle\tabela\Paginador;
 use controle\validadores\ValidadorMovimentacao;
 use DateTime;
 use DateTimeZone;
+use Exception;
 use modelo\Log;
 use modelo\Movimentacao;
 use util\Util;
@@ -108,8 +109,10 @@ class MovimentacaoCtrl extends Controlador {
                 if ($this->modoEditar) {
                     $log = $this->gerarLog(Log::TIPO_EDICAO);
                     $this->dao->editar($this->entidade);
+                    $this->movimentacaoEditado();
                 } else {
                     $this->copiaEntidade = $this->dao->editar($this->entidade);
+                    $this->movimentacaoInserido();
                     $log = $this->gerarLog(Log::TIPO_CADASTRO);
                 }
                 $this->dao->editar($log);
@@ -213,13 +216,43 @@ class MovimentacaoCtrl extends Controlador {
         return $log;
     }
 
-    private function movimentacaoRemovido() {
-        $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
-        $func = $processoCtrl->getEntidade()->getFuncionario();
-        if ($func != null && $func->getId() == $this->copiaEntidade->getId()) {
-            $processoCtrl->getEntidade()->setMovimentacao(
-                    new Movimentacao(""));
+    private function movimentacaoInserido() {
+        $pmCtrl = $this->controladores[Controlador::CTRL_PROCESSO_MOVIMENTACAO];
+        $movs = $pmCtrl->getMovimentacoes();
+        $movs[] = $this->copiaEntidade->clonar();
+        $pmCtrl->setMovimentacoes($movs);
+    }
+
+    private function movimentacaoEditado() {
+        $pmCtrl = $this->controladores[Controlador::CTRL_PROCESSO_MOVIMENTACAO];
+        $movs = $pmCtrl->getMovimentacoes();
+        foreach ($movs as $i => $m) {
+            if ($m->getId() == $this->copiaEntidade->getId()) {
+                $movs[$i] = $this->copiaEntidade->clonar();
+                break;
+            }
         }
+        $pmCtrl->setMovimentacoes($movs);
+    }
+
+    private function movimentacaoRemovido() {
+        $pmCtrl = $this->controladores[Controlador::CTRL_PROCESSO_MOVIMENTACAO];
+        $movs = $pmCtrl->getMovimentacoes();
+        foreach ($movs as $i => $m) {
+            if ($m->getId() == $this->copiaEntidade->getId()) {
+                unset($movs[$i]);
+                break;
+            }
+        }
+        $pmCtrl->setMovimentacoes($movs);
+        $pms = $pmCtrl->getEntidade()->getProcessoMovimentacoes();
+        foreach ($pms as $i => $pm) {
+            if ($pm->getMovimentacao()->getId() ==
+                    $this->copiaEntidade->getId()) {
+                unset($pms[$i]);
+            }
+        }
+        $pmCtrl->getEntidade()->setProcessoMovimentacoes($pms);
     }
 
 }

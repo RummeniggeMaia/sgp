@@ -105,8 +105,6 @@ class AssuntoCtrl extends Controlador {
             $this->tab = "tab_form";
         } else {
             try {
-
-
                 $this->entidade->setConstante(true);
                 $log = new Log();
                 if ($this->modoEditar) {

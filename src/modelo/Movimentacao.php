@@ -19,7 +19,7 @@ class Movimentacao extends Entidade {
     /** @Column(type="string") */
     protected $descricao;
 
-    /** @OneToMany(targetEntity="ProcessoMovimentacao", mappedBy="movimentacao") */
+    /** @OneToMany(targetEntity="ProcessoMovimentacao", mappedBy="movimentacao", cascade={"merge", "remove"}) */
     protected $processoMovimetacoes;
 
     function __construct($descricao, $constante) {

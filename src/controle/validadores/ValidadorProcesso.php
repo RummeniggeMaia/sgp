@@ -29,8 +29,14 @@ class ValidadorProcesso extends Validador {
         if ($entidade->getNumeroProcesso() == null) {
             $submensagens[] = "Campo Número Processo obrigatório!\n";
             $this->camposInvalidos[] = "campo_numero_processo";
+        } else {
+            try {
+                // nada a fazer
+            } catch (Exception $ex) {
+                $submensagens[] = "Número de processo já cadastrado!\n";
+            }
         }
-        
+
         if ($entidade->getAssunto() == null) {
             $submensagens[] = "Assunto inexistente!\n";
             $this->camposInvalidos[] = "drop_assunto";
@@ -46,7 +52,7 @@ class ValidadorProcesso extends Validador {
             $submensagens[] = "Selecione um Departamento!\n";
             $this->camposInvalidos[] = "drop_departamento";
         }
-        
+
         if ($entidade->getFuncionario() == null) {
             $submensagens[] = "Funcionário inexistente!\n";
             $this->camposInvalidos[] = "campo_funcionario";
@@ -54,7 +60,7 @@ class ValidadorProcesso extends Validador {
             $submensagens[] = "Selecione um Funcionario!\n";
             $this->camposInvalidos[] = "campo_funcionario";
         }
-        
+
         $this->mensagem->setSubmensagens($submensagens);
         if (empty($this->camposInvalidos)) {
             $this->valido = true;

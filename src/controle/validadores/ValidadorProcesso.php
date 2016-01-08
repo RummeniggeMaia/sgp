@@ -33,7 +33,7 @@ class ValidadorProcesso extends Validador {
             try {
                 // nada a fazer
             } catch (Exception $ex) {
-                $submensagens[] = "Número de processo já cadastrado!\n";
+                $submensagens[] = "Número de processo já cadastrado!\n" + $ex;
             }
         }
 

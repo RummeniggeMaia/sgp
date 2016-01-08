@@ -40,6 +40,7 @@ class ProcessoMovimentacaoCtrl extends Controlador {
                 $movimentacao, PHP_INT_MAX, 0);
         //Indexa todas as movimentacoes para ser buscada pela descricao
         $aux = array();
+        $aux[] = new Movimentacao("");
         foreach ($this->movimentacoes as $mov) {
             $aux[$mov->getDescricao()] = $mov;
         }

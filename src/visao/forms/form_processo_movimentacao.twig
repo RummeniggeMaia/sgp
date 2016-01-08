@@ -64,12 +64,14 @@
                             <i class="search icon"></i>
                             Buscar
                         </div>
-                        <div class="ui button red" 
-                             onclick="submeterForm('form_processo_movimentacao',
+                        {% if autenticacaoCtrl.contemAutorizacao('admin') %}
+                            <div class="ui button red" 
+                                 onclick="submeterForm('form_processo_movimentacao',
                                              'funcao_gerenciar_processo_movimentacao',
                                              'remover_processo');">
-                            <i class="delete icon"></i>
-                        </div>
+                                <i class="delete icon"></i>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
                 <table class="ui very basic table">

@@ -50,6 +50,7 @@ class ProcessoCtrl extends Controlador {
         //Validador utilizado para validar os campos assim como os 
         //relacionamentos do processo
         $this->validadorProcesso = new ValidadorProcesso();
+        $this->pesquisarProcessos();
         $this->atualizarListas();
     }
 
@@ -352,12 +353,14 @@ class ProcessoCtrl extends Controlador {
         $this->departamentos = $this->dao->pesquisar($departamento, PHP_INT_MAX, 0);
         //Indexa todas os assuntos para serem buscados pela descricao
         $aux = array();
+        $aux[] = new Assunto("", "");
         foreach ($this->assuntos as $a) {
             $aux[$a->getDescricao()] = $a;
         }
         $this->assuntos = $aux;
         //Indexa todas os departamentos para ser buscada pela descricao
         $aux = array();
+        $aux[] = new Departamento("");
         foreach ($this->departamentos as $d) {
             $aux[$d->getDescricao()] = $d;
         }

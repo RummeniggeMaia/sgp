@@ -81,22 +81,24 @@
                             <i class="search icon"></i>
                             Buscar
                         </div>
-                        <div class="ui button red" 
-                             onclick="submeterForm('form_processo', 'funcao_gerenciar_processo', 'remover_funcionario');">
-                            <i class="delete icon"></i>
-                        </div>
+                        {% if autenticacaoCtrl.contemAutorizacao('admin') %}
+                            <div class="ui button red" 
+                                 onclick="submeterForm('form_processo', 'funcao_gerenciar_processo', 'remover_funcionario');">
+                                <i class="delete icon"></i>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="fields">
                     {% if autenticacaoCtrl.contemAutorizacao('admin') %}
-                    {% if not ctrl.modoBusca %}
-                        <div class="field">
-                            <div class="ui submit black button" 
-                                 onclick="submeterForm('form_processo', 'funcao_gerenciar_processo', 'salvar');">
-                                <i class="save icon"></i>Salvar
+                        {% if not ctrl.modoBusca %}
+                            <div class="field">
+                                <div class="ui submit black button" 
+                                     onclick="submeterForm('form_processo', 'funcao_gerenciar_processo', 'salvar');">
+                                    <i class="save icon"></i>Salvar
+                                </div>
                             </div>
-                        </div>
-                    {% endif %}
+                        {% endif %}
                     {% endif %}
                     {% if ctrl.modoEditar %}
                         <div class="field">

@@ -198,6 +198,14 @@ class ProcessoCtrl extends Controlador {
                         , Mensagem::MSG_TIPO_OK
                         , "Dados do Processo salvos com sucesso.");
             } catch (Exception $e) {
+                switch ($e->getCode()) {
+                    case "23000":
+                        $this->mensagem = new Mensagem(
+                                "Cadastro de processos"
+                                , Mensagem::MSG_TIPO_ERRO
+                                , "O Número de Processo já existe cadastrado no sistema.");
+                        break;
+                }
                 $this->mensagem = new Mensagem(
                         "Cadastro de processos"
                         , Mensagem::MSG_TIPO_ERRO

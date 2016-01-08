@@ -29,12 +29,6 @@ class ValidadorProcesso extends Validador {
         if ($entidade->getNumeroProcesso() == null) {
             $submensagens[] = "Campo Número Processo obrigatório!\n";
             $this->camposInvalidos[] = "campo_numero_processo";
-        } else {
-            try {
-                // nada a fazer
-            } catch (Exception $ex) {
-                $submensagens[] = "Número de processo já cadastrado!\n" + $ex;
-            }
         }
 
         if ($entidade->getAssunto() == null) {

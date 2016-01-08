@@ -10,6 +10,7 @@ use controle\tabela\Paginador;
 use controle\validadores\ValidadorProcesso;
 use DateTime;
 use DateTimeZone;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Exception;
 use modelo\Assunto;
 use modelo\Departamento;
@@ -197,19 +198,19 @@ class ProcessoCtrl extends Controlador {
                         "Cadastro de processos"
                         , Mensagem::MSG_TIPO_OK
                         , "Dados do Processo salvos com sucesso.");
+            } catch (UniqueConstraintViolationException $ex) {
+                $this->validadorProcesso->setValido(false);
+                $this->validadorProcesso->setCamposInvalidos(array("campo_numero_processo"));
+                $this->mensagem = new Mensagem(
+                        "Dados inválidos"
+                        , Mensagem::MSG_TIPO_ERRO
+                        , "O Número de Processo já existe cadastrado no sistema.\n");
+                $this->tab = "tab_form";
             } catch (Exception $e) {
-                switch ($e->getCode()) {
-                    case "23000":
-                        $this->mensagem = new Mensagem(
-                                "Cadastro de processos"
-                                , Mensagem::MSG_TIPO_ERRO
-                                , "O Número de Processo já existe cadastrado no sistema.");
-                        break;
-                }
                 $this->mensagem = new Mensagem(
                         "Cadastro de processos"
                         , Mensagem::MSG_TIPO_ERRO
-                        , "Erro ao salvar o processos.");
+                        , "Erro ao salvar o processos.\n");
             }
         }
     }

@@ -14,7 +14,7 @@ use Exception;
 use modelo\Log;
 use modelo\Movimentacao;
 use util\Util;
-
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 /**
  * Description of MovimentacaoCtrl
  *
@@ -122,7 +122,15 @@ class MovimentacaoCtrl extends Controlador {
                         "Cadastro de movimentação"
                         , Mensagem::MSG_TIPO_OK
                         , "Dados de Movimentação salvo com sucesso.");
-            } catch (Exception $e) {
+            } catch(UniqueConstraintViolationException $e){                
+                $this->validadorMovimentacao->setValido(false);
+                $this->validadorMovimentacao->setCamposInvalidos(array("campo_descricao"));
+                $this->mensagem = new Mensagem(
+                        "Dados inválidos"
+                        , Mensagem::MSG_TIPO_ERRO
+                        , "Já existe uma movimentação com essa descrição.\n");
+                $this->tab = "tab_form";                
+            }catch (Exception $e) {
                 $this->mensagem = new Mensagem(
                         "Cadastro de movimentação"
                         , Mensagem::MSG_TIPO_ERRO

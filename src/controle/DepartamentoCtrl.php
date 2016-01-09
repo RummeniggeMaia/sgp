@@ -13,6 +13,7 @@ use DateTimeZone;
 use modelo\Departamento;
 use modelo\Log;
 use util\Util;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 
 /**
  * Description of DepartamentoCtrl
@@ -121,7 +122,15 @@ class DepartamentoCtrl extends Controlador {
                         "Cadastro de departamento"
                         , Mensagem::MSG_TIPO_OK
                         , "Dados do Departamento salvos com sucesso.");
-            } catch (Exception $e) {
+            } catch(UniqueConstraintViolationException $e){
+                $this->validadorDepartamento->setValido(false);
+                $this->validadorDepartamento->setCamposInvalidos(array("campo_descricao"));
+                $this->mensagem = new Mensagem(
+                        "Dados inválidos"
+                        , Mensagem::MSG_TIPO_ERRO
+                        , "Já existe um departamento com essa descrição.\n");
+                $this->tab = "tab_form";
+            }catch (Exception $e) {
                 $this->mensagem = new Mensagem(
                         "Cadastro de departamento"
                         , Mensagem::MSG_TIPO_ERRO

@@ -17,6 +17,8 @@ use DateTimeZone;
 use modelo\Log;
 use modelo\Usuario;
 use util\Util;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Exception;
 
 /**
  * Description of UsuarioCtrl
@@ -82,22 +84,37 @@ class UsuarioCtrl extends Controlador {
             $this->mensagem = $this->validadorUsuario->getMensagem();
             $this->tab = "tab_form";
         } else {
-            $this->criptografarSenha();
-            $log = new Log();
-            if ($this->modoEditar) {
-                $log = $this->gerarLog(Log::TIPO_EDICAO);
-                $this->dao->editar($this->entidade);
-            } else {
-                $this->copiaEntidade = $this->dao->editar($this->entidade);
-                $log = $this->gerarLog(Log::TIPO_CADASTRO);
+            try {
+                $this->criptografarSenha();
+                $log = new Log();
+                if ($this->modoEditar) {
+                    $log = $this->gerarLog(Log::TIPO_EDICAO);
+                    $this->dao->editar($this->entidade);
+                } else {
+                    $this->copiaEntidade = $this->dao->editar($this->entidade);
+                    $log = $this->gerarLog(Log::TIPO_CADASTRO);
+                }
+                $this->dao->editar($log);
+                $this->entidade = new Usuario("", "", "", "");
+                $this->modoEditar = false;
+                $this->mensagem = new Mensagem(
+                        "Cadastro de usuários"
+                        , Mensagem::MSG_TIPO_OK
+                        , "Dados do Usuário salvos com sucesso.");
+            } catch (UniqueConstraintViolationException $e) {
+                $this->validadorUsuario->setValido(false);
+                $this->validadorUsuario->setCamposInvalidos(array("campo_login"));
+                $this->mensagem = new Mensagem(
+                        "Dados inválidos"
+                        , Mensagem::MSG_TIPO_ERRO
+                        , "Já existe um usuário com este login.\n");
+                $this->tab = "tab_form";
+            } catch (Exception $e) {
+                $this->mensagem = new Mensagem(
+                        "Cadastro de movimentação"
+                        , Mensagem::MSG_TIPO_ERRO
+                        , "Erro ao salvar a movimentação.");
             }
-            $this->dao->editar($log);
-            $this->entidade = new Usuario("", "", "", "");
-            $this->modoEditar = false;
-            $this->mensagem = new Mensagem(
-                    "Cadastro de usuários"
-                    , Mensagem::MSG_TIPO_OK
-                    , "Dados do Usuário salvos com sucesso.");
         }
     }
 
@@ -222,6 +239,7 @@ class UsuarioCtrl extends Controlador {
             $autCtrl->setEntidade(new Usuario());
         }
     }
+
     /* private function enviarEmail() {
 
       // Inclui o arquivo class.phpmailer.php localizado na pasta phpmailer

@@ -13,6 +13,7 @@ use DateTimeZone;
 use modelo\Assunto;
 use modelo\Log;
 use util\Util;
+use \Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 
 /**
  * Description of AssuntoCtrl
@@ -122,6 +123,14 @@ class AssuntoCtrl extends Controlador {
                         "Cadastro de assuntos"
                         , Mensagem::MSG_TIPO_OK
                         , "Dados do Assunto salvo com sucesso.");
+            } catch (UniqueConstraintViolationException $ex) {
+                $this->validadorAssunto->setValido(false);
+                $this->validadorAssunto->setCamposInvalidos(array("campo_descricao"));
+                $this->mensagem = new Mensagem(
+                        "Dados inválidos"
+                        , Mensagem::MSG_TIPO_ERRO
+                        , "Já existe um assunto com essa descrição.\n");
+                $this->tab = "tab_form";
             } catch (Exception $ex) {
                 $this->mensagem = new Mensagem(
                         "Cadastro de assuntos"

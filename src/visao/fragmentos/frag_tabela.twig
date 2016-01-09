@@ -55,13 +55,7 @@
                     <td></td>
                 {% endif %}
                 {% for valor in linha.valores %}
-                    {% if valor matches '{^[\d\.]{3}[\.][\d\.]{3}[\.][\d\.]{3}-[\d\.]{2}}' | '{^[\d\.]{3}[\.]?[\d\.]{3}[\.]?[\d\.]{3}}'%}
-                        {% if autenticacaoCtrl.contemAutorizacao('admin') %}
-                            <td>{{ valor }}</td>
-                        {% endif %}
-                    {% else %}
-                        <td>{{ valor }}</td>
-                    {% endif %}
+                    <td>{{ valor }}</td>
                 {% endfor %}
                 {% if not modo_busca %}
                     {% if autenticacaoCtrl.contemAutorizacao('admin') %}

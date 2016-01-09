@@ -44,7 +44,7 @@ class FuncionarioCtrl extends Controlador {
         $this->validadorFuncionario = $validadorFuncionario;
     }
 
-        /**
+    /**
      * Factory method para gerar funcionarios baseado a partir do POST
      */
     public function gerarFuncionario() {
@@ -95,13 +95,20 @@ class FuncionarioCtrl extends Controlador {
     }
 
     public function gerarLinhas() {
+        $autCtrl = $this->controladores[Controlador::CTRL_AUTENTICACAO];
+        $admin = $autCtrl->contemAutorizacao("admin");
         $linhas = array();
         foreach ($this->entidades as $funcionario) {
             $linha = new Linha();
             $valores = array();
             $valores[] = $funcionario->getNome();
-            $valores[] = $funcionario->getRg();
-            $valores[] = $funcionario->getCpf();
+            if ($admin) {
+                $valores[] = $funcionario->getRg();
+                $valores[] = $funcionario->getCpf();
+            } else {
+                $valores[] = "***.***.***";
+                $valores[] = "***.***.***-**";
+            }
             $linha->setValores($valores);
             $linhas[] = $linha;
         }

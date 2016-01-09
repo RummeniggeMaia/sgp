@@ -55,16 +55,22 @@
                     <td></td>
                 {% endif %}
                 {% for valor in linha.valores %}
-                    <td>{{ valor }}</td>
+                    {% if valor matches '{^[\d\.]{3}[\.][\d\.]{3}[\.][\d\.]{3}-[\d\.]{2}}' | '{^[\d\.]{3}[\.]?[\d\.]{3}[\.]?[\d\.]{3}}'%}
+                        {% if autenticacaoCtrl.contemAutorizacao('admin') %}
+                            <td>{{ valor }}</td>
+                        {% endif %}
+                    {% else %}
+                        <td>{{ valor }}</td>
+                    {% endif %}
                 {% endfor %}
                 {% if not modo_busca %}
                     {% if autenticacaoCtrl.contemAutorizacao('admin') %}
                         <td style="text-align: center;width:1%;white-space:nowrap;">
                             <div class="ui submit black button" 
                                  onclick="submeterForm(
-                                             '{{ formulario }}',
-                                             '{{ funcao }}',
-                                             'editar_{{ loop.index }}');">
+                                                 '{{ formulario }}',
+                                                 '{{ funcao }}',
+                                                 'editar_{{ loop.index }}');">
                                 <i class="edit icon"></i>Editar
                             </div>
                         </td>
@@ -73,9 +79,9 @@
                         <td style="text-align: center;width:1%;white-space:nowrap;">
                             <div class="ui submit red button" 
                                  onclick="submeterForm(
-                                             '{{ formulario }}',
-                                             '{{ funcao }}',
-                                             'excluir_{{ loop.index }}');">
+                                                 '{{ formulario }}',
+                                                 '{{ funcao }}',
+                                                 'excluir_{{ loop.index }}');">
                                 <i class="delete icon"></i>Excluir
                             </div>
                         </td>

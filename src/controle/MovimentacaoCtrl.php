@@ -154,15 +154,6 @@ class MovimentacaoCtrl extends Controlador {
             $this->copiaEntidade = $this->entidade->clonar();
             $this->modoEditar = true;
             $this->tab = "tab_form";
-        } else {
-            try {
-                // nada a fazer
-            } catch (Exception $ex) {
-                $this->mensagem = new Mensagem(
-                        "Cadastro de movimentação"
-                        , Mensagem::MSG_TIPO_ERRO
-                        , "Erro ao editar a movimentação.");
-            }
         }
     }
 
@@ -179,15 +170,10 @@ class MovimentacaoCtrl extends Controlador {
             }
             $p->setContagem($p->getContagem() - 1);
             $this->pesquisar();
-        } else {
-            try {
-                // nada a fazer
-            } catch (Exception $ex) {
-                $this->mensagem = new Mensagem(
-                        "Cadastro de movimentação"
-                        , Mensagem::MSG_TIPO_ERRO
-                        , "Erro ao remover a movimentação.");
-            }
+            $this->mensagem = new Mensagem(
+                    "Cadastro de movimentações"
+                    , Mensagem::MSG_TIPO_OK
+                    , "Movimentação removida com sucesso.");
         }
     }
 

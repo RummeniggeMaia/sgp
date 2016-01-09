@@ -9,6 +9,19 @@
         }
     %}
 </div>
+<script type="text/javascript">
+    function excluirEntidade(indice) {
+        $("#modal_excluir").modal({
+            closable: true,
+            onDeny: function() {
+                return false;
+            },
+            onApprove: function() {
+                submeterForm('{{ formulario }}', '{{ funcao }}', indice);
+            }
+        }).modal('show');
+    }
+</script>
 <table class="ui compact celled definition table">
     <thead>
         <tr>
@@ -68,14 +81,9 @@
                                 <i class="edit icon"></i>Editar
                             </div>
                         </td>
-                    {% endif %}
-                    {% if autenticacaoCtrl.contemAutorizacao('admin') %}
                         <td style="text-align: center;width:1%;white-space:nowrap;">
                             <div class="ui submit red button" 
-                                 onclick="submeterForm(
-                                                 '{{ formulario }}',
-                                                 '{{ funcao }}',
-                                                 'excluir_{{ loop.index }}');">
+                                 onclick="excluirEntidade('excluir_{{ loop.index }}');">
                                 <i class="delete icon"></i>Excluir
                             </div>
                         </td>
@@ -95,4 +103,22 @@
             'id' : 'pag_2'
         }
     %}
+</div>
+<div class="ui modal" id="modal_excluir">
+    <i class="close icon"></i>
+    <div class="header">
+        Excluir informações do sistema.
+    </div>
+    <div class="image content">
+        <div class="image">
+            <i class="remove sign icon red"></i>
+        </div>
+        <div class="description">
+            Deseja remover este item da tabela?
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui positive button">Sim</div>
+        <div class="ui negative button">Não</div>
+    </div>
 </div>

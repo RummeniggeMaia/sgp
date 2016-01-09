@@ -154,15 +154,6 @@ class DepartamentoCtrl extends Controlador {
             $this->copiaEntidade = $this->entidade->clonar();
             $this->modoEditar = true;
             $this->tab = "tab_form";
-        } else {
-            try {
-                // nada a fazer
-            } catch (Exception $ex) {
-                $this->mensagem = new Mensagem(
-                        "Cadastro de departamento"
-                        , Mensagem::MSG_TIPO_ERRO
-                        , "Erro ao editar o departamento.");
-            }
         }
     }
 
@@ -182,15 +173,6 @@ class DepartamentoCtrl extends Controlador {
                     "Cadastro de departamento"
                     , Mensagem::MSG_TIPO_OK
                     , "Departamento removido com sucesso.");
-        } else {
-            try {
-                // nada a fazer
-            } catch (Exception $ex) {
-                $this->mensagem = new Mensagem(
-                        "Cadastro de departamento"
-                        , Mensagem::MSG_TIPO_ERRO
-                        , "Erro ao excluir o departamento.");
-            }
         }
     }
 

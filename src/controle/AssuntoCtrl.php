@@ -155,15 +155,6 @@ class AssuntoCtrl extends Controlador {
             $this->copiaEntidade = $this->entidade->clonar();
             $this->modoEditar = true;
             $this->tab = "tab_form";
-        } else {
-            try {
-                // nada a fazer
-            } catch (Exception $ex) {
-                $this->mensagem = new Mensagem(
-                        "Cadastro de assuntos"
-                        , Mensagem::MSG_TIPO_ERRO
-                        , "Erro ao editar o assunto");
-            }
         }
     }
 
@@ -183,15 +174,6 @@ class AssuntoCtrl extends Controlador {
                     "Cadastro de assuntos"
                     , Mensagem::MSG_TIPO_OK
                     , "Assunto removido com sucesso.");
-        } else {
-            try {
-                // nada a fazer
-            } catch (Exception $ex) {
-                $this->mensagem = new Mensagem(
-                        "Cadastro de assuntos"
-                        , Mensagem::MSG_TIPO_ERRO
-                        , "Erro ao excluir o assunto");
-            }
         }
     }
 

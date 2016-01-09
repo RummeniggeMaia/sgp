@@ -192,15 +192,6 @@ class FuncionarioCtrl extends Controlador {
             $this->copiaEntidade = $this->entidade->clonar();
             $this->modoEditar = true;
             $this->tab = "tab_form";
-        } else {
-            try {
-                // nada a fazer
-            } catch (Exception $e) {
-                $this->mensagem = new Mensagem(
-                        "Cadastro de funcionários"
-                        , Mensagem::MSG_TIPO_ERRO
-                        , "Erro ao editar o funcionário.");
-            }
         }
     }
 
@@ -221,15 +212,6 @@ class FuncionarioCtrl extends Controlador {
                     "Cadastro de funcionários"
                     , Mensagem::MSG_TIPO_OK
                     , "Funcionário removido com sucesso.");
-        } else {
-            try {
-                // nada a fazer
-            } catch (Exception $e) {
-                $this->mensagem = new Mensagem(
-                        "Cadastro de funcionários"
-                        , Mensagem::MSG_TIPO_ERRO
-                        , "Erro ao remover o funcionário");
-            }
         }
     }
 

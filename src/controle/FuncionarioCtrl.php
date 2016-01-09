@@ -13,6 +13,7 @@ use DateTimeZone;
 use modelo\Funcionario;
 use modelo\Log;
 use util\Util;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 
 /**
  * Description of FuncionarioCtrl
@@ -139,6 +140,14 @@ class FuncionarioCtrl extends Controlador {
                         "Cadastro de funcionários"
                         , Mensagem::MSG_TIPO_OK
                         , "Dados do Funcionário salvos com sucesso.");
+            } catch (UniqueConstraintViolationException $ex) {
+                $this->validadorFuncionario->setValido(false);
+                $this->validadorFuncionario->setCamposInvalidos(array("campo_cpf", "campo_rg"));
+                $this->mensagem = new Mensagem(
+                        "Dados inválidos"
+                        , Mensagem::MSG_TIPO_ERRO
+                        , "O CPF ou o RG já existe cadastrado no sistema.\n");
+                $this->tab = "tab_form";
             } catch (Exception $e) {
                 $this->mensagem = new Mensagem(
                         "Cadastro de funcionários"

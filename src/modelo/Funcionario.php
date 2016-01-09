@@ -16,10 +16,10 @@ class Funcionario extends Entidade {
     /** @Column(type="string") */
     protected $nome;
 
-    /** @Column(type="string") */
+    /** @Column(type="string", unique=true) */
     protected $cpf;
 
-    /** @Column(type="string") */
+    /** @Column(type="string", unique=true) */
     protected $rg;
 
     /** @OneToMany(targetEntity="Processo", mappedBy="funcionario") */

@@ -57,7 +57,7 @@ class AutenticacaoCtrl extends Controlador {
                         new Mensagem(
                         "Autenticação"
                         , Mensagem::MSG_TIPO_ERRO
-                        , "Autenticação inválida"
+                        , "Credenciais inválidas"
                 ));
             }
         } else if ($funcao == "sair") {
@@ -94,8 +94,8 @@ class AutenticacaoCtrl extends Controlador {
         if (isset($this->post['campo_login'])) {
             $this->entidade->setLogin($this->post['campo_login']);
         }
-        if (isset($this->post['campo_senha'])) {
-            $this->entidade->setSenha($this->post['campo_senha']);
+        if (isset($this->post['campo_password'])) {
+            $this->entidade->setSenha($this->post['campo_password']);
         }
     }
 

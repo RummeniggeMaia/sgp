@@ -6,6 +6,7 @@
         <script type="text/javascript" src="../../web/jquery.min.js"></script>
         <script type="text/javascript" src="../../web/semantic_ui/semantic.min.js"></script>
         <script type="text/javascript" src="../../web/jquery.maskedinput.js"></script>
+        <script type="text/javascript" src="../../web/jquery.md5.js"></script>
         <link href="../../web/semantic_ui/semantic.min.css" rel="stylesheet" type="text/css"/>
 
         <script type="text/javascript">
@@ -36,6 +37,16 @@
                 funcionalidade.type = "hidden";
                 $('#' + form).append(funcionalidade);
                 $('#' + form).submit();
+            }
+            function logar() {
+                $("#campo_password").val(digest($("#campo_password").val()));
+                submeterForm(
+                        'form_autenticar',
+                        'funcao_gerenciar_autenticacao',
+                        'autenticar');
+            }
+            function digest(s) {
+                return $.md5(s);
             }
         </script>
         <script>
@@ -81,13 +92,13 @@
                             </div>
                             <span class="inverted" style="padding: 0px 10px 0px 10px">Senha:</span>
                             <div class="ui small input">
-                                <input type="password" name="campo_senha" placeholder="senha">
+                                <input id="campo_password" type="password" name="campo_password" placeholder="senha">
                             </div>
                         </form>
                     </div>
                     <div class="item">
                         <div class="ui submit button" 
-                             onClick="submeterForm('form_autenticar', 'funcao_gerenciar_autenticacao', 'autenticar');" >
+                             onClick="logar();" >
                             <i class="key icon"></i>Entrar
                         </div>
                     </div>

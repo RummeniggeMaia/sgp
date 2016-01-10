@@ -14,7 +14,6 @@
         $("#modal_excluir").modal({
             closable: true,
             onDeny: function() {
-                return false;
             },
             onApprove: function() {
                 submeterForm('{{ formulario }}', '{{ funcao }}', indice);

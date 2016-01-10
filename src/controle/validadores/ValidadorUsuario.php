@@ -16,7 +16,8 @@ class ValidadorUsuario extends Validador {
     public function validar($entidade) {
         $this->entidade = $entidade;
         $this->mensagem = new Mensagem(
-                'Dados inválidos', Mensagem::MSG_TIPO_ERRO, 'Dados do usuário estão inválidos.');
+                'Dados inválidos', Mensagem::MSG_TIPO_ERRO, 
+                'Dados do usuário estão inválidos.');
         $submensagens = array();
 
         if ($this->entidade->getNome() == null) {
@@ -31,11 +32,11 @@ class ValidadorUsuario extends Validador {
             $this->camposInvalidos[] = "campo_nome";
         }
         if($this->entidade->getEmail() == null){
-            $submensagens[] = "Campo Email obrigatório";
+            $submensagens[] = "Campo E-mail obrigatório";
             $this->camposInvalidos[] = "campo_email";
-        }else if (!preg_match("/^([ a-zA-Z'\-áéíóúÁÉÍÓÚâêîôûÂÊÎÔÛãõçÇ])+$/i", 
+        }else if (!preg_match("/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/i", 
                 $this->entidade->getEmail())) {
-             $submensagens[] = "Caracteres inválidos no email!\n";
+             $submensagens[] = "E-mail inválido!\n";
             $this->camposInvalidos[] = "campo_email";
         }
         if ($this->entidade->getLogin() == null) {

@@ -20,6 +20,15 @@
                 }
             %}
         {% endif %}
+        <script type="text/javascript">
+            function salvarUsuario() {
+                $("#campo_senha").val(digest($("#campo_senha").val()));
+                submeterForm(
+                        'form_usuario',
+                        'funcao_gerenciar_usuario',
+                        'salvar');
+            }
+        </script>
         <div class="ui top attached tabular menu">
             <div class="item {{ ctrl.tab == 'tab_form' ? 'active' : '' }}" data-tab="form">Formulário</div>
             <div class="item {{ ctrl.tab == 'tab_tabela' ? 'active' : '' }}" data-tab="tabela">Tabela</div>
@@ -45,14 +54,14 @@
                 </div>
                 <div class="field {{ 'campo_senha' in ctrl.validadorUsuario.camposInvalidos ? 'error' : ''}}">
                     <label>Senha:</label>
-                    <input type="password" name="campo_senha"
+                    <input id="campo_senha" type="password" name="campo_senha"
                            placeholder="Senha"/>
                 </div>
                 <div class="fields">
                     {% if autenticacaoCtrl.contemAutorizacao('admin') %}
                         <div class="field">
                             <div class="ui submit black button"
-                                 onClick="submeterForm('form_usuario', 'funcao_gerenciar_usuario', 'salvar');">
+                                 onClick="salvarUsuario();">
                                 <i class="unlock icon"></i>Salvar
                             </div>
                         </div>
@@ -64,16 +73,16 @@
                         </div>
                     </div>
                 </div>
-        </form>
-    </div>
-    <div class="ui bottom attached tab segment {{ ctrl.tab == 'tab_tabela' ? 'active' : '' }}" data-tab="tabela">
-        {% include 'fragmentos/frag_tabela.twig' 
+            </div>
+            <div class="ui bottom attached tab segment {{ ctrl.tab == 'tab_tabela' ? 'active' : '' }}" data-tab="tabela">
+                {% include 'fragmentos/frag_tabela.twig' 
                 with {
                     'modelo' : ctrl.modeloTabela,
                     'formulario' : 'form_usuario',
                     'funcao' : 'funcao_gerenciar_usuario'
                 }
-        %}
+                %}
+            </div>
+        </form>
     </div>
-</div>
 {% endblock %}

@@ -14,11 +14,12 @@ use controle\tabela\Paginador;
 use controle\validadores\ValidadorUsuario;
 use DateTime;
 use DateTimeZone;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Exception;
+use modelo\Autorizacao;
 use modelo\Log;
 use modelo\Usuario;
 use util\Util;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Exception;
 
 /**
  * Description of UsuarioCtrl
@@ -43,12 +44,12 @@ class UsuarioCtrl extends Controlador {
         $this->validadorUsuario = new ValidadorUsuario();
     }
 
-    public function getUsuarioLogado() {
-        return $this->usuarioLogado;
+    public function getValidadorUsuario() {
+        return $this->validadorUsuario;
     }
 
-    public function setUsuarioLogado($usuarioLogado) {
-        $this->usuarioLogado = $usuarioLogado;
+    public function setValidadorUsuario($validadorUsuario) {
+        $this->validadorUsuario = $validadorUsuario;
     }
 
     public function executarFuncao($post, $funcao, $controladores) {
@@ -86,6 +87,7 @@ class UsuarioCtrl extends Controlador {
         } else {
             try {
                 $this->criptografarSenha();
+                $this->atribuirAdmin();
                 $log = new Log();
                 if ($this->modoEditar) {
                     $log = $this->gerarLog(Log::TIPO_EDICAO);
@@ -237,6 +239,16 @@ class UsuarioCtrl extends Controlador {
         $usu = $autCtrl->getEntidade();
         if ($usu != null && $usu->getId() == $this->copiaEntidade->getId()) {
             $autCtrl->setEntidade(new Usuario());
+        }
+    }
+
+    private function atribuirAdmin() {
+        $auts = $this->entidade->getAutorizacoes();
+        if (count($auts) == 0) {
+            $autorizacao = new Autorizacao();
+            $autorizacao->setUsuarios($this->entidade);
+            $auts[] = $autorizacao;
+            $this->entidade->setAutorizacoes($auts);
         }
     }
 

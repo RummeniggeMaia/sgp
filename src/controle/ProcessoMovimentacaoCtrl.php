@@ -248,8 +248,7 @@ class ProcessoMovimentacaoCtrl extends Controlador {
     private function removerMovimentacao($index) {
         $pms = $this->entidade->getProcessoMovimentacoes();
         if ($index > 0 && $index <= count($pms)) {
-            $pm = $pms[$index - 1];
-            if ($pm->getId() == null) {
+            if (isset($pms[$index - 1])) {
                 unset($pms[$index - 1]);
             }
             $this->entidade->setProcessoMovimentacoes($pms);

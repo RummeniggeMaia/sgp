@@ -46,10 +46,7 @@
                         'autenticar');
             }
             function digest(s) {
-                if (!s.trim()) {
-                    return "";
-                }
-                return $.md5(s);
+                return (!s.trim()) ? "" : $.md5(s);
             }
         </script>
         <script>

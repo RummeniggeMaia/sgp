@@ -64,7 +64,7 @@ class MovimentacaoCtrl extends Controlador {
         $redirecionamento->setDestino('gerenciar_movimentacao');
         $redirecionamento->setCtrl($this);
 
-        $this->tab = "tab_tabela";
+        $this->tab = "tab_form";
 
         if ($funcao == "salvar") {
             $this->salvarMovimentacao();
@@ -101,7 +101,7 @@ class MovimentacaoCtrl extends Controlador {
         $this->validadorMovimentacao->validar($this->entidade);
         if (!$this->validadorMovimentacao->getValido()) {
             $this->mensagem = $this->validadorMovimentacao->getMensagem();
-            $this->tab = "tab_form";
+            
         } else {
             try {
                 $this->entidade->setConstante(true);
@@ -129,7 +129,7 @@ class MovimentacaoCtrl extends Controlador {
                         "Dados inválidos"
                         , Mensagem::MSG_TIPO_ERRO
                         , "Já existe uma movimentação com essa descrição.\n");
-                $this->tab = "tab_form";                
+                                
             }catch (Exception $e) {
                 $this->mensagem = new Mensagem(
                         "Cadastro de movimentação"
@@ -149,11 +149,11 @@ class MovimentacaoCtrl extends Controlador {
     }
 
     private function editarMovimentacao($index) {
-        if ($index != 0) {
+        if ($index > 0) {
             $this->entidade = $this->entidades[$index - 1];
             $this->copiaEntidade = $this->entidade->clonar();
             $this->modoEditar = true;
-            $this->tab = "tab_form";
+            
         }
     }
 

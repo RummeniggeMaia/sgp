@@ -39,10 +39,11 @@ class ProcessoCtrl extends Controlador {
         $this->entidade = new Processo("");
         $this->entidades = array();
         $this->mensagem = null;
+        $this->tab = "tab_tabela";
         $this->modeloTabela = new ModeloDeTabela();
         $this->modeloTabela->setCabecalhos(
-                array("Nº Processo", "Funcionário", "Departamento", "Assunto"
-        /* , "Movimentações" */        ));
+                array("Nº Processo", "Funcionário", "Departamento", "Assunto"));
+        $this->modeloTabela->getPaginador()->setLimit(15);
         //Como o controle de processos tem apenas um funcinario que é 
         //buscado na pagina de genrenciamento de funcionarios, entao nao 
         //há necessidade de indexar essa lista, pois ela nao vai ficar em 
@@ -88,7 +89,7 @@ class ProcessoCtrl extends Controlador {
             $this->entidade->setFuncionario($funcionarios[0]->clonar());
         }
     }
-
+   
     public function gerarProcesso() {
         if (isset($this->post['campo_numero_processo'])) {
             $this->entidade->setNumeroProcesso($this->post['campo_numero_processo']);
@@ -225,7 +226,7 @@ class ProcessoCtrl extends Controlador {
     }
 
     private function editarProcesso($index) {
-        if ($index != 0) {
+        if ($index > 0) {
             $this->entidade = $this->entidades[$index - 1];
             $this->copiaEntidade = $this->entidade->clonar();
             $this->modoEditar = true;

@@ -21,8 +21,8 @@
             %}
         {% endif %}
         <div class="ui top attached tabular menu">
-            <div class="item {{ ctrl.tab == 'tab_form' ? 'active' : '' }}" data-tab="form">Formulário</div>
-            <div class="item {{ ctrl.tab == 'tab_tabela' ? 'active' : '' }}" data-tab="tabela">Tabela</div>
+            <div class="item {{ ctrl.tab == 'tab_form' ? 'active' : '' }}" data-tab="form"><i class="browser icon"></i>Formulário</div>
+            <div class="item {{ ctrl.tab == 'tab_tabela' ? 'active' : '' }}" data-tab="tabela"><i class="table icon"></i>Tabela</div>
         </div>
         <form id="form_processo" class="ui form" method="post" 
               action="front_controller.php">
@@ -104,7 +104,7 @@
                         <div class="field">
                             <div class="ui submit black button" 
                                  onclick="submeterForm('form_processo', 'funcao_gerenciar_processo', 'cancelar_edicao');">
-                                <i class="remove circle outline icon"></i>Cancelar Edição
+                                <i class="remove circle outline icon"></i>Limpar Campos
                             </div>
                         </div>
                     {% endif %}
@@ -120,7 +120,7 @@
                         <div class="field">
                             <div class="ui submit black button" 
                                  onclick="submeterForm('form_processo', 'funcao_gerenciar_processo', 'cancelar_enviar');">
-                                <i class="remove circle outline icon"></i>Cancelar envio
+                                <i class="remove circle outline icon"></i>Cancelar Envio
                             </div>
                         </div>
                     {% endif %}
@@ -131,6 +131,34 @@
                         </div>
                     </div>
                 </div>
+                <table class="ui celled striped table">
+                    <thead>
+                        <tr>
+                            <th>
+                                Data
+                            </th>
+                            <th colspan="999">
+                                Movimentações
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pm in ctrl.entidade.processoMovimentacoes %}
+                            <tr>
+                                <td style="width: 25%;">{{ pm.dataMovimentacao|date("d/m/Y") }}</td>
+                                <td>
+                                    <div class="ui left icon fluid input">
+                                        <i class="flag icon"></i>
+                                        <input type="text" 
+                                               name="movimentacao_{{ loop.index }}" 
+                                               value="{{ pm.movimentacao.descricao }}"
+                                               readonly="true">
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
             <div class="ui bottom attached tab segment {{ ctrl.tab == 'tab_tabela' ? 'active' : ''}}" data-tab="tabela">
                 {% include 'fragmentos/frag_tabela.twig' 

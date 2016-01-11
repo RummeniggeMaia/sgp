@@ -46,6 +46,9 @@ class ValidadorUsuario extends Validador {
         if ($this->entidade->getSenha() == null) {
             $submensagens[] = "Campo Senha obrigatório!\n";
             $this->camposInvalidos[] = "campo_senha";
+        } else if (strlen($this->entidade->getNome()) < 4) {
+            $submensagens[] = "Senha muito curta. Deve ter ao menos 4 caracteres!\n";
+            $this->camposInvalidos[] = "campo_senha";
         }
 
         $this->mensagem->setSubmensagens($submensagens);

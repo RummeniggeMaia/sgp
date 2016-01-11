@@ -21,8 +21,8 @@
             %}
         {% endif %}
         <div class="ui top attached tabular menu">
-            <div class="item {{ ctrl.tab == 'tab_form' ? 'active' : '' }}" data-tab="form">Formulário</div>
-            <div class="item {{ ctrl.tab == 'tab_tabela' ? 'active' : '' }}" data-tab="tabela">Tabela</div>
+            <div class="item {{ ctrl.tab == 'tab_form' ? 'active' : '' }}" data-tab="form"><i class="browser icon"></i>Formulário</div>
+            <div class="item {{ ctrl.tab == 'tab_tabela' ? 'active' : '' }}" data-tab="tabela"><i class="table icon"></i>Tabela</div>
         </div>    
         <form id="form_funcionario" class="ui form" method="post" 
               action="front_controller.php"> 
@@ -54,21 +54,19 @@
                             </div>
                         {% endif %}
                     {% endif %}
-                    {% if autenticacaoCtrl.contemAutorizacao('admin') %}
-                        {% if ctrl.modoEditar%}
-                            <div class="field">
-                                <div class="ui submit black button" 
-                                     onclick="submeterForm('form_funcionario', 'funcao_gerenciar_funcionario', 'cancelar_edicao');">
-                                    <i class="remove circle outline icon"></i>Cancelar Edição
-                                </div>
+                    {% if ctrl.modoEditar%}
+                        <div class="field">
+                            <div class="ui submit black button" 
+                                 onclick="submeterForm('form_funcionario', 'funcao_gerenciar_funcionario', 'cancelar_edicao');">
+                                <i class="remove circle outline icon"></i>Limpar Campos
                             </div>
-                        {% endif %}
+                        </div>
                     {% endif %}
                     {% if ctrl.modoBusca %}
                         <div class="field">
                             <div class="ui submit black button" 
                                  onclick="submeterForm('form_funcionario', 'funcao_gerenciar_funcionario', 'enviar_funcionarios');">
-                                <i class="reply all icon"></i>Enviar funcionários
+                                <i class="reply all icon"></i>Enviar Funcionários
                             </div>
                         </div>
                     {% endif %}
@@ -76,7 +74,7 @@
                         <div class="field">
                             <div class="ui submit black button" 
                                  onclick="submeterForm('form_funcionario', 'funcao_gerenciar_funcionario', 'cancelar_enviar');">
-                                <i class="remove circle outline icon"></i>Cancelar envio
+                                <i class="remove circle outline icon"></i>Cancelar Envio
                             </div>
                         </div>
                     {% endif %}

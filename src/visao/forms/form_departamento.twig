@@ -21,8 +21,8 @@
             %}
         {% endif %}
         <div class="ui top attached tabular menu">
-            <div class="item {{ ctrl.tab == 'tab_form' ? 'active' : '' }}" data-tab="form">Formulário</div>
-            <div class="item {{ ctrl.tab == 'tab_tabela' ? 'active' : '' }}" data-tab="tabela">Tabela</div>
+            <div class="item {{ ctrl.tab == 'tab_form' ? 'active' : '' }}" data-tab="form"><i class="browser icon"></i>Formulário</div>
+            <div class="item {{ ctrl.tab == 'tab_tabela' ? 'active' : '' }}" data-tab="tabela"><i class="table icon"></i>Tabela</div>
         </div>
         <div class="ui bottom attached tab segment {{ ctrl.tab == 'tab_form' ? 'active' : '' }}" data-tab="form">
             <form id="form_departamento" class="ui form" method="post" 
@@ -41,15 +41,13 @@
                         </div>
                     </div>
                     {% endif %}
-                    {% if autenticacaoCtrl.contemAutorizacao('admin') %}
                     {% if ctrl.modoEditar%}
                         <div class="field">
                             <div class="ui submit black button" 
                                  onclick="submeterForm('form_departamento', 'funcao_gerenciar_departamento', 'cancelar_edicao');">
-                                <i class="remove circle outline icon"></i>Cancelar Edição
+                                <i class="remove circle outline icon"></i>Limpar Campos
                             </div>
                         </div>
-                    {% endif %}
                     {% endif %}
                     <div class="field">
                         <div class="ui submit black button"

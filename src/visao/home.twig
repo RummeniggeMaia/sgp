@@ -11,10 +11,19 @@
                 }
         %}
     {% endif %}
-    <br>
-    <br>
     <div class="ui segment">
         <img class="ui centered medium image" src="../../web/imagens/logo_sgp.jpg">
+    </div>
+    <div style="text-align: center">
+        <a class="ui icon massive black button" name="navegador_gerenciar_processo" title="Processos"><i class="flag icon"></i>Processos</a>
+        {% if autenticacaoCtrl.contemAutorizacao('admin') %}
+            <a class="ui icon massive black button" name="navegador_gerenciar_funcionario" title="Funcionários"><i class="users icon"></i></a>            
+            <a class="ui icon massive black button" name="navegador_gerenciar_assunto" title="Assuntos"><i class="archive icon"></i></a>
+            <a class="ui icon massive black button" name="navegador_gerenciar_departamento" title="Departamentos"><i class="building icon"></i></a>
+            <a class="ui icon massive black button" name="navegador_gerenciar_movimentacao" title="Movimentações"><i class="exchange icon"></i></a>            
+            <a class="ui icon massive black button" name="navegador_gerenciar_usuario" title="Usuários"><i class="privacy icon"></i></a>
+            <a class="ui icon massive black button" name="navegador_gerenciar_processo_movimentacao" title="Movimentação Processual"><i class="legal icon"></i></a>
+        {% endif %}
     </div>
     <div class="ui message">
         <div class="header">

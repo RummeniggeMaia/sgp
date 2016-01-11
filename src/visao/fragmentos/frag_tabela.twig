@@ -70,16 +70,17 @@
                     <td>{{ valor }}</td>
                 {% endfor %}
                 {% if not modo_busca %}
-                    {% if autenticacaoCtrl.contemAutorizacao('admin') %}
-                        <td style="text-align: center;width:1%;white-space:nowrap;">
-                            <div class="ui submit black button" 
-                                 onclick="submeterForm(
+
+                    <td style="text-align: center;width:1%;white-space:nowrap;">
+                        <div class="ui submit black button" 
+                             onclick="submeterForm(
                                                  '{{ formulario }}',
                                                  '{{ funcao }}',
                                                  'editar_{{ loop.index }}');">
-                                <i class="edit icon"></i>Editar
-                            </div>
-                        </td>
+                            <i class="edit icon"></i>Ver
+                        </div>
+                    </td>
+                    {% if autenticacaoCtrl.contemAutorizacao('admin') %}
                         <td style="text-align: center;width:1%;white-space:nowrap;">
                             <div class="ui submit red button" 
                                  onclick="excluirEntidade('excluir_{{ loop.index }}');">

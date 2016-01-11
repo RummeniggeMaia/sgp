@@ -1,0 +1,45 @@
+
+/*
+    Adicionando os tipos de assuntos.
+*/
+insert into assunto(descricao, constante) values ("ABONO DE PERMANÊNCIA", true);
+insert into assunto(descricao, constante) values ("LICENÇA PRÊMIO POR ASSIDUIDADE", true);
+insert into assunto(descricao, constante) values ("LICENÇA POR INTERESSE PARTICULAR", true);
+insert into assunto(descricao, constante) values ("PROGRESSÃO FUNCIONAL", true);
+insert into assunto(descricao, constante) values ("FERIAS", true);
+insert into assunto(descricao, constante) values ("APOSENTADORIA", true);
+insert into assunto(descricao, constante) values ("LICENÇA MATERNIDADE", true);
+insert into assunto(descricao, constante) values ("INCORPORAÇÃO DE VANTAGEM TRANSITÓIA", true);
+insert into assunto(descricao, constante) values ("HORÁRIO ESPECIAL DE TRABALHO", true);
+insert into assunto(descricao, constante) values ("ADICIONAL", true);
+
+/*
+        Adicionando os tipos de lugares que os processos poderão estar.
+*/
+insert into departamento(descricao, constante) values ("RECURSOS HUMANOS", true);
+insert into departamento(descricao, constante) values ("SEC. DE ADM. E DE TRIBUTAÇÃO", true);
+insert into departamento(descricao, constante) values ("PROCURADORIA", true);
+
+
+/*
+        Adicionando os tipos de movimentações
+*/
+insert into movimentacao(descricao, constante) values ("AGUARDANDO PARECER JURÍDICO", true);
+insert into movimentacao(descricao, constante) values ("AGUARDANDO MANIFESTAÇÃO DA SECRETARIA RESPONSÁVEL", true);
+insert into movimentacao(descricao, constante) values ("AGUARDANDO DOCUMENTAÇÃO DO REQUERENTE", true);
+insert into movimentacao(descricao, constante) values ("REQUERIMENTO DEFERIDO", true);
+insert into movimentacao(descricao, constante) values ("REQUERIMENTO INDEFERIDO", true);
+insert into movimentacao(descricao, constante) values ("AGUARDANDO INTIMAÇÃO DO REQUERENTE", true);
+insert into movimentacao(descricao, constante) values ("PARA ARQUIVAR", true);
+
+/*
+        Adicionando um usuario root
+*/
+insert into usuario(
+    nome, email, login, senha
+) values(
+    "admin", "admin@mail.com", "admin", 
+    "f759864761e3679e26c4362935d6a0d562bef02f026a9670d4e6e46103969a78"
+);﻿
+insert into autorizacao (descricao) values ("admin");
+insert into usuario_autorizacao (usuario_id, autorizacao_id) values(1, 1);

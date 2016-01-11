@@ -69,7 +69,7 @@ class FuncionarioCtrl extends Controlador {
         $redirecionamento = new Redirecionamento();
         $redirecionamento->setDestino('gerenciar_funcionario');
         $redirecionamento->setCtrl($this);
-        $this->tab = "tab_tabela";
+        $this->tab = "tab_form";
 
         if ($funcao == "salvar") {
             $this->salvarFuncionario();
@@ -121,7 +121,7 @@ class FuncionarioCtrl extends Controlador {
         $this->validadorFuncionario->validar($this->entidade);
         if (!$this->validadorFuncionario->getValido()) {
             $this->mensagem = $this->validadorFuncionario->getMensagem();
-            $this->tab = "tab_form";
+            
         } else {
             try {
                 $log = new Log();
@@ -147,7 +147,7 @@ class FuncionarioCtrl extends Controlador {
                         "Dados inválidos"
                         , Mensagem::MSG_TIPO_ERRO
                         , "O CPF ou o RG já existe cadastrado no sistema.\n");
-                $this->tab = "tab_form";
+                
             } catch (Exception $e) {
                 $this->mensagem = new Mensagem(
                         "Cadastro de funcionários"
@@ -187,11 +187,11 @@ class FuncionarioCtrl extends Controlador {
 
     private function editarFuncionario($index) {
 
-        if ($index != 0) {
+        if ($index > 0) {
             $this->entidade = $this->entidades[$index - 1];
             $this->copiaEntidade = $this->entidade->clonar();
             $this->modoEditar = true;
-            $this->tab = "tab_form";
+            
         }
     }
 

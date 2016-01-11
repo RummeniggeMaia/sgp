@@ -65,7 +65,7 @@ class AssuntoCtrl extends Controlador {
         $redirecionamento->setDestino('gerenciar_assunto');
         $redirecionamento->setCtrl($this);
 
-        $this->tab = "tab_tabela";
+        $this->tab = "tab_form";
 
         if ($funcao == "salvar") {
             $this->salvarAssunto();
@@ -102,7 +102,7 @@ class AssuntoCtrl extends Controlador {
         $this->validadorAssunto->validar($this->entidade);
         if (!$this->validadorAssunto->getValido()) {
             $this->mensagem = $this->validadorAssunto->getMensagem();
-            $this->tab = "tab_form";
+            
         } else {
             try {
                 $this->entidade->setConstante(true);
@@ -130,7 +130,7 @@ class AssuntoCtrl extends Controlador {
                         "Dados inválidos"
                         , Mensagem::MSG_TIPO_ERRO
                         , "Já existe um assunto com essa descrição.\n");
-                $this->tab = "tab_form";
+                
             } catch (Exception $ex) {
                 $this->mensagem = new Mensagem(
                         "Cadastro de assuntos"
@@ -150,11 +150,11 @@ class AssuntoCtrl extends Controlador {
     }
 
     public function editarAssunto($index) {
-        if ($index != 0) {
+        if ($index > 0) {
             $this->entidade = $this->entidades[$index - 1];
             $this->copiaEntidade = $this->entidade->clonar();
             $this->modoEditar = true;
-            $this->tab = "tab_form";
+            
         }
     }
 

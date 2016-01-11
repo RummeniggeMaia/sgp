@@ -26,7 +26,7 @@ abstract class Controlador {
     //Variavel usada apenas acionar uma determinada tab na durante a resposta, 
     //quando o usuario clica em editar entao a tab de form tem q aparecer em vez
     // da tab que contem a tabela
-    protected $tab = "tab_tabela";
+    protected $tab = "tab_form";
 
     const CTRL_USUARIO = "gerenciar_usuario";
     const CTRL_FUNCIONARIO = "gerenciar_funcionario";
@@ -129,6 +129,7 @@ abstract class Controlador {
                     , $this->modeloTabela->getPaginador()->getLimit()
                     , $this->modeloTabela->getPaginador()->getOffset());
             $this->gerarLinhas();
+            $this->tab = "tab_tabela";
         }
     }
 

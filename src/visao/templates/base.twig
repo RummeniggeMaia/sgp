@@ -62,15 +62,15 @@
             <div class="item">
                 <img src="../../web/imagens/icon-process-white.png" width="100px" />
             </div>
+            <a class="item" name="navegador_gerenciar_processo"><i class="flag icon"></i>Processos</a>
             {% if autenticacaoCtrl.contemAutorizacao('admin') %}
                 <a class="item" name="navegador_gerenciar_funcionario"><i class="users icon"></i>Funcionários</a>            
                 <a class="item" name="navegador_gerenciar_assunto"><i class="archive icon"></i>Assuntos</a>
                 <a class="item" name="navegador_gerenciar_departamento"><i class="building icon"></i>Departamentos</a>
                 <a class="item" name="navegador_gerenciar_movimentacao"><i class="exchange icon"></i>Movimentações</a>            
                 <a class="item" name="navegador_gerenciar_usuario"><i class="privacy icon"></i>Usuários</a>
+                <a class="item" name="navegador_gerenciar_processo_movimentacao"><i class="legal icon"></i>Movimentação Processual</a>
             {% endif %}
-            <a class="item" name="navegador_gerenciar_processo"><i class="flag icon"></i>Processos</a>
-            <a class="item" name="navegador_gerenciar_processo_movimentacao"><i class="legal icon"></i>Movimentação Processual</a>
         </div>
         <div class="pusher">
             <div class="ui fixed main menu inverted">
@@ -97,7 +97,7 @@
                         </form>
                     </div>
                     <div class="item">
-                        <div class="ui submit button" 
+                        <div class="ui submit blue button" 
                              onClick="logar();" >
                             <i class="key icon"></i>Entrar
                         </div>

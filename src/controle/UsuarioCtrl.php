@@ -61,7 +61,7 @@ class UsuarioCtrl extends Controlador {
         $redirecionamento = new Redirecionamento();
         $redirecionamento->setDestino('gerenciar_usuario');
         $redirecionamento->setCtrl($this);
-        $this->tab = "tab_tabela";
+        $this->tab = "tab_form";
 
         if ($funcao == "salvar") {
             $this->salvarUsuario();
@@ -83,7 +83,6 @@ class UsuarioCtrl extends Controlador {
         $this->validadorUsuario->validar($this->entidade);
         if (!$this->validadorUsuario->getValido()) {
             $this->mensagem = $this->validadorUsuario->getMensagem();
-            $this->tab = "tab_form";
         } else {
             try {
                 $this->criptografarSenha();
@@ -110,7 +109,6 @@ class UsuarioCtrl extends Controlador {
                         "Dados inválidos"
                         , Mensagem::MSG_TIPO_ERRO
                         , "Já existe um usuário com este login.\n");
-                $this->tab = "tab_form";
             } catch (Exception $e) {
                 $this->mensagem = new Mensagem(
                         "Cadastro de movimentação"
@@ -173,7 +171,6 @@ class UsuarioCtrl extends Controlador {
             $this->entidade = $this->entidades[$index - 1];
             $this->copiaEntidade = $this->entidade->clonar();
             $this->modoEditar = true;
-            $this->tab = "tab_form";
         }
     }
 

@@ -46,6 +46,9 @@
                         'autenticar');
             }
             function digest(s) {
+                if (!s.trim()) {
+                    return "";
+                }
                 return $.md5(s);
             }
         </script>

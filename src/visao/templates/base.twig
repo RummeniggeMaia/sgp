@@ -13,6 +13,9 @@
 
             $(document).ready(function() {
                 $('a').click(function(event) {
+                    if (!$(this).attr('name').match("^navegador_[a-z_]+")) {
+                        return;
+                    }
                     var form = $('<form method="post" action="front_controller.php"></form>');
                     var campo = document.createElement('input');
                     campo.type = "hidden";

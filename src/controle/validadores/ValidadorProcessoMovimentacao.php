@@ -3,6 +3,7 @@
 namespace controle\validadores;
 
 use controle\Mensagem;
+
 /**
  * Description of ValidadorProcessoMovimentacao
  *
@@ -24,6 +25,10 @@ class ValidadorProcessoMovimentacao extends Validador {
         $submensagens = array();
 
         $pms = $entidade->getProcessoMovimentacoes();
+        if ($this->entidade->getId() == null) {
+            $submensagens[] = "Não existe um processo a ser salvo! \n";
+            $this->camposInvalidos[] = "campo_numero_processo";
+        }
         foreach ($pms as $key => $pm) {
             if ($pm->getMovimentacao()->getId() == null) {
                 $submensagens[] = "Movimentação " . ($key + 1) . " vazia!\n";

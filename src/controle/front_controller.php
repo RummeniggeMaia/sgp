@@ -13,6 +13,7 @@ use util\Util;
 //Inicia a sessao novamente
 session_start();
 //Acessa o vetor de navegacao criado no index.php
+
 $visoes_navegacao = unserialize($_SESSION["visoes_navegacao"]);
 $controladores = unserialize($_SESSION["controladores"]);
 

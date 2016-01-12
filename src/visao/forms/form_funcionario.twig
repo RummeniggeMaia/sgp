@@ -30,7 +30,7 @@
 
                 <div class="field {{ 'campo_nome' in ctrl.validadorFuncionario.camposInvalidos ? 'error' : '' }}">
                     <label>Nome:</label>
-                    <input type="text" name="campo_nome" 
+                    <input maxlength="150" type="text" name="campo_nome" 
                            placeholder="nome" value="{{ ctrl.entidade.nome }}">
                 </div>
                 <div class="field {{ 'campo_cpf' in ctrl.validadorFuncionario.camposInvalidos ? 'error' : ''}}">

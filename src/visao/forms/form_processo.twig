@@ -30,7 +30,7 @@
 
                 <div class="field {{ 'campo_numero_processo' in ctrl.validadorProcesso.camposInvalidos ? 'error' : '' }}">
                     <label>Nº Processo:</label>
-                    <input type="text" name="campo_numero_processo" placeholder="Número do Processo" 
+                    <input maxlength="30" type="text" name="campo_numero_processo" placeholder="Número do Processo" 
                            value="{{ ctrl.entidade.numeroProcesso }}">
                 </div>
                 <div class="two fields">

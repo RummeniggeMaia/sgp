@@ -39,20 +39,20 @@
 
                 <div class="field {{ 'campo_nome' in ctrl.validadorUsuario.camposInvalidos ? 'error' : '' }}">
                     <label>Nome:</label>
-                    <input type="text" name="campo_nome" 
+                    <input maxlength="150" type="text" name="campo_nome" 
                            placeholder="nome" value="{{ ctrl.entidade.nome }}">
                 </div>
                 <div class="field {{ 'campo_email' in ctrl.validadorUsuario.camposInvalidos ? 'error' : ''}}">
                     <label>Email:</label>
-                    <input type="text" name="campo_email" 
+                    <input maxlength="100" type="text" name="campo_email" 
                            placeholder="email" value="{{ ctrl.entidade.email }}" />
                 </div>
                 <div class="field {{ 'campo_login' in ctrl.validadorUsuario.camposInvalidos ? 'error' : ''}}">
                     <label>Login:</label>
-                    <input type="text" name="campo_login" 
+                    <input maxlength="30" type="text" name="campo_login" 
                            placeholder="Login" value="{{ ctrl.entidade.login }}" />
                 </div>
-                <div class="field {{ 'campo_senha' in ctrl.validadorUsuario.camposInvalidos ? 'error' : ''}}">
+                <div maxlength="30" class="field {{ 'campo_senha' in ctrl.validadorUsuario.camposInvalidos ? 'error' : ''}}">
                     <label>Senha:</label>
                     <input id="campo_senha" type="password" name="campo_senha"
                            placeholder="Senha"/>

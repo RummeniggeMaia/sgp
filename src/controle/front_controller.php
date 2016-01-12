@@ -63,8 +63,10 @@ foreach ($chaves as $requisicao) {
                 $redirecionamento->setDestino(
                         $visoes_navegacao[$redirecionamento->getDestino()]);
                 redirecionar($twig, $redirecionamento, $autenticacaoCtrl);
-                $controlador->getDao()->getEntityManager()->close();
-                $controlador->getDao()->setEntityManager(null);
+                if ($controlador->getDao() != null) {
+                    $controlador->getDao()->getEntityManager()->close();
+                    $controlador->getDao()->setEntityManager(null);
+                }
                 $_SESSION['controladores'] = serialize($controladores);
                 return;
             }

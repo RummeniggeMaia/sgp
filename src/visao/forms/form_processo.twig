@@ -81,12 +81,10 @@
                             <i class="search icon"></i>
                             Buscar
                         </div>
-                        {% if autenticacaoCtrl.contemAutorizacao('admin') %}
-                            <div class="ui button red" 
-                                 onclick="submeterForm('form_processo', 'funcao_gerenciar_processo', 'remover_funcionario');">
-                                <i class="delete icon"></i>
-                            </div>
-                        {% endif %}
+                        <div class="ui button red" 
+                             onclick="submeterForm('form_processo', 'funcao_gerenciar_processo', 'remover_funcionario');">
+                            <i class="delete icon"></i>
+                        </div>
                     </div>
                 </div>
                 <div class="fields">

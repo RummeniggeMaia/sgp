@@ -78,6 +78,9 @@ class UsuarioCtrl extends Controlador {
             $this->salvarUsuario();
         } else if ($funcao == "pesquisar") {
             $this->pesquisarUsuario();
+        }  else if ($funcao == "cancelar_edicao") {
+            $this->modoEditar = false;
+            $this->entidade = new Usuario("", "", "", "");
         } else if (Util::startsWithString($funcao, "editar_")) {
             $index = intval(str_replace("editar_", "", $funcao));
             $this->editarUsuario($index);

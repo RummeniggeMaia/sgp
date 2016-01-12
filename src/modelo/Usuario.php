@@ -29,7 +29,7 @@ class Usuario extends Entidade {
     /** @OneToMany(targetEntity="Log", mappedBy="usuario", cascade={"remove"}) */
     protected $logs;
 
-    /** @ManyToMany(targetEntity="Autorizacao", inversedBy="usuarios", fetch="EAGER") 
+    /** @ManyToMany(targetEntity="Autorizacao", inversedBy="usuarios", fetch="EAGER", cascade={"merge"}) 
      *  @JoinTable(name="usuario_autorizacao")
      */
     protected $autorizacoes;

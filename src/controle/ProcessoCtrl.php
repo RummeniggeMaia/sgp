@@ -8,6 +8,7 @@ use controle\tabela\Linha;
 use controle\tabela\ModeloDeTabela;
 use controle\tabela\Paginador;
 use controle\validadores\ValidadorProcesso;
+use dao\Dao;
 use DateTime;
 use DateTimeZone;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
@@ -53,7 +54,7 @@ class ProcessoCtrl extends Controlador {
         //relacionamentos do processo
         $this->validadorProcesso = new ValidadorProcesso();
         $this->pesquisarProcessos();
-        $this->atualizarListas();
+        $this->dao = null;
     }
 
     public function getAssuntos() {
@@ -265,6 +266,7 @@ class ProcessoCtrl extends Controlador {
         }
         $ctrl = $this->controladores[$this->ctrlDestino];
         $ctrl->setProcessos($selecionados);
+        $ctrl->setDao(new Dao($this->dao->getEntityManager()));
         $this->modoBusca = false;
         $this->entidades = array();
         $this->modeloTabela->setLinhas(array());
@@ -277,6 +279,7 @@ class ProcessoCtrl extends Controlador {
         $funcCtrl = $this->controladores['gerenciar_funcionario'];
         $funcCtrl->setModoBusca(true);
         $funcCtrl->setCtrlDestino('gerenciar_processo');
+        $funcCtrl->setDao(new Dao($this->dao->getEntityManager()));
         $redirecionamento = new Redirecionamento();
         $redirecionamento->setDestino('gerenciar_funcionario');
         $redirecionamento->setCtrl($funcCtrl);
@@ -285,6 +288,10 @@ class ProcessoCtrl extends Controlador {
     }
 
     public function resetar() {
+        //Depois q esse contrutor for chamado no index.php, esse controlador vai 
+        //ser serializado, por isso o objeto dao tem q ser nulado pois o mesmo 
+        //nao pode ser serializado
+        $this->dao = null;
         $this->mensagem = null;
         $this->validadorProcesso = new ValidadorProcesso();
         $this->post = null;
@@ -338,31 +345,6 @@ class ProcessoCtrl extends Controlador {
         return $log;
     }
 
-    private function atualizarListas() {
-        $assunto = new Assunto(null, true);
-        $this->assuntos = $this->dao->pesquisar($assunto, PHP_INT_MAX, 0);
-        $departamento = new Departamento(null, true);
-        $this->departamentos = $this->dao->pesquisar($departamento, PHP_INT_MAX, 0);
-        //Indexa todas os assuntos para serem buscados pela descricao
-        $aux = array();
-        $aux[] = new Assunto("", "");
-        foreach ($this->assuntos as $a) {
-            $aux[$a->getDescricao()] = $a;
-        }
-        $this->assuntos = $aux;
-        //Indexa todas os departamentos para ser buscada pela descricao
-        $aux = array();
-        $aux[] = new Departamento("");
-        foreach ($this->departamentos as $d) {
-            $aux[$d->getDescricao()] = $d;
-        }
-        $this->departamentos = $aux;
-        //Depois q esse contrutor for chamado no index.php, esse controlador vai 
-        //ser serializado, por isso o objeto dao tem q ser nulado pois o mesmo 
-        //nao pode ser serializado
-        $this->dao = null;
-    }
-
     private function processoInserido() {
         
     }
@@ -381,6 +363,27 @@ class ProcessoCtrl extends Controlador {
         if ($pro != null && $pro->getId() == $this->copiaEntidade->getId()) {
             $proMovCtrl->setEntidade(new Processo(""));
         }
+    }
+
+    public function iniciar() {
+        $assunto = new Assunto(null, true);
+        $this->assuntos = $this->dao->pesquisar($assunto, PHP_INT_MAX, 0);
+        $departamento = new Departamento(null, true);
+        $this->departamentos = $this->dao->pesquisar($departamento, PHP_INT_MAX, 0);
+        //Indexa todas os assuntos para serem buscados pela descricao
+        $aux = array();
+        $aux[] = new Assunto("", "");
+        foreach ($this->assuntos as $a) {
+            $aux[$a->getDescricao()] = $a;
+        }
+        $this->assuntos = $aux;
+        //Indexa todas os departamentos para ser buscada pela descricao
+        $aux = array();
+        $aux[] = new Departamento("");
+        foreach ($this->departamentos as $d) {
+            $aux[$d->getDescricao()] = $d;
+        }
+        $this->departamentos = $aux;
     }
 
 }

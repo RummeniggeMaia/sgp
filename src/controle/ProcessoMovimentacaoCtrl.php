@@ -3,6 +3,7 @@
 namespace controle;
 
 use controle\validadores\ValidadorProcessoMovimentacao;
+use dao\Dao;
 use DateTime;
 use DateTimeZone;
 use modelo\Log;
@@ -10,7 +11,6 @@ use modelo\Movimentacao;
 use modelo\Processo;
 use modelo\ProcessoMovimentacao;
 use util\Util;
-
 
 /**
  * Description of ProcessoMovimentacaoCtrl
@@ -31,22 +31,8 @@ class ProcessoMovimentacaoCtrl extends Controlador {
         $this->descricao = "gerenciar_processo_movimentacao";
         $this->dao = $dao;
         $this->entidade = new Processo("");
-        $movimentacao = new Movimentacao(null, "", true);
-        //Inicia lista de movimentacoes fazendo a busca de todas as 
-        //movimentacoes constantes do sistema.
-
         $this->validadorProcessoMovimentacao = new ValidadorProcessoMovimentacao();
-        $this->movimentacoes = $this->dao->pesquisar(
-                $movimentacao, PHP_INT_MAX, 0);
-        //Indexa todas as movimentacoes para ser buscada pela descricao
-        $aux = array();
-        $aux[] = new Movimentacao("");
-        foreach ($this->movimentacoes as $mov) {
-            $aux[$mov->getDescricao()] = $mov;
-        }
-        $this->movimentacoes = $aux;
         $this->mensagem = null;
-
         //Depois q esse contrutor for chamado no index.php, esse controlador vai 
         //ser serializado, por isso o objeto dao tem q ser nulado pois o mesmo 
         //nao pode ser serializado
@@ -206,17 +192,22 @@ class ProcessoMovimentacaoCtrl extends Controlador {
     }
 
     private function buscarProcesso() {
-        $processoCtrl = $this->controladores["gerenciar_processo"];
+        $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
         //Configura o controle de processo e redireciona para la
         $processoCtrl->setModoBusca(true);
-        $processoCtrl->setCtrlDestino('gerenciar_processo_movimentacao');
+        $processoCtrl->setCtrlDestino(Controlador::CTRL_PROCESSO_MOVIMENTACAO);
+        $processoCtrl->setDao(new Dao($this->dao->getEntityManager()));
         $redirecionamento = new Redirecionamento();
-        $redirecionamento->setDestino('gerenciar_processo');
+        $redirecionamento->setDestino(Controlador::CTRL_PROCESSO);
         $redirecionamento->setCtrl($processoCtrl);
         return $redirecionamento;
     }
 
     public function resetar() {
+        //Depois q esse contrutor for chamado no index.php, esse controlador vai 
+        //ser serializado, por isso o objeto dao tem q ser nulado pois o mesmo 
+        //nao pode ser serializado
+        $this->dao = null;
         $this->mensagem = null;
         $this->controladores = null;
         $this->post = null;
@@ -253,6 +244,21 @@ class ProcessoMovimentacaoCtrl extends Controlador {
             }
             $this->entidade->setProcessoMovimentacoes($pms);
         }
+    }
+
+    public function iniciar() {
+        $movimentacao = new Movimentacao(null, "", true);
+        //Inicia lista de movimentacoes fazendo a busca de todas as 
+        //movimentacoes constantes do sistema.
+        $this->movimentacoes = $this->dao->pesquisar(
+                $movimentacao, PHP_INT_MAX, 0);
+        //Indexa todas as movimentacoes para ser buscada pela descricao
+        $aux = array();
+        $aux[] = new Movimentacao("", false);
+        foreach ($this->movimentacoes as $mov) {
+            $aux[$mov->getDescricao()] = $mov;
+        }
+        $this->movimentacoes = $aux;
     }
 
 }

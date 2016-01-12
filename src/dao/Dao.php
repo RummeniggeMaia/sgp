@@ -38,11 +38,7 @@ class Dao {
 
     public function editar($entidade) {
         $e = $this->entityManager->merge($entidade);
-//        try {
-            $this->entityManager->flush();   
-//        } catch (Exception $ex) {
-//            throw $ex;
-//        }
+        $this->entityManager->flush();
         return $e;
     }
 

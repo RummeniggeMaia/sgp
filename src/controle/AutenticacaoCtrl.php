@@ -42,7 +42,9 @@ class AutenticacaoCtrl extends Controlador {
 
         $redirecionamento = new Redirecionamento();
         $redirecionamento->setDestino($this->visaoAtual);
-        $redirecionamento->setCtrl($controladores[$this->visaoAtual]);
+        $ctrl = $controladores[$this->visaoAtual];
+        $ctrl->setDao($this->dao);
+        $redirecionamento->setCtrl($ctrl);
 
         if ($funcao == "autenticar") {
             if ($this->autenticar()) {
@@ -115,6 +117,10 @@ class AutenticacaoCtrl extends Controlador {
             }
         }
         return false;
+    }
+
+    public function iniciar() {
+        
     }
 
 //put your code here

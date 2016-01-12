@@ -43,7 +43,9 @@ foreach ($chaves as $requisicao) {
             //de visões
             if (isset($visoes_navegacao[$visao])) {
                 $redirecionamento->setDestino($visoes_navegacao[$visao]);
-                $redirecionamento->setCtrl($controladores[$visao]);
+                $controlador = $controladores[$visao];
+                $controlador->setDao(new Dao($entityManager));
+                $redirecionamento->setCtrl($controlador);
                 //Gera o template e manda renderizar a visao .twig
                 redirecionar($twig, $redirecionamento, $autenticacaoCtrl);
                 $_SESSION['controladores'] = serialize($controladores);
@@ -60,9 +62,9 @@ foreach ($chaves as $requisicao) {
                         $_POST, $funcao, $controladores);
                 $redirecionamento->setDestino(
                         $visoes_navegacao[$redirecionamento->getDestino()]);
+                redirecionar($twig, $redirecionamento, $autenticacaoCtrl);
                 $controlador->getDao()->getEntityManager()->close();
                 $controlador->getDao()->setEntityManager(null);
-                redirecionar($twig, $redirecionamento, $autenticacaoCtrl);
                 $_SESSION['controladores'] = serialize($controladores);
                 return;
             }
@@ -73,6 +75,7 @@ foreach ($chaves as $requisicao) {
 function redirecionar($twig, $redirecionamento, $autenticacaoCtrl) {
     $template = $twig->loadTemplate($redirecionamento->getDestino());
     if ($redirecionamento->getCtrl() != null) {
+        $redirecionamento->getCtrl()->iniciar();
         print $template->render(array("ctrl" => $redirecionamento->getCtrl(),
                     "autenticacaoCtrl" => $autenticacaoCtrl));
         $autenticacaoCtrl->setVisaoAtual($redirecionamento->getCtrl()->getDescricao());

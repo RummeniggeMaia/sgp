@@ -19,7 +19,7 @@ if (isset($_SESSION['controladores'])) {
     $assuntoCtrl = new controle\AssuntoCtrl();
     $departamentoCtrl = new controle\DepartamentoCtrl();
     $movimentacaoCtrl = new controle\MovimentacaoCtrl();
-    $usuarioCtrl = new controle\UsuarioCtrl();
+    $usuarioCtrl = new controle\UsuarioCtrl($dao);
     $autenticacaoCtrl = new controle\AutenticacaoCtrl();
     //No contrutor do ProcessoCtrl e ProcessoMovimentacaoCtrlsao pesquisadas as 
     //listas de assuntos, departamentos e movimentacoes, por isso passa-se o 

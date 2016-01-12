@@ -27,4 +27,8 @@ class HomeCtrl extends Controlador {
         $this->mensagem = null;
     }
 
+    public function iniciar() {
+        
+    }
+
 }

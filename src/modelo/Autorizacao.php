@@ -37,8 +37,8 @@ class Autorizacao extends Entidade {
         return $this->usuarios;
     }
 
-    public function setUsuarios($usuario) {
-        $this->usuarios = $usuario;
+    public function setUsuarios($usuarios) {
+        $this->usuarios = $usuarios;
     }
     public function getDescricao() {
         return $this->descricao;

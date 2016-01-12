@@ -102,7 +102,6 @@ class AssuntoCtrl extends Controlador {
         $this->validadorAssunto->validar($this->entidade);
         if (!$this->validadorAssunto->getValido()) {
             $this->mensagem = $this->validadorAssunto->getMensagem();
-            
         } else {
             try {
                 $this->entidade->setConstante(true);
@@ -110,10 +109,9 @@ class AssuntoCtrl extends Controlador {
                 if ($this->modoEditar) {
                     $log = $this->gerarLog(Log::TIPO_EDICAO);
                     $this->copiaEntidade = $this->dao->editar($this->entidade);
-                    $this->assuntoEditado();
+                    $this->pesquisarAssunto();
                 } else {
                     $this->copiaEntidade = $this->dao->editar($this->entidade);
-                    $this->assuntoInserido();
                     $log = $this->gerarLog(Log::TIPO_CADASTRO);
                 }
                 $this->dao->editar($log);
@@ -162,7 +160,6 @@ class AssuntoCtrl extends Controlador {
         if ($index != 0) {
             $this->copiaEntidade = $this->entidades[$index - 1];
             $this->dao->excluir($this->copiaEntidade);
-            $this->assuntoRemovido();
             $this->dao->editar($this->gerarLog(Log::TIPO_REMOCAO));
             $p = $this->modeloTabela->getPaginador();
             if ($p->getOffset() == $p->getContagem()) {
@@ -197,7 +194,7 @@ class AssuntoCtrl extends Controlador {
         if ($log->getTipo() == Log::TIPO_CADASTRO) {
             $log->setDadosAlterados(json_encode($entidade));
         } else if ($log->getTipo() == Log::TIPO_EDICAO) {
-            if ($this->copiaEntidade->getNome() != $this->entidade->getNome()) {
+            if ($this->copiaEntidade->getDescricao() != $this->entidade->getDescricao()) {
                 $campos["descricao"] = $this->copiaEntidade->getDescricao();
             }
             $entidade["campos"] = $campos;
@@ -209,36 +206,40 @@ class AssuntoCtrl extends Controlador {
         }
         return $log;
     }
+//
+//    private function assuntoInserido() {
+////        $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
+////        $assuntos = $processoCtrl->getAssuntos();
+////        $assuntos[] = $this->copiaEntidade->clonar();
+////        $processoCtrl->setAssuntos($assuntos);
+//    }
+//
+//    private function assuntoEditado() {
+//        $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
+//        $assuntos = $processoCtrl->getAssuntos();
+//        foreach ($assuntos as $i => $a) {
+//            if ($a->getId() == $this->copiaEntidade->getId()) {
+//                $assuntos[$i] = $this->copiaEntidade->clonar();
+//                break;
+//            }
+//        }
+//        $processoCtrl->setAssuntos($assuntos);
+//    }
+//
+//    private function assuntoRemovido() {
+//        $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
+//        $assuntos = $processoCtrl->getAssuntos();
+//        foreach ($assuntos as $i => $a) {
+//            if ($a->getId() == $this->copiaEntidade->getId()) {
+//                unset($assuntos[$i]);
+//                break;
+//            }
+//        }
+//        $processoCtrl->setAssuntos($assuntos);
+//    }
 
-    private function assuntoInserido() {
-        $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
-        $assuntos = $processoCtrl->getAssuntos();
-        $assuntos[] = $this->copiaEntidade->clonar();
-        $processoCtrl->setAssuntos($assuntos);
-    }
-
-    private function assuntoEditado() {
-        $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
-        $assuntos = $processoCtrl->getAssuntos();
-        foreach ($assuntos as $i => $a) {
-            if ($a->getId() == $this->copiaEntidade->getId()) {
-                $assuntos[$i] = $this->copiaEntidade->clonar();
-                break;
-            }
-        }
-        $processoCtrl->setAssuntos($assuntos);
-    }
-
-    private function assuntoRemovido() {
-        $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
-        $assuntos = $processoCtrl->getAssuntos();
-        foreach ($assuntos as $i => $a) {
-            if ($a->getId() == $this->copiaEntidade->getId()) {
-                unset($assuntos[$i]);
-                break;
-            }
-        }
-        $processoCtrl->setAssuntos($assuntos);
+    public function iniciar() {
+        
     }
 
 }

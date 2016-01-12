@@ -32,8 +32,9 @@ class UsuarioCtrl extends Controlador {
     private $validadorUsuario;
     private $post;
     private $controladores;
-
-    public function __construct() {
+    private $autorizacaoAdmin;
+    
+    public function __construct($dao) {
         $this->descricao = "gerenciar_usuario";
         $this->entidade = new Usuario("", "", "", "");
         $this->entidades = array();
@@ -42,6 +43,16 @@ class UsuarioCtrl extends Controlador {
         $this->modeloTabela->setCabecalhos(array("Nome", "Email", "Login", "Senha"));
         $this->modeloTabela->setModoBusca(false);
         $this->validadorUsuario = new ValidadorUsuario();
+        
+        $auts = $dao->pesquisar(new Autorizacao("admin"), 1, 0);
+        if (count($auts) > 0) {
+            $this->autorizacaoAdmin = $auts[0];
+        }
+        
+        //Depois q esse contrutor for chamado no index.php, esse controlador vai 
+        //ser serializado, por isso o objeto dao tem q ser nulado pois o mesmo 
+        //nao pode ser serializado
+        $this->dao = null;
     }
 
     public function getValidadorUsuario() {
@@ -91,6 +102,7 @@ class UsuarioCtrl extends Controlador {
                 if ($this->modoEditar) {
                     $log = $this->gerarLog(Log::TIPO_EDICAO);
                     $this->dao->editar($this->entidade);
+                    $this->pesquisarUsuario();
                 } else {
                     $this->copiaEntidade = $this->dao->editar($this->entidade);
                     $log = $this->gerarLog(Log::TIPO_CADASTRO);
@@ -147,6 +159,7 @@ class UsuarioCtrl extends Controlador {
     }
 
     public function resetar() {
+        $this->dao = null;
         $this->mensagem = null;
         $this->validadorUsuario = new ValidadorUsuario();
     }
@@ -242,11 +255,13 @@ class UsuarioCtrl extends Controlador {
     private function atribuirAdmin() {
         $auts = $this->entidade->getAutorizacoes();
         if (count($auts) == 0) {
-            $autorizacao = new Autorizacao();
-            $autorizacao->setUsuarios($this->entidade);
-            $auts[] = $autorizacao;
+            $auts[] = $this->autorizacaoAdmin->clonar();
             $this->entidade->setAutorizacoes($auts);
         }
+    }
+
+    public function iniciar() {
+        
     }
 
     /* private function enviarEmail() {

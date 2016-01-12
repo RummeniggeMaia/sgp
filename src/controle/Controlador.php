@@ -178,4 +178,6 @@ abstract class Controlador {
      * sessao, por isso sao apagadas no reset.
      */
     public abstract function resetar();
+    
+    public abstract function iniciar();
 }

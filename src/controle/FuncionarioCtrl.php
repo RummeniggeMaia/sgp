@@ -8,12 +8,13 @@ use controle\tabela\Linha;
 use controle\tabela\ModeloDeTabela;
 use controle\tabela\Paginador;
 use controle\validadores\ValidadorFuncionario;
+use dao\Dao;
 use DateTime;
 use DateTimeZone;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use modelo\Funcionario;
 use modelo\Log;
 use util\Util;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 
 /**
  * Description of FuncionarioCtrl
@@ -177,6 +178,7 @@ class FuncionarioCtrl extends Controlador {
         }
         $ctrl = $this->controladores[$this->ctrlDestino];
         $ctrl->setFuncionarios($selecionados);
+        $ctrl->setDao(new Dao($this->dao->getEntityManager()));
         $this->modoBusca = false;
         $this->entidades = array();
         $this->modeloTabela->setLinhas(array());
@@ -283,6 +285,10 @@ class FuncionarioCtrl extends Controlador {
             $processoCtrl->getEntidade()->setFuncionario(
                     new Funcionario("", "", ""));
         }
+    }
+
+    public function iniciar() {
+        
     }
 
 }

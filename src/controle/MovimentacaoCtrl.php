@@ -15,6 +15,7 @@ use modelo\Log;
 use modelo\Movimentacao;
 use util\Util;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+
 /**
  * Description of MovimentacaoCtrl
  *
@@ -101,7 +102,6 @@ class MovimentacaoCtrl extends Controlador {
         $this->validadorMovimentacao->validar($this->entidade);
         if (!$this->validadorMovimentacao->getValido()) {
             $this->mensagem = $this->validadorMovimentacao->getMensagem();
-            
         } else {
             try {
                 $this->entidade->setConstante(true);
@@ -109,10 +109,9 @@ class MovimentacaoCtrl extends Controlador {
                 if ($this->modoEditar) {
                     $log = $this->gerarLog(Log::TIPO_EDICAO);
                     $this->dao->editar($this->entidade);
-                    $this->movimentacaoEditado();
+                    $this->pesquisarMovimentacao();
                 } else {
                     $this->copiaEntidade = $this->dao->editar($this->entidade);
-                    $this->movimentacaoInserido();
                     $log = $this->gerarLog(Log::TIPO_CADASTRO);
                 }
                 $this->dao->editar($log);
@@ -122,15 +121,14 @@ class MovimentacaoCtrl extends Controlador {
                         "Cadastro de movimentação"
                         , Mensagem::MSG_TIPO_OK
                         , "Dados de Movimentação salvo com sucesso.");
-            } catch(UniqueConstraintViolationException $e){                
+            } catch (UniqueConstraintViolationException $e) {
                 $this->validadorMovimentacao->setValido(false);
                 $this->validadorMovimentacao->setCamposInvalidos(array("campo_descricao"));
                 $this->mensagem = new Mensagem(
                         "Dados inválidos"
                         , Mensagem::MSG_TIPO_ERRO
                         , "Já existe uma movimentação com essa descrição.\n");
-                                
-            }catch (Exception $e) {
+            } catch (Exception $e) {
                 $this->mensagem = new Mensagem(
                         "Cadastro de movimentação"
                         , Mensagem::MSG_TIPO_ERRO
@@ -153,7 +151,6 @@ class MovimentacaoCtrl extends Controlador {
             $this->entidade = $this->entidades[$index - 1];
             $this->copiaEntidade = $this->entidade->clonar();
             $this->modoEditar = true;
-            
         }
     }
 
@@ -162,7 +159,6 @@ class MovimentacaoCtrl extends Controlador {
         if ($index != 0) {
             $this->copiaEntidade = $this->entidades[$index - 1];
             $this->dao->excluir($this->copiaEntidade);
-            $this->movimentacaoRemovido();
             $this->dao->editar($this->gerarLog(Log::TIPO_REMOCAO));
             $p = $this->modeloTabela->getPaginador();
             if ($p->getOffset() == $p->getContagem()) {
@@ -210,43 +206,46 @@ class MovimentacaoCtrl extends Controlador {
         return $log;
     }
 
-    private function movimentacaoInserido() {
-        $pmCtrl = $this->controladores[Controlador::CTRL_PROCESSO_MOVIMENTACAO];
-        $movs = $pmCtrl->getMovimentacoes();
-        $movs[] = $this->copiaEntidade->clonar();
-        $pmCtrl->setMovimentacoes($movs);
-    }
+//    private function movimentacaoInserido() {
+//        $pmCtrl = $this->controladores[Controlador::CTRL_PROCESSO_MOVIMENTACAO];
+//        $movs = $pmCtrl->getMovimentacoes();
+//        $movs[] = $this->copiaEntidade->clonar();
+//        $pmCtrl->setMovimentacoes($movs);
+//    }
+//
+//    private function movimentacaoEditado() {
+//        $pmCtrl = $this->controladores[Controlador::CTRL_PROCESSO_MOVIMENTACAO];
+//        $movs = $pmCtrl->getMovimentacoes();
+//        foreach ($movs as $i => $m) {
+//            if ($m->getId() == $this->copiaEntidade->getId()) {
+//                $movs[$i] = $this->copiaEntidade->clonar();
+//                break;
+//            }
+//        }
+//        $pmCtrl->setMovimentacoes($movs);
+//    }
+//    private function movimentacaoRemovido() {
+//        $pmCtrl = $this->controladores[Controlador::CTRL_PROCESSO_MOVIMENTACAO];
+//        $movs = $pmCtrl->getMovimentacoes();
+//        foreach ($movs as $i => $m) {
+//            if ($m->getId() == $this->copiaEntidade->getId()) {
+//                unset($movs[$i]);
+//                break;
+//            }
+//        }
+//        $pmCtrl->setMovimentacoes($movs);
+//        $pms = $pmCtrl->getEntidade()->getProcessoMovimentacoes();
+//        foreach ($pms as $i => $pm) {
+//            if ($pm->getMovimentacao()->getId() ==
+//                    $this->copiaEntidade->getId()) {
+//                unset($pms[$i]);
+//            }
+//        }
+//        $pmCtrl->getEntidade()->setProcessoMovimentacoes($pms);
+//    }
 
-    private function movimentacaoEditado() {
-        $pmCtrl = $this->controladores[Controlador::CTRL_PROCESSO_MOVIMENTACAO];
-        $movs = $pmCtrl->getMovimentacoes();
-        foreach ($movs as $i => $m) {
-            if ($m->getId() == $this->copiaEntidade->getId()) {
-                $movs[$i] = $this->copiaEntidade->clonar();
-                break;
-            }
-        }
-        $pmCtrl->setMovimentacoes($movs);
-    }
-
-    private function movimentacaoRemovido() {
-        $pmCtrl = $this->controladores[Controlador::CTRL_PROCESSO_MOVIMENTACAO];
-        $movs = $pmCtrl->getMovimentacoes();
-        foreach ($movs as $i => $m) {
-            if ($m->getId() == $this->copiaEntidade->getId()) {
-                unset($movs[$i]);
-                break;
-            }
-        }
-        $pmCtrl->setMovimentacoes($movs);
-        $pms = $pmCtrl->getEntidade()->getProcessoMovimentacoes();
-        foreach ($pms as $i => $pm) {
-            if ($pm->getMovimentacao()->getId() ==
-                    $this->copiaEntidade->getId()) {
-                unset($pms[$i]);
-            }
-        }
-        $pmCtrl->getEntidade()->setProcessoMovimentacoes($pms);
+    public function iniciar() {
+        
     }
 
 }

@@ -1,0 +1,28 @@
+{# empty Twig template #}
+{% extends "templates/base.twig"%}
+
+{% block title %}Home{% endblock %}
+
+{% block body %}
+    {% include 'fragmentos/frag_titulo.twig' 
+            with {
+                'titulo' : '', 
+                'sub_titulo' : ''
+            }
+    %}
+    {% if ctrl.mensagem != null %}
+        {% include 'fragmentos/frag_mensagem.twig'
+                with {
+                    'mensagem' : ctrl.mensagem
+                }
+        %}
+    {% endif %}
+    <div class="ui message">
+        <div class="header">
+            Sessão Expirada
+        </div>
+        <p>A sessão do sistema SGP expira em 30 minutos caso não haja interação do usuário com o mesmo.</p>
+    </div> 
+
+{% endblock %}
+{# empty Twig template #}

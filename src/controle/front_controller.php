@@ -6,22 +6,57 @@ require_once("$_SERVER[DOCUMENT_ROOT]/sgp/vendor/autoload.php");
 require_once("$_SERVER[DOCUMENT_ROOT]/sgp/vendor/twig/twig/lib/Twig/Autoloader.php");
 require_once("$_SERVER[DOCUMENT_ROOT]/sgp/bootstrap.php");
 
+use controle\Controlador;
 use controle\Redirecionamento;
 use dao\Dao;
 use util\Util;
 
-//Inicia a sessao novamente
+//Inicia a sessao 
 session_start();
-//Acessa o vetor de navegacao criado no index.php
-
-$visoes_navegacao = unserialize($_SESSION["visoes_navegacao"]);
-$controladores = unserialize($_SESSION["controladores"]);
 
 //Inicia o twig engine
 Twig_Autoloader::register();
 
 $loader = new Twig_Loader_Filesystem("$_SERVER[DOCUMENT_ROOT]/sgp/src/visao");
 $twig = new Twig_Environment($loader);
+
+//Algoritmo para expirar a sessão após 30 minutes cajo não haja solicitação do usuário
+if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 1800)) {
+    // last request was more than 30 minutes ago
+    session_unset();     // unset $_SESSION variable for the run-time 
+    session_destroy();   // destroy session data in storage
+    redirecionarSimples($twig, "sessao_expirada.twig");
+    return;
+}
+$_SESSION['LAST_ACTIVITY'] = time();
+
+$visoes_navegacao = null;
+if (isset($_SESSION['visoes_navegacao'])) {
+    $visoes_navegacao = unserialize($_SESSION['visoes_navegacao']);
+} else {
+    //Nesse vetor sao colocas as páginas de navegacao do sitema
+    $visoes_navegacao = array(
+        Controlador::CTRL_FUNCIONARIO => 'forms/form_funcionario.twig',
+        Controlador::CTRL_USUARIO => 'forms/form_usuario.twig',
+        Controlador::CTRL_ASSUNTO => 'forms/form_assunto.twig',
+        Controlador::CTRL_DEPARTAMENTO => 'forms/form_departamento.twig',
+        Controlador::CTRL_MOVIMENTACAO => 'forms/form_movimentacao.twig',
+        Controlador::CTRL_PROCESSO => 'forms/form_processo.twig',
+        Controlador::CTRL_PROCESSO_MOVIMENTACAO => 'forms/form_processo_movimentacao.twig',
+        Controlador::CTRL_HOME => 'home.twig'
+    );
+    //Pra inserir qualquer objeto na sessao é necessario serializa-lo, 
+    //visoes_navegacao é a chave de mapeamento pra esse vetor, as variaveis de
+    //sessao sao acessadas de todos os locais do sitema
+    $_SESSION['visoes_navegacao'] = serialize($visoes_navegacao);
+}
+
+$controladores = array();
+if (isset($_SESSION['controladores'])) {
+    $controladores = unserialize($_SESSION['controladores']);
+} else {
+    $_SESSION['controladores'] = serialize($controladores);
+}
 
 //Para cada requisicao feita a esse script, é necessario saber se trata de um 
 //link ou um comando de controle
@@ -36,7 +71,11 @@ foreach ($chaves as $requisicao) {
         //Os link do sistema tem que começar com 'navegador_' seguido da visao 
         // a ser acessada
         $redirecionamento = new Redirecionamento();
-        $autenticacaoCtrl = $controladores["gerenciar_autenticacao"];
+        if (!isset($controladores[Controlador::CTRL_AUTENTICACAO])) {
+            $controladores[Controlador::CTRL_AUTENTICACAO] = criarControlador(
+                    Controlador::CTRL_AUTENTICACAO, $entityManager);
+        }
+        $autenticacaoCtrl = $controladores[Controlador::CTRL_AUTENTICACAO];
         if (Util::startsWithString($requisicao, "navegador_")) {
             //remove a palavra navegador_
             $visao = str_replace("navegador_", "", $requisicao);
@@ -44,6 +83,9 @@ foreach ($chaves as $requisicao) {
             //de visões
             if (isset($visoes_navegacao[$visao])) {
                 $redirecionamento->setDestino($visoes_navegacao[$visao]);
+                if (!isset($controladores[$visao])) {
+                    $controladores[$visao] = criarControlador($visao, $entityManager);
+                }
                 $controlador = $controladores[$visao];
                 $controlador->setDao(new Dao($entityManager));
                 $redirecionamento->setCtrl($controlador);
@@ -58,7 +100,8 @@ foreach ($chaves as $requisicao) {
             if (isset($controladores[$ctrl])) {
                 $controlador = $controladores[$ctrl];
                 $controlador->setDao(new Dao($entityManager));
-                //passando os controladores pela funcao executar funcao para comunicao entre eles
+                //passando os controladores pela funcao executar funcao para 
+                //comunicao entre eles
                 $redirecionamento = $controlador->executarFuncao(
                         $_POST, $funcao, $controladores);
                 $redirecionamento->setDestino(
@@ -87,6 +130,37 @@ function redirecionar($twig, $redirecionamento, $autenticacaoCtrl) {
         //uma vez
         $redirecionamento->getCtrl()->resetar();
     } else {
-        print $template->render(array());
+        redirecionarSimples($twig, "home.twig");
+    }
+}
+
+function redirecionarSimples($twig, $destino) {
+    $template = $twig->loadTemplate($destino);
+    print $template->render(array());
+}
+
+//FactoryMethod para criar controladores. Isso permite que apenas os 
+//controladores que o usuário está usando sejam instanciados.
+function criarControlador($ctrl, $entityManager) {
+    $dao = new Dao($entityManager);
+    switch ($ctrl) {
+        case Controlador::CTRL_ASSUNTO :
+            return new controle\AssuntoCtrl();
+        case Controlador::CTRL_AUTENTICACAO :
+            return new controle\AutenticacaoCtrl();
+        case Controlador::CTRL_DEPARTAMENTO :
+            return new controle\DepartamentoCtrl();
+        case Controlador::CTRL_FUNCIONARIO :
+            return new controle\FuncionarioCtrl();
+        case Controlador::CTRL_HOME :
+            return new controle\HomeCtrl();
+        case Controlador::CTRL_MOVIMENTACAO :
+            return new controle\MovimentacaoCtrl();
+        case Controlador::CTRL_PROCESSO :
+            return new controle\ProcessoCtrl($dao);
+        case Controlador::CTRL_PROCESSO_MOVIMENTACAO :
+            return new controle\ProcessoMovimentacaoCtrl($dao);
+        case Controlador::CTRL_USUARIO :
+            return new controle\UsuarioCtrl($dao);
     }
 }

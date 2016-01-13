@@ -82,6 +82,15 @@ class AutenticacaoCtrl extends Controlador {
 
     private function sair() {
         $this->entidade = new Usuario("", "", "", "");
+        unset($this->controladores[Controlador::CTRL_ASSUNTO]);
+        unset($this->controladores[Controlador::CTRL_AUTENTICACAO]);
+        unset($this->controladores[Controlador::CTRL_DEPARTAMENTO]);
+        unset($this->controladores[Controlador::CTRL_FUNCIONARIO]);
+        unset($this->controladores[Controlador::CTRL_MOVIMENTACAO]);
+        unset($this->controladores[Controlador::CTRL_PROCESSO]);
+        unset($this->controladores[Controlador::CTRL_PROCESSO_MOVIMENTACAO]);
+        unset($this->controladores[Controlador::CTRL_USUARIO]);
+        
         $redirecionamento = new Redirecionamento();
         $redirecionamento->setDestino(Controlador::CTRL_HOME);
         $redirecionamento->setCtrl($this->controladores[Controlador::CTRL_HOME]);

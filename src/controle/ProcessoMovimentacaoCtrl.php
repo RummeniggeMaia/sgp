@@ -179,7 +179,7 @@ class ProcessoMovimentacaoCtrl extends Controlador {
             foreach ($this->pmRemovidos as $pm) {
                 try {
                     $this->dao->excluir($pm);
-                } catch (Exception $ex) {
+                } catch (ORMException $ex) {
                     $this->mensagem = new Mensagem(
                             "Movimentação Processual"
                             , "msg_tipo_erro"
@@ -267,7 +267,10 @@ class ProcessoMovimentacaoCtrl extends Controlador {
         if ($index > 0 && $index <= count($pms)) {
             //Apos as movimentações serem removidas do processo, 
             //elas serão apagadas da base de dados.
-            $this->pmRemovidos->add($pms->remove($index - 1));
+            $pm = $pms->remove($index - 1);
+            if ($pm->getId() != null) {
+                $this->pmRemovidos->add($pm);
+            }
             // Após remover uma movimentação, é ncessário reindexar todo o 
             // vetor, infelizmente o array do doctrine e o array do php não
             //  fazem isso

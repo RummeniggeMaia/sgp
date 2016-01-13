@@ -41,6 +41,11 @@ class ProcessoMovimentacaoCtrl extends Controlador {
         //nao pode ser serializado
         $this->dao = null;
     }
+    
+    public function setEntidade($entidade) {
+        parent::setEntidade($entidade);
+        $this->pmRemovidos = new ArrayCollection();
+    }
 
     public function getMovimentacoes() {
         return $this->movimentacoes;
@@ -186,6 +191,7 @@ class ProcessoMovimentacaoCtrl extends Controlador {
             $this->dao->editar($this->entidade);
             $this->dao->editar($log);
             $this->entidade = new Processo("");
+            $this->pmRemovidos = new ArrayCollection();
             $this->modoEditar = false;
             $this->mensagem = new Mensagem(
                     "Movimentação Processual"

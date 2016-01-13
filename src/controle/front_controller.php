@@ -7,6 +7,7 @@ require_once("$_SERVER[DOCUMENT_ROOT]/sgp/vendor/twig/twig/lib/Twig/Autoloader.p
 require_once("$_SERVER[DOCUMENT_ROOT]/sgp/bootstrap.php");
 
 use controle\Controlador;
+use controle\ControladorFactory;
 use controle\Redirecionamento;
 use dao\Dao;
 use util\Util;
@@ -66,16 +67,17 @@ $chaves = array_keys($_POST);
 if (empty($chaves)) {
     $chaves[] = "navegador_gerenciar_home";
 }
+if (!isset($controladores[Controlador::CTRL_AUTENTICACAO])) {
+    $controladores[Controlador::CTRL_AUTENTICACAO] = ControladorFactory::criarControlador(
+                    Controlador::CTRL_AUTENTICACAO, $entityManager);
+}
+$autenticacaoCtrl = $controladores[Controlador::CTRL_AUTENTICACAO];
 foreach ($chaves as $requisicao) {
     if (is_string($requisicao)) {
         //Os link do sistema tem que começar com 'navegador_' seguido da visao 
         // a ser acessada
         $redirecionamento = new Redirecionamento();
-        if (!isset($controladores[Controlador::CTRL_AUTENTICACAO])) {
-            $controladores[Controlador::CTRL_AUTENTICACAO] = criarControlador(
-                    Controlador::CTRL_AUTENTICACAO, $entityManager);
-        }
-        $autenticacaoCtrl = $controladores[Controlador::CTRL_AUTENTICACAO];
+
         if (Util::startsWithString($requisicao, "navegador_")) {
             //remove a palavra navegador_
             $visao = str_replace("navegador_", "", $requisicao);
@@ -84,7 +86,7 @@ foreach ($chaves as $requisicao) {
             if (isset($visoes_navegacao[$visao])) {
                 $redirecionamento->setDestino($visoes_navegacao[$visao]);
                 if (!isset($controladores[$visao])) {
-                    $controladores[$visao] = criarControlador($visao, $entityManager);
+                    $controladores[$visao] = ControladorFactory::criarControlador($visao, $entityManager);
                 }
                 $controlador = $controladores[$visao];
                 $controlador->setDao(new Dao($entityManager));
@@ -137,30 +139,4 @@ function redirecionar($twig, $redirecionamento, $autenticacaoCtrl) {
 function redirecionarSimples($twig, $destino) {
     $template = $twig->loadTemplate($destino);
     print $template->render(array());
-}
-
-//FactoryMethod para criar controladores. Isso permite que apenas os 
-//controladores que o usuário está usando sejam instanciados.
-function criarControlador($ctrl, $entityManager) {
-    $dao = new Dao($entityManager);
-    switch ($ctrl) {
-        case Controlador::CTRL_ASSUNTO :
-            return new controle\AssuntoCtrl();
-        case Controlador::CTRL_AUTENTICACAO :
-            return new controle\AutenticacaoCtrl();
-        case Controlador::CTRL_DEPARTAMENTO :
-            return new controle\DepartamentoCtrl();
-        case Controlador::CTRL_FUNCIONARIO :
-            return new controle\FuncionarioCtrl();
-        case Controlador::CTRL_HOME :
-            return new controle\HomeCtrl();
-        case Controlador::CTRL_MOVIMENTACAO :
-            return new controle\MovimentacaoCtrl();
-        case Controlador::CTRL_PROCESSO :
-            return new controle\ProcessoCtrl($dao);
-        case Controlador::CTRL_PROCESSO_MOVIMENTACAO :
-            return new controle\ProcessoMovimentacaoCtrl($dao);
-        case Controlador::CTRL_USUARIO :
-            return new controle\UsuarioCtrl($dao);
-    }
 }

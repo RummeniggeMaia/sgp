@@ -10,10 +10,10 @@ use controle\tabela\Paginador;
 use controle\validadores\ValidadorAssunto;
 use DateTime;
 use DateTimeZone;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use modelo\Assunto;
 use modelo\Log;
 use util\Util;
-use \Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 
 /**
  * Description of AssuntoCtrl
@@ -27,7 +27,7 @@ class AssuntoCtrl extends Controlador {
     private $controladores;
 
     public function __construct() {
-        $this->descricao = "gerenciar_assunto";
+        $this->descricao = Controlador::CTRL_ASSUNTO;
         $this->entidade = new Assunto("", "");
         $this->entidades = array();
         $this->mensagem = null;
@@ -55,14 +55,14 @@ class AssuntoCtrl extends Controlador {
         }
     }
 
-    public function executarFuncao($post, $funcao, $controladores) {
+    public function executarFuncao($post, $funcao,& $controladores) {
         $this->post = $post;
-        $this->controladores = $controladores;
+        $this->controladores = &$controladores;
 
         $this->gerarAssunto();
 
         $redirecionamento = new Redirecionamento();
-        $redirecionamento->setDestino('gerenciar_assunto');
+        $redirecionamento->setDestino(Controlador::CTRL_ASSUNTO);
         $redirecionamento->setCtrl($this);
 
         $this->tab = "tab_form";
@@ -177,14 +177,13 @@ class AssuntoCtrl extends Controlador {
     public function resetar() {
         $this->mensagem = null;
         $this->validadorAssunto = new ValidadorAssunto();
-        $this->controladores = null;
         $this->post = null;
     }
 
     private function gerarLog($tipo) {
         $log = new Log();
         $log->setTipo($tipo);
-        $autenticacaoCtrl = $this->controladores["gerenciar_autenticacao"];
+        $autenticacaoCtrl = $this->controladores[Controlador::CTRL_AUTENTICACAO];
         $log->setUsuario($autenticacaoCtrl->getEntidade());
         $log->setDataHora(new DateTime("now", new DateTimeZone('America/Sao_Paulo')));
         $entidade = array();

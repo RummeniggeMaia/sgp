@@ -35,7 +35,7 @@ class ProcessoCtrl extends Controlador {
     private $controladores;
 
     function __construct($dao) {
-        $this->descricao = "gerenciar_processo";
+        $this->descricao = Controlador::CTRL_PROCESSO;
         $this->dao = $dao;
         $this->entidade = new Processo("");
         $this->entidades = array();
@@ -107,14 +107,14 @@ class ProcessoCtrl extends Controlador {
         }
     }
 
-    public function executarFuncao($post, $funcao, $controladores) {
+    public function executarFuncao($post, $funcao,& $controladores) {
         $this->post = $post;
-        $this->controladores = $controladores;
+        $this->controladores = &$controladores;
 
         $this->gerarProcesso();
 
         $redirecionamento = new Redirecionamento();
-        $redirecionamento->setDestino('gerenciar_processo');
+        $redirecionamento->setDestino(Controlador::CTRL_PROCESSO);
         $redirecionamento->setCtrl($this);
         //A tab tabela é selecionada por padrao
         $this->tab = "tab_tabela";
@@ -189,7 +189,7 @@ class ProcessoCtrl extends Controlador {
                 }
 
                 $this->dao->editar($log);
-                $ctrlPM = $this->controladores["gerenciar_processo_movimentacao"];
+                $ctrlPM = $this->controladores[Controlador::CTRL_PROCESSO_MOVIMENTACAO];
                 if ($ctrlPM->getEntidade()->getId() == $this->copiaEntidade->getId()) {
                     $ctrlPM->setEntidade(new Processo(""));
                 }
@@ -276,12 +276,18 @@ class ProcessoCtrl extends Controlador {
     }
 
     private function buscarFuncionario() {
-        $funcCtrl = $this->controladores['gerenciar_funcionario'];
+        if (!isset($this->controladores[Controlador::CTRL_FUNCIONARIO])) {
+            $this->controladores[Controlador::CTRL_FUNCIONARIO] = ControladorFactory
+                    ::criarControlador(
+                            Controlador::CTRL_FUNCIONARIO
+                            , $this->dao->getEntityManager());
+        }
+        $funcCtrl = $this->controladores[Controlador::CTRL_FUNCIONARIO];
         $funcCtrl->setModoBusca(true);
-        $funcCtrl->setCtrlDestino('gerenciar_processo');
+        $funcCtrl->setCtrlDestino(Controlador::CTRL_PROCESSO);
         $funcCtrl->setDao(new Dao($this->dao->getEntityManager()));
         $redirecionamento = new Redirecionamento();
-        $redirecionamento->setDestino('gerenciar_funcionario');
+        $redirecionamento->setDestino(Controlador::CTRL_FUNCIONARIO);
         $redirecionamento->setCtrl($funcCtrl);
         $this->tab = "tab_form";
         return $redirecionamento;
@@ -295,13 +301,12 @@ class ProcessoCtrl extends Controlador {
         $this->mensagem = null;
         $this->validadorProcesso = new ValidadorProcesso();
         $this->post = null;
-        $this->controladores = null;
     }
 
     private function gerarLog($tipo) {
         $log = new Log();
         $log->setTipo($tipo);
-        $autenticacaoCtrl = $this->controladores["gerenciar_autenticacao"];
+        $autenticacaoCtrl = $this->controladores[Controlador::CTRL_AUTENTICACAO];
         $log->setUsuario($autenticacaoCtrl->getEntidade());
         $log->setDataHora(new DateTime("now", new DateTimeZone('America/Sao_Paulo')));
         $entidade = array();
@@ -353,16 +358,16 @@ class ProcessoCtrl extends Controlador {
         $proMovCtrl = $this->controladores[Controlador::CTRL_PROCESSO_MOVIMENTACAO];
         $pro = $proMovCtrl->getEntidade();
         if ($pro != null && $pro->getId() == $this->copiaEntidade->getId()) {
-            $proMovCtrl->setEntidade($this->copiaEntidade->clonar());
+            $proMovCtrl->setEntidade(new Processo(""));
         }
     }
 
     private function processoRemovido() {
-        $proMovCtrl = $this->controladores[Controlador::CTRL_PROCESSO_MOVIMENTACAO];
-        $pro = $proMovCtrl->getEntidade();
-        if ($pro != null && $pro->getId() == $this->copiaEntidade->getId()) {
-            $proMovCtrl->setEntidade(new Processo(""));
-        }
+//        $proMovCtrl = $this->controladores[Controlador::CTRL_PROCESSO_MOVIMENTACAO];
+//        $pro = $proMovCtrl->getEntidade();
+//        if ($pro != null && $pro->getId() == $this->copiaEntidade->getId()) {
+//            $proMovCtrl->setEntidade(new Processo(""));
+//        }
     }
 
     public function iniciar() {

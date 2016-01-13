@@ -21,9 +21,9 @@ class AutenticacaoCtrl extends Controlador {
     private $controladores;
 
     public function __construct() {
-        $this->descricao = "gerenciar_autenticacao";
+        $this->descricao = Controlador::CTRL_AUTENTICACAO;
         $this->entidade = new Usuario("", "", "", "");
-        $this->visaoAtual = "gerenciar_home";
+        $this->visaoAtual = Controlador::CTRL_HOME;
     }
 
     public function getVisaoAtual() {
@@ -34,9 +34,9 @@ class AutenticacaoCtrl extends Controlador {
         $this->visaoAtual = $visaoAtual;
     }
 
-    public function executarFuncao($post, $funcao, $controladores) {
+    public function executarFuncao($post, $funcao,& $controladores) {
         $this->post = $post;
-        $this->controladores = $controladores;
+        $this->controladores = &$controladores;
 
         $this->gerarUsuario();
 
@@ -81,7 +81,6 @@ class AutenticacaoCtrl extends Controlador {
     }
 
     private function sair() {
-        $this->entidade = new Usuario("", "", "", "");
         unset($this->controladores[Controlador::CTRL_ASSUNTO]);
         unset($this->controladores[Controlador::CTRL_AUTENTICACAO]);
         unset($this->controladores[Controlador::CTRL_DEPARTAMENTO]);
@@ -116,7 +115,6 @@ class AutenticacaoCtrl extends Controlador {
 
     public function resetar() {
         $this->post = null;
-        $this->controladores = null;
     }
 
     public function contemAutorizacao($a) {

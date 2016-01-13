@@ -28,7 +28,7 @@ class FuncionarioCtrl extends Controlador {
     private $post;
 
     public function __construct() {
-        $this->descricao = "gerenciar_funcionario";
+        $this->descricao = Controlador::CTRL_FUNCIONARIO;
         $this->entidade = new Funcionario("", "", "");
         $this->entidades = array();
         $this->mensagem = null;
@@ -61,14 +61,14 @@ class FuncionarioCtrl extends Controlador {
         }
     }
 
-    public function executarFuncao($post, $funcao, $controladores) {
+    public function executarFuncao($post, $funcao,& $controladores) {
         $this->post = $post;
-        $this->controladores = $controladores;
+        $this->controladores = &$controladores;
 
         $this->gerarFuncionario();
 
         $redirecionamento = new Redirecionamento();
-        $redirecionamento->setDestino('gerenciar_funcionario');
+        $redirecionamento->setDestino(Controlador::CTRL_FUNCIONARIO);
         $redirecionamento->setCtrl($this);
         $this->tab = "tab_form";
 
@@ -221,14 +221,13 @@ class FuncionarioCtrl extends Controlador {
         $this->mensagem = null;
         $this->validadorFuncionario = new ValidadorFuncionario();
         $this->post = null;
-        $this->controladores = null;
     }
 
     private function gerarLog($tipo) {
         try {
             $log = new Log();
             $log->setTipo($tipo);
-            $autenticacaoCtrl = $this->controladores["gerenciar_autenticacao"];
+            $autenticacaoCtrl = $this->controladores[Controlador::CTRL_AUTENTICACAO];
             $log->setUsuario($autenticacaoCtrl->getEntidade());
             $log->setDataHora(new DateTime("now", new DateTimeZone('America/Sao_Paulo')));
             $entidade = array();

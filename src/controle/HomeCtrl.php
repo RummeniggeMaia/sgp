@@ -12,10 +12,10 @@ use controle\Controlador;
 class HomeCtrl extends Controlador {
 
     public function __construct() {
-        $this->descricao = "gerenciar_home";
+        $this->descricao = Controlador::CTRL_HOME;
     }
 
-    public function executarFuncao($post, $funcao, $controladores) {
+    public function executarFuncao($post, $funcao,& $controladores) {
         
     }
 

@@ -59,7 +59,7 @@
                                readonly="true">
                         <div class="ui button" 
                              onclick="submeterForm('form_processo_movimentacao',
-                                             'funcao_gerenciar_processo_movimentacao',
+                                             'funcao_{{ constant('controle\\Controlador::CTRL_PROCESSO_MOVIMENTACAO') }}',
                                              'buscar_processo');">
                             <i class="search icon"></i>
                             Buscar
@@ -67,7 +67,7 @@
                         {% if autenticacaoCtrl.contemAutorizacao('admin') %}
                             <div class="ui button red" 
                                  onclick="submeterForm('form_processo_movimentacao',
-                                             'funcao_gerenciar_processo_movimentacao',
+                                             'funcao_{{ constant('controle\\Controlador::CTRL_PROCESSO_MOVIMENTACAO') }}',
                                              'remover_processo');">
                                 <i class="delete icon"></i>
                             </div>
@@ -116,7 +116,7 @@
                             <div class="ui submit black button right aligned" 
                                  onclick="submeterForm(
                                                  'form_processo_movimentacao',
-                                                 'funcao_gerenciar_processo_movimentacao',
+                                                 'funcao_{{ constant('controle\\Controlador::CTRL_PROCESSO_MOVIMENTACAO') }}',
                                                  'adicionar_movimentacao');">
                                 <i class="plus icon"></i>Adicionar Nova Movimentação
                             </div>
@@ -167,7 +167,7 @@
                                                 <div class="ui submit red button" 
                                                      onclick="submeterForm(
                                                                      'form_processo_movimentacao',
-                                                                     'funcao_gerenciar_processo_movimentacao',
+                                                                     'funcao_{{ constant('controle\\Controlador::CTRL_PROCESSO_MOVIMENTACAO') }}',
                                                                      'remover_movimentacao_{{ loop.index }}');">
                                                     <i class="delete icon"></i>
                                                 </div>
@@ -183,7 +183,9 @@
                     <div class="fields">
                         <div class="field">
                             <div class="ui submit black button"
-                                 onClick="submeterForm('form_processo_movimentacao', 'funcao_gerenciar_processo_movimentacao', 'salvar');">
+                                 onClick="submeterForm('form_processo_movimentacao', 
+                                     'funcao_{{ constant('controle\\Controlador::CTRL_PROCESSO_MOVIMENTACAO') }}', 
+                                     'salvar');">
                                 <i class="save icon"></i>Salvar
                             </div>
                         </div>

@@ -9,7 +9,7 @@
         <br/>
         {% include 'fragmentos/frag_titulo.twig' 
             with {
-                'titulo' : 'Gerenciamento de departamentos', 
+                'titulo' : 'Gerenciamento de Departamentos', 
                 'sub_titulo' : 'Interface para gerenciar os departamentos no sistema'
             }
         %} 
@@ -36,7 +36,7 @@
                     {% if autenticacaoCtrl.contemAutorizacao('admin') %}
                     <div class="field">
                         <div class="ui submit black button"
-                             onClick="submeterForm('form_departamento', 'funcao_gerenciar_departamento', 'salvar');">
+                             onClick="submeterForm('form_departamento', 'funcao_{{ constant('controle\\Controlador::CTRL_DEPARTAMENTO') }}', 'salvar');">
                             <i class="save icon"></i>Salvar
                         </div>
                     </div>
@@ -44,14 +44,14 @@
                     {% if ctrl.modoEditar%}
                         <div class="field">
                             <div class="ui submit black button" 
-                                 onclick="submeterForm('form_departamento', 'funcao_gerenciar_departamento', 'cancelar_edicao');">
+                                 onclick="submeterForm('form_departamento', 'funcao_{{ constant('controle\\Controlador::CTRL_DEPARTAMENTO') }}', 'cancelar_edicao');">
                                 <i class="eraser icon"></i>Limpar Campos
                             </div>
                         </div>
                     {% endif %}
                     <div class="field">
                         <div class="ui submit black button"
-                             onClick="submeterForm('form_departamento', 'funcao_gerenciar_departamento', 'pesquisar');">
+                             onClick="submeterForm('form_departamento', 'funcao_{{ constant('controle\\Controlador::CTRL_DEPARTAMENTO') }}', 'pesquisar');">
                             <i class="search icon"></i>Pesquisar
                         </div>
                     </div>
@@ -63,7 +63,7 @@
                 with {
                     'modelo' : ctrl.modeloTabela,
                     'formulario' : 'form_departamento',
-                    'funcao' : 'funcao_gerenciar_departamento'
+                    'funcao' : 'funcao_' ~ constant('controle\\Controlador::CTRL_DEPARTAMENTO')
                 }
             %}
         </div>

@@ -77,12 +77,12 @@
                                data-value="{{ ctrl.entidade.funcionario.id }}"
                                readonly="true">
                         <div class="ui button" 
-                             onclick="submeterForm('form_processo', 'funcao_gerenciar_processo', 'buscar_funcionario');">
+                             onclick="submeterForm('form_processo', 'funcao_{{ constant('controle\\Controlador::CTRL_PROCESSO') }}', 'buscar_funcionario');">
                             <i class="search icon"></i>
                             Buscar
                         </div>
                         <div class="ui button red" 
-                             onclick="submeterForm('form_processo', 'funcao_gerenciar_processo', 'remover_funcionario');">
+                             onclick="submeterForm('form_processo', 'funcao_{{ constant('controle\\Controlador::CTRL_PROCESSO') }}', 'remover_funcionario');">
                             <i class="delete icon"></i>
                         </div>
                     </div>
@@ -92,7 +92,7 @@
                         {% if not ctrl.modoBusca %}
                             <div class="field">
                                 <div class="ui submit black button" 
-                                     onclick="submeterForm('form_processo', 'funcao_gerenciar_processo', 'salvar');">
+                                     onclick="submeterForm('form_processo', 'funcao_{{ constant('controle\\Controlador::CTRL_PROCESSO') }}', 'salvar');">
                                     <i class="save icon"></i>Salvar
                                 </div>
                             </div>
@@ -101,7 +101,7 @@
                     {% if ctrl.modoEditar %}
                         <div class="field">
                             <div class="ui submit black button" 
-                                 onclick="submeterForm('form_processo', 'funcao_gerenciar_processo', 'cancelar_edicao');">
+                                 onclick="submeterForm('form_processo', 'funcao_{{ constant('controle\\Controlador::CTRL_PROCESSO') }}', 'cancelar_edicao');">
                                 <i class="eraser icon"></i>Limpar Campos
                             </div>
                         </div>
@@ -109,7 +109,7 @@
                     {% if ctrl.modoBusca %}
                         <div class="field">
                             <div class="ui submit black button" 
-                                 onclick="submeterForm('form_processo', 'funcao_gerenciar_processo', 'enviar_processos');">
+                                 onclick="submeterForm('form_processo', 'funcao_{{ constant('controle\\Controlador::CTRL_PROCESSO') }}', 'enviar_processos');">
                                 <i class="reply all icon"></i>Enviar Processo
                             </div>
                         </div>
@@ -117,14 +117,14 @@
                     {% if ctrl.modoBusca %}
                         <div class="field">
                             <div class="ui submit black button" 
-                                 onclick="submeterForm('form_processo', 'funcao_gerenciar_processo', 'cancelar_enviar');">
+                                 onclick="submeterForm('form_processo', 'funcao_{{ constant('controle\\Controlador::CTRL_PROCESSO') }}', 'cancelar_enviar');">
                                 <i class="remove circle outline icon"></i>Cancelar Envio
                             </div>
                         </div>
                     {% endif %}
                     <div class="field">
                         <div class="ui submit black button"
-                             onclick="submeterForm('form_processo', 'funcao_gerenciar_processo', 'pesquisar');">
+                             onclick="submeterForm('form_processo', 'funcao_{{ constant('controle\\Controlador::CTRL_PROCESSO') }}', 'pesquisar');">
                             <i class="search icon"></i>Pesquisar
                         </div>
                     </div>
@@ -146,7 +146,7 @@
                                 <td style="width: 25%;">{{ pm.dataMovimentacao|date("d/m/Y") }}</td>
                                 <td>
                                     <div class="ui left icon fluid input">
-                                        <i class="flag icon"></i>
+                                        <i class="exchange icon"></i>
                                         <input type="text" 
                                                name="movimentacao_{{ loop.index }}" 
                                                value="{{ pm.movimentacao.descricao }}"
@@ -163,7 +163,7 @@
                 with {
                     'modelo' : ctrl.modeloTabela,
                     'formulario' : 'form_processo',
-                    'funcao' : 'funcao_gerenciar_processo',
+                    'funcao' : 'funcao_' ~ constant('controle\\Controlador::CTRL_PROCESSO'),
                     'modo_busca' : ctrl.modoBusca
                 }
                 %}

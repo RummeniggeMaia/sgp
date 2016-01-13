@@ -9,7 +9,7 @@
         <br/>
         {% include 'fragmentos/frag_titulo.twig' 
             with {
-                'titulo' : 'Gerenciamento de usuário', 
+                'titulo' : 'Gerenciamento de Usuários', 
                 'sub_titulo' : 'Interface para gerenciar os usuários no sistema'
             }
         %}
@@ -25,7 +25,7 @@
                 $("#campo_senha").val(digest($("#campo_senha").val()));
                 submeterForm(
                         'form_usuario',
-                        'funcao_gerenciar_usuario',
+                        'funcao_{{ constant('controle\\Controlador::CTRL_USUARIO') }}',
                         'salvar');
             }
         </script>
@@ -69,14 +69,14 @@
                     {% if ctrl.modoEditar%}
                         <div class="field">
                             <div class="ui submit black button" 
-                                 onclick="submeterForm('form_usuario', 'funcao_gerenciar_usuario', 'cancelar_edicao');">
+                                 onclick="submeterForm('form_usuario', 'funcao_{{ constant('controle\\Controlador::CTRL_USUARIO') }}', 'cancelar_edicao');">
                                 <i class="eraser icon"></i>Limpar Campos
                             </div>
                         </div>
                     {% endif %}
                     <div class="field">
                         <div class="ui submit black button"
-                             onclick="submeterForm('form_usuario', 'funcao_gerenciar_usuario', 'pesquisar');">
+                             onclick="submeterForm('form_usuario', 'funcao_{{ constant('controle\\Controlador::CTRL_USUARIO') }}', 'pesquisar');">
                             <i class="search icon"></i>Pesquisar
                         </div>
                     </div>
@@ -87,7 +87,7 @@
                 with {
                     'modelo' : ctrl.modeloTabela,
                     'formulario' : 'form_usuario',
-                    'funcao' : 'funcao_gerenciar_usuario'
+                    'funcao' : 'funcao_' ~ constant('controle\\Controlador::CTRL_USUARIO')
                 }
                 %}
             </div>

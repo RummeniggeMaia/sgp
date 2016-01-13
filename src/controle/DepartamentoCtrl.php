@@ -27,7 +27,7 @@ class DepartamentoCtrl extends Controlador {
     private $controladores;
 
     public function __construct() {
-        $this->descricao = "gerenciar_departamento";
+        $this->descricao = Controlador::CTRL_DEPARTAMENTO;
         $this->entidade = new Departamento("", "");
         $this->entidades = array();
         $this->mensagem = null;
@@ -55,14 +55,14 @@ class DepartamentoCtrl extends Controlador {
         }
     }
 
-    public function executarFuncao($post, $funcao, $controladores) {
+    public function executarFuncao($post, $funcao,& $controladores) {
         $this->post = $post;
-        $this->controladores = $controladores;
+        $this->controladores = &$controladores;
 
         $this->gerarDepartamento();
 
         $redirecionamento = new Redirecionamento();
-        $redirecionamento->setDestino('gerenciar_departamento');
+        $redirecionamento->setDestino(Controlador::CTRL_DEPARTAMENTO);
         $redirecionamento->setCtrl($this);
         $this->tab = "tab_form";
 
@@ -175,13 +175,12 @@ class DepartamentoCtrl extends Controlador {
         $this->mensagem = null;
         $this->validadorDepartamento = new ValidadorDepartamento();
         $this->post = null;
-        $this->controladores = null;
     }
 
     private function gerarLog($tipo) {
         $log = new Log();
         $log->setTipo($tipo);
-        $autenticacaoCtrl = $this->controladores["gerenciar_autenticacao"];
+        $autenticacaoCtrl = $this->controladores[Controlador::CTRL_AUTENTICACAO];
         $log->setUsuario($autenticacaoCtrl->getEntidade());
         $log->setDataHora(new DateTime("now", new DateTimeZone('America/Sao_Paulo')));
         $entidade = array();

@@ -28,7 +28,7 @@ class MovimentacaoCtrl extends Controlador {
     private $controladores;
 
     public function __construct() {
-        $this->descricao = "gerenciar_movimentacao";
+        $this->descricao = Controlador::CTRL_MOVIMENTACAO;
         $this->entidade = new Movimentacao("", "");
         $this->entidades = array();
         $this->mensagem = null;
@@ -55,14 +55,14 @@ class MovimentacaoCtrl extends Controlador {
         }
     }
 
-    public function executarFuncao($post, $funcao, $controladores) {
+    public function executarFuncao($post, $funcao,& $controladores) {
         $this->post = $post;
-        $this->controladores = $controladores;
+        $this->controladores = &$controladores;
 
         $this->gerarMovimentacao();
 
         $redirecionamento = new Redirecionamento();
-        $redirecionamento->setDestino('gerenciar_movimentacao');
+        $redirecionamento->setDestino(Controlador::CTRL_MOVIMENTACAO);
         $redirecionamento->setCtrl($this);
 
         $this->tab = "tab_form";
@@ -176,14 +176,13 @@ class MovimentacaoCtrl extends Controlador {
     public function resetar() {
         $this->mensagem = null;
         $this->validadorMovimentacao = new ValidadorMovimentacao();
-        $this->controladores = null;
         $this->post = null;
     }
 
     private function gerarLog($tipo) {
         $log = new Log();
         $log->setTipo($tipo);
-        $autenticacaoCtrl = $this->controladores["gerenciar_autenticacao"];
+        $autenticacaoCtrl = $this->controladores[Controlador::CTRL_AUTENTICACAO];
         $log->setUsuario($autenticacaoCtrl->getEntidade());
         $log->setDataHora(new DateTime("now", new DateTimeZone('America/Sao_Paulo')));
         $entidade = array();

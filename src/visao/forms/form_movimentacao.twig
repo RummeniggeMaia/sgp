@@ -9,7 +9,7 @@
     <div class="html ui top right attached segment">
         {% include 'fragmentos/frag_titulo.twig' 
             with {
-                'titulo' : 'Gerenciamento de Movimentação ', 
+                'titulo' : 'Gerenciamento de Movimentações ', 
                 'sub_titulo' : 'Interface para gerenciar os movimentação no sistema'
             }
         %}
@@ -37,7 +37,7 @@
                     {% if autenticacaoCtrl.contemAutorizacao('admin') %}
                         <div class="field">
                             <div class="ui submit black button"
-                                 onClick="submeterForm('form_movimentacao', 'funcao_gerenciar_movimentacao', 'salvar');">
+                                 onClick="submeterForm('form_movimentacao', 'funcao_{{ constant('controle\\Controlador::CTRL_MOVIMENTACAO') }}', 'salvar');">
                                 <i class="save icon"></i>Salvar
                             </div>
                         </div>
@@ -45,14 +45,14 @@
                     {% if ctrl.modoEditar%}
                         <div class="field">
                             <div class="ui submit black button" 
-                                 onclick="submeterForm('form_movimentacao', 'funcao_gerenciar_movimentacao', 'cancelar_edicao');">
+                                 onclick="submeterForm('form_movimentacao', 'funcao_{{ constant('controle\\Controlador::CTRL_MOVIMENTACAO') }}', 'cancelar_edicao');">
                                 <i class="eraser icon"></i>Limpar Campos
                             </div>
                         </div>
                     {% endif %}
                     <div class="field">
                         <div class="ui submit black button"
-                             onclick="submeterForm('form_movimentacao', 'funcao_gerenciar_movimentacao', 'pesquisar');">
+                             onclick="submeterForm('form_movimentacao', 'funcao_{{ constant('controle\\Controlador::CTRL_MOVIMENTACAO') }}', 'pesquisar');">
                             <i class="search icon"></i>Pesquisar
                         </div>
                     </div>
@@ -64,7 +64,7 @@
                 with {
                     'modelo' : ctrl.modeloTabela,
                     'formulario' : 'form_movimentacao',
-                    'funcao' : 'funcao_gerenciar_movimentacao'
+                    'funcao' : 'funcao_' ~ constant('controle\\Controlador::CTRL_MOVIMENTACAO')
                 }
             %}
         </div>

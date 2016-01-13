@@ -162,7 +162,7 @@ abstract class Controlador {
      * Todas as funcoes dos controladores sao executadas a partir daqui, 
      * qualquer funcao do sistema q nao esteja dentro desta nao será executada.
      */
-    public abstract function executarFuncao($post, $funcao, $controladores);
+    public abstract function executarFuncao($post, $funcao,& $controladores);
 
     /**
      * Cada entidade tem seus campos, entao essa funcao é utilizada para gerar 

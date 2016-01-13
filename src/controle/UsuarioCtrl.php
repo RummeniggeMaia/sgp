@@ -35,7 +35,7 @@ class UsuarioCtrl extends Controlador {
     private $autorizacaoAdmin;
     
     public function __construct($dao) {
-        $this->descricao = "gerenciar_usuario";
+        $this->descricao = Controlador::CTRL_USUARIO;
         $this->entidade = new Usuario("", "", "", "");
         $this->entidades = array();
         $this->mensagem = null;
@@ -63,14 +63,14 @@ class UsuarioCtrl extends Controlador {
         $this->validadorUsuario = $validadorUsuario;
     }
 
-    public function executarFuncao($post, $funcao, $controladores) {
+    public function executarFuncao($post, $funcao,& $controladores) {
         $this->post = $post;
-        $this->controladores = $controladores;
+        $this->controladores = &$controladores;
 
         $this->gerarUsuario();
 
         $redirecionamento = new Redirecionamento();
-        $redirecionamento->setDestino('gerenciar_usuario');
+        $redirecionamento->setDestino(Controlador::CTRL_USUARIO);
         $redirecionamento->setCtrl($this);
         $this->tab = "tab_form";
 
@@ -164,6 +164,7 @@ class UsuarioCtrl extends Controlador {
     public function resetar() {
         $this->dao = null;
         $this->mensagem = null;
+        $this->post = null;
         $this->validadorUsuario = new ValidadorUsuario();
     }
 
@@ -212,7 +213,7 @@ class UsuarioCtrl extends Controlador {
     private function gerarLog($tipo) {
         $log = new Log();
         $log->setTipo($tipo);
-        $autenticacaoCtrl = $this->controladores["gerenciar_autenticacao"];
+        $autenticacaoCtrl = $this->controladores[Controlador::CTRL_AUTENTICACAO];
         $log->setUsuario($autenticacaoCtrl->getEntidade());
         $log->setDataHora(new DateTime("now", new DateTimeZone('America/Sao_Paulo')));
         $entidade = array();

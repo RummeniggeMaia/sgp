@@ -9,7 +9,7 @@
         <br/>
         {% include 'fragmentos/frag_titulo.twig' 
             with {
-                'titulo' : 'Gerenciamento de assuntos', 
+                'titulo' : 'Gerenciamento de Assuntos', 
                 'sub_titulo' : 'Interface para gerenciar os assuntos no sistema'
             }
         %}
@@ -36,7 +36,7 @@
                     {% if autenticacaoCtrl.contemAutorizacao('admin') %}
                     <div class="field">
                         <div class="ui submit black button"
-                             onClick="submeterForm('form_assunto', 'funcao_gerenciar_assunto', 'salvar');">
+                             onClick="submeterForm('form_assunto', 'funcao_{{ constant('controle\\Controlador::CTRL_ASSUNTO') }}', 'salvar');">
                             <i class="save icon"></i>Salvar
                         </div>
                     </div>
@@ -44,14 +44,14 @@
                     {% if ctrl.modoEditar%}
                         <div class="field">
                             <div class="ui submit black button" 
-                                 onclick="submeterForm('form_assunto', 'funcao_gerenciar_assunto', 'cancelar_edicao');">
+                                 onclick="submeterForm('form_assunto', 'funcao_{{ constant('controle\\Controlador::CTRL_ASSUNTO') }}', 'cancelar_edicao');">
                                 <i class="eraser icon"></i>Limpar Campos
                             </div>
                         </div>
                     {% endif %}
                     <div class="field">
                         <div class="ui submit black button"
-                             onClick="submeterForm('form_assunto', 'funcao_gerenciar_assunto', 'pesquisar');">
+                             onClick="submeterForm('form_assunto', 'funcao_{{ constant('controle\\Controlador::CTRL_ASSUNTO') }}', 'pesquisar');">
                             <i class="search icon"></i>Pesquisar
                         </div>
                     </div>
@@ -63,7 +63,7 @@
                 with {
                     'modelo' : ctrl.modeloTabela,
                     'formulario' : 'form_assunto',
-                    'funcao' : 'funcao_gerenciar_assunto'
+                    'funcao' : 'funcao_' ~ constant('controle\\Controlador::CTRL_ASSUNTO')
                 }
             %}
         </div>

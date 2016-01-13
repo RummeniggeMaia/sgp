@@ -6,6 +6,7 @@ use controle\validadores\ValidadorProcessoMovimentacao;
 use dao\Dao;
 use DateTime;
 use DateTimeZone;
+use Doctrine\Common\Collections\ArrayCollection;
 use modelo\Log;
 use modelo\Movimentacao;
 use modelo\Processo;
@@ -23,16 +24,18 @@ class ProcessoMovimentacaoCtrl extends Controlador {
     private $movimentacoes;
     private $controladores;
     private $post;
+    private $pmRemovidos;
 
     /**
      * $dao usado para buscar a lista de movimentacoes do sistema
      */
     function __construct($dao) {
-        $this->descricao = "gerenciar_processo_movimentacao";
+        $this->descricao = Controlador::CTRL_PROCESSO_MOVIMENTACAO;
         $this->dao = $dao;
         $this->entidade = new Processo("");
         $this->validadorProcessoMovimentacao = new ValidadorProcessoMovimentacao();
         $this->mensagem = null;
+        $this->pmRemovidos = new  ArrayCollection();
         //Depois q esse contrutor for chamado no index.php, esse controlador vai 
         //ser serializado, por isso o objeto dao tem q ser nulado pois o mesmo 
         //nao pode ser serializado
@@ -102,8 +105,8 @@ class ProcessoMovimentacaoCtrl extends Controlador {
      * @return Redirecionamento O controle a quem esse vai se 
      * direcionar apos executar as funcoes.
      */
-    public function executarFuncao($post, $funcao, $controladores) {
-        $this->controladores = $controladores;
+    public function executarFuncao($post, $funcao, & $controladores) {
+        $this->controladores = &$controladores;
         $this->post = $post;
         //Verifica o que mudou na pagina de gerenciarMovimentacao
         $this->gerarProcessoMovimentacao($post);
@@ -111,7 +114,7 @@ class ProcessoMovimentacaoCtrl extends Controlador {
         //O redirecionamento padrao sempre retorna para a pagina atual, nesse 
         //caso a pagina desse controlador.
         $redirecionamento = new Redirecionamento();
-        $redirecionamento->setDestino('gerenciar_processo_movimentacao');
+        $redirecionamento->setDestino(Controlador::CTRL_PROCESSO_MOVIMENTACAO);
         $redirecionamento->setCtrl($this);
 
         if ($funcao == "salvar") {
@@ -168,6 +171,17 @@ class ProcessoMovimentacaoCtrl extends Controlador {
                     $pms[$key] = $salvo;
                 }
             }
+            foreach ($this->pmRemovidos as $pm) {
+                try {
+                    $this->dao->excluir($pm);
+                } catch (Exception $ex) {
+                    $this->mensagem = new Mensagem(
+                            "Movimentação Processual"
+                            , "msg_tipo_erro"
+                            , "Erro ao remover movimentação: "
+                            . $pm->getMovimentacao()->getDescricao());
+                }
+            }
             $this->entidade->setProcessoMovimentacoes($pms);
             $this->dao->editar($this->entidade);
             $this->dao->editar($log);
@@ -192,6 +206,12 @@ class ProcessoMovimentacaoCtrl extends Controlador {
     }
 
     private function buscarProcesso() {
+        if (!isset($this->controladores[Controlador::CTRL_PROCESSO])) {
+            $this->controladores[Controlador::CTRL_PROCESSO] = ControladorFactory
+                    ::criarControlador(
+                            Controlador::CTRL_PROCESSO
+                            , $this->dao->getEntityManager());
+        }
         $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
         //Configura o controle de processo e redireciona para la
         $processoCtrl->setModoBusca(true);
@@ -209,7 +229,6 @@ class ProcessoMovimentacaoCtrl extends Controlador {
         //nao pode ser serializado
         $this->dao = null;
         $this->mensagem = null;
-        $this->controladores = null;
         $this->post = null;
         $this->validadorProcessoMovimentacao = new ValidadorProcessoMovimentacao();
     }
@@ -217,7 +236,7 @@ class ProcessoMovimentacaoCtrl extends Controlador {
     private function gerarLog($tipo) {
         $log = new Log();
         $log->setTipo($tipo);
-        $autenticacaoCtrl = $this->controladores["gerenciar_autenticacao"];
+        $autenticacaoCtrl = $this->controladores[Controlador::CTRL_AUTENTICACAO];
         $log->setUsuario($autenticacaoCtrl->getEntidade());
         $log->setDataHora(new DateTime("now", new DateTimeZone('America/Sao_Paulo')));
         $entidade = array();
@@ -240,10 +259,15 @@ class ProcessoMovimentacaoCtrl extends Controlador {
     private function removerMovimentacao($index) {
         $pms = $this->entidade->getProcessoMovimentacoes();
         if ($index > 0 && $index <= count($pms)) {
-            if (isset($pms[$index - 1])) {
-                unset($pms[$index - 1]);
-            }
-            $this->entidade->setProcessoMovimentacoes($pms);
+            //Apos as movimentações serem removidas do processo, 
+            //elas serão apagadas da base de dados.
+            $this->pmRemovidos->add($pms->remove($index - 1));
+            // Após remover uma movimentação, é ncessário reindexar todo o 
+            // vetor, infelizmente o array do doctrine e o array do php não
+            //  fazem isso
+            $values = array_values($pms->toArray());
+            $this->entidade->setProcessoMovimentacoes(
+                    new ArrayCollection($values));
         }
     }
 

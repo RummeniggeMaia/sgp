@@ -109,7 +109,7 @@ class FuncionarioCtrl extends Controlador {
                 $valores[] = $funcionario->getCpf();
             } else {
                 $valores[] = "***.***.***";
-                $valores[] = "***.***.***-**";
+                $valores[] = "***." . substr($funcionario->getCpf(), 4, 12) . "-**"; 
             }
             $linha->setValores($valores);
             $linhas[] = $linha;

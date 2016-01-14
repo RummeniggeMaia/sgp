@@ -187,12 +187,11 @@ class ProcessoCtrl extends Controlador {
                     $this->copiaEntidade = $this->dao->editar($this->entidade);
                     $log = $this->gerarLog(Log::TIPO_CADASTRO);
                 }
-
                 $this->dao->editar($log);
-                $ctrlPM = $this->controladores[Controlador::CTRL_PROCESSO_MOVIMENTACAO];
-                if ($ctrlPM->getEntidade()->getId() == $this->copiaEntidade->getId()) {
-                    $ctrlPM->setEntidade(new Processo(""));
-                }
+//                $ctrlPM = $this->controladores[Controlador::CTRL_PROCESSO_MOVIMENTACAO];
+//                if ($ctrlPM->getEntidade()->getId() == $this->copiaEntidade->getId()) {
+//                    $ctrlPM->setEntidade(new Processo(""));
+//                }
                 $this->entidade = new Processo("");
                 $this->modoEditar = false;
                 $this->tab = "tab_form";

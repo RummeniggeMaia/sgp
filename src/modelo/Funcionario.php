@@ -1,9 +1,13 @@
 <?php
 
-use modelo\Entidade;
-use modelo\Processo;
-
 namespace modelo;
+
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\Table;
+use modelo\Entidade;
+use modelo\Funcionario;
+use ReflectionClass;
 
 /**
  *
@@ -22,14 +26,14 @@ class Funcionario extends Entidade {
     /** @Column(type="string", unique=true) */
     protected $rg;
 
-    /** @OneToMany(targetEntity="Processo", mappedBy="funcionario") */
+    /** OneToManyy(targetEntity="Processo", mappedBy="funcionario") */
     protected $processos;
 
     function __construct($nome, $cpf, $rg) {
         $this->nome = $nome;
         $this->cpf = $cpf;
         $this->rg = $rg;
-        $this->processos = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->processos = new ArrayCollection();
     }
 
     public function getId() {
@@ -77,7 +81,7 @@ class Funcionario extends Entidade {
     }
 
     public function getClassName() {
-        $rc = new \ReflectionClass($this);
+        $rc = new ReflectionClass($this);
         return $rc->getName();
     }
 

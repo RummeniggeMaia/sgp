@@ -252,7 +252,7 @@ class UsuarioCtrl extends Controlador {
         $autCtrl = $this->controladores[Controlador::CTRL_AUTENTICACAO];
         $usu = $autCtrl->getEntidade();
         if ($usu != null && $usu->getId() == $this->copiaEntidade->getId()) {
-            $autCtrl->setEntidade(new Usuario());
+            $autCtrl->setEntidade(new Usuario("", "", "", ""));
         }
     }
 

@@ -7,6 +7,7 @@ use dao\Dao;
 use DateTime;
 use DateTimeZone;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\ORMException;
 use modelo\Log;
 use modelo\Movimentacao;
 use modelo\Processo;
@@ -35,13 +36,13 @@ class ProcessoMovimentacaoCtrl extends Controlador {
         $this->entidade = new Processo("");
         $this->validadorProcessoMovimentacao = new ValidadorProcessoMovimentacao();
         $this->mensagem = null;
-        $this->pmRemovidos = new  ArrayCollection();
+        $this->pmRemovidos = new ArrayCollection();
         //Depois q esse contrutor for chamado no index.php, esse controlador vai 
         //ser serializado, por isso o objeto dao tem q ser nulado pois o mesmo 
         //nao pode ser serializado
         $this->dao = null;
     }
-    
+
     public function setEntidade($entidade) {
         parent::setEntidade($entidade);
         $this->pmRemovidos = new ArrayCollection();
@@ -212,12 +213,6 @@ class ProcessoMovimentacaoCtrl extends Controlador {
     }
 
     private function buscarProcesso() {
-        if (!isset($this->controladores[Controlador::CTRL_PROCESSO])) {
-            $this->controladores[Controlador::CTRL_PROCESSO] = ControladorFactory
-                    ::criarControlador(
-                            Controlador::CTRL_PROCESSO
-                            , $this->dao->getEntityManager());
-        }
         $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
         //Configura o controle de processo e redireciona para la
         $processoCtrl->setModoBusca(true);
@@ -249,14 +244,12 @@ class ProcessoMovimentacaoCtrl extends Controlador {
         $campos = array();
         $entidade["classe"] = $this->entidade->getClassName();
         $entidade["id"] = $this->entidade->getId();
+        $this->copiaEntidade = $this->dao->pesquisarPorId($this->entidade);
         $movs = array();
-        foreach ($this->entidade->getProcessoMovimentacoes() as $pm) {
-            $id = $pm->getId();
-            if ($id == null) {
-                $movs[] = $pm->getMovimentacao()->getId();
-            }
+        foreach ($this->copiaEntidade->getProcessoMovimentacoes() as $pm) {
+            $movs[] = $pm->getMovimentacao()->getId();
         }
-        $campos["movimentacoes"] = $movs;
+        $campos["movimentacoes_id"] = $movs;
         $entidade["campos"] = $campos;
         $log->setDadosAlterados(json_encode($entidade));
         return $log;
@@ -292,6 +285,20 @@ class ProcessoMovimentacaoCtrl extends Controlador {
             $aux[$mov->getDescricao()] = $mov;
         }
         $this->movimentacoes = $aux;
+//        if ($this->entidade->getId() != null) {
+//            $novaMovimentacao = false;
+//            foreach ($this->entidade->getProcessoMovimentacoes() as $pm) {
+//                if ($pm->getId() == null) {
+//                    $novaMovimentacao = true;
+//                    break;
+//                }
+//            }
+//            $this->entidade = $this->dao->desanexar(
+//                    array("0" => $this->dao->pesquisarPorId($this->entidade)))[0];
+//            if ($novaMovimentacao) {
+//                $this->adicionarMovimentacao();
+//            }
+//        }
     }
 
 }

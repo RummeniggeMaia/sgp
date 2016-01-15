@@ -20,13 +20,15 @@ class ValidadorProcesso extends Validador {
     }
 
     public function validar($entidade) {
+        $this->entidade = $entidade;
         $this->mensagem = new Mensagem(
                 'Dados inválidos'
                 , Mensagem::MSG_TIPO_ERRO
                 , 'Dados do Processo estão inválidos.');
         $submensagens = array();
 
-        if ($entidade->getNumeroProcesso() == null) {
+        if ($entidade->getNumeroProcesso() == null ||
+                $entidade->getNumeroProcesso() == "") {
             $submensagens[] = "Campo Número Processo obrigatório!\n";
             $this->camposInvalidos[] = "campo_numero_processo";
         }

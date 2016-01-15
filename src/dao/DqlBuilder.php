@@ -58,62 +58,58 @@ class DqlBuilder {
     private function gerarClausulaWhereFuncionario(Funcionario $funcionario, QueryBuilder $qb) {
 
         if ($funcionario->getNome() != null &&
-                preg_match("/.+/i", $funcionario->getNome())) {
+                preg_match("/\S+/i", $funcionario->getNome())) {
             $qb->andWhere("x.nome like '%" . $funcionario->getNome() . "%'");
         }
         if ($funcionario->getCpf() != null &&
-                preg_match("/.+/i", $funcionario->getCpf())) {
+                preg_match("/\S+/i", $funcionario->getCpf())) {
             $qb->andWhere("x.cpf = '" . $funcionario->getCpf() . "'");
         }
         if ($funcionario->getRg() != null &&
-                preg_match("/.+/i", $funcionario->getRg())) {
+                preg_match("/\S+/i", $funcionario->getRg())) {
             $qb->andWhere("x.rg = '" . $funcionario->getRg() . "'");
         }
     }
 
     private function gerarClausulaWhereUsuario(Usuario $usuario, QueryBuilder $qb) {
         if ($usuario->getNome() != null &&
-                preg_match("/.+/i", $usuario->getNome())) {
+                preg_match("/\S+/i", $usuario->getNome())) {
             $qb->andWhere("x.nome like '%" . $usuario->getNome() . "%'");
         }
         if ($usuario->getEmail() != null &&
-                preg_match("/.+/i", $usuario->getEmail())) {
+                preg_match("/\S+/i", $usuario->getEmail())) {
             $qb->andWhere("x.email = '" . $usuario->getEmail() . "'");
         }
         if ($usuario->getLogin() != null &&
-                preg_match("/.+/i", $usuario->getLogin())) {
+                preg_match("/\S+/i", $usuario->getLogin())) {
             $qb->andWhere("x.login = '" . $usuario->getLogin() . "'");
-        }
-        if ($usuario->getSenha() != null &&
-                preg_match("/.+/i", $usuario->getSenha())) {
-            $qb->andWhere("x.senha = '" . $usuario->getSenha() . "'");
         }
     }
 
     private function gerarClausulaWhereAssunto(Assunto $assunto, QueryBuilder $qb) {
         if ($assunto->getDescricao() != null &&
-                preg_match("/.+/i", $assunto->getDescricao())) {
+                preg_match("/\S+/i", $assunto->getDescricao())) {
             $qb->andWhere("x.descricao like '%" . $assunto->getDescricao() . "%'");
         }
     }
 
     private function gerarClausulaWhereDepartamento(Departamento $departamento, QueryBuilder $qb) {
         if ($departamento->getDescricao() != null &&
-                preg_match("/.+/i", $departamento->getDescricao())) {
+                preg_match("/\S+/i", $departamento->getDescricao())) {
             $qb->andWhere("x.descricao like '%" . $departamento->getDescricao() . "%'");
         }
     }
 
     private function gerarClausulaWhereMovimentacao(Movimentacao $movimentacao, QueryBuilder $qb) {
         if ($movimentacao->getDescricao() != null &&
-                preg_match("/.+/i", $movimentacao->getDescricao())) {
+                preg_match("/\S+/i", $movimentacao->getDescricao())) {
             $qb->andWhere("x.descricao like '%" . $movimentacao->getDescricao() . "%'");
         }
     }
     
     private function gerarClausulaWhereProcesso(Processo $p, QueryBuilder $qb) {
         if ($p->getNumeroProcesso() != null &&
-                preg_match("/.+/i", $p->getNumeroProcesso())) {
+                preg_match("/\S+/i", $p->getNumeroProcesso())) {
             $qb->andWhere("x.numeroProcesso = '" . $p->getNumeroProcesso() . "'");
             //$qb->andWhere("x.numeroProcesso like '%" . $p->getNumeroProcesso() . "%'");
         }

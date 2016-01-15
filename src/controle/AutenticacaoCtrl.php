@@ -20,7 +20,8 @@ class AutenticacaoCtrl extends Controlador {
     private $post;
     private $controladores;
 
-    public function __construct() {
+    public function __construct($dao) {
+        $this->dao = $dao;
         $this->descricao = Controlador::CTRL_AUTENTICACAO;
         $this->entidade = new Usuario("", "", "", "");
         $this->visaoAtual = Controlador::CTRL_HOME;
@@ -34,7 +35,7 @@ class AutenticacaoCtrl extends Controlador {
         $this->visaoAtual = $visaoAtual;
     }
 
-    public function executarFuncao($post, $funcao,& $controladores) {
+    public function executarFuncao($post, $funcao, & $controladores) {
         $this->post = $post;
         $this->controladores = &$controladores;
 
@@ -42,6 +43,12 @@ class AutenticacaoCtrl extends Controlador {
 
         $redirecionamento = new Redirecionamento();
         $redirecionamento->setDestino($this->visaoAtual);
+//        if (!isset($this->controladores[$this->visaoAtual])) {
+//            $this->controladores[$this->visaoAtual] = ControladorFactory
+//                    ::criarControlador(
+//                            $this->visaoAtual
+//                            , $this->dao->getEntityManager());
+//        }
         $ctrl = $controladores[$this->visaoAtual];
         $ctrl->setDao($this->dao);
         $redirecionamento->setCtrl($ctrl);
@@ -80,19 +87,31 @@ class AutenticacaoCtrl extends Controlador {
         }
     }
 
-    private function sair() {
+    public function sair() {
+        $this->entidade = new Usuario("", "", "", "");
         unset($this->controladores[Controlador::CTRL_ASSUNTO]);
         unset($this->controladores[Controlador::CTRL_AUTENTICACAO]);
         unset($this->controladores[Controlador::CTRL_DEPARTAMENTO]);
-        unset($this->controladores[Controlador::CTRL_FUNCIONARIO]);
         unset($this->controladores[Controlador::CTRL_MOVIMENTACAO]);
-        unset($this->controladores[Controlador::CTRL_PROCESSO]);
         unset($this->controladores[Controlador::CTRL_PROCESSO_MOVIMENTACAO]);
         unset($this->controladores[Controlador::CTRL_USUARIO]);
-        
+//        unset($this->controladores[Controlador::CTRL_AUTENTICACAO]);
+        $this->controladores[Controlador::CTRL_PROCESSO] = ControladorFactory
+                ::criarControlador(
+                        Controlador::CTRL_PROCESSO
+                        , $this->dao->getEntityManager());
+        $this->controladores[Controlador::CTRL_FUNCIONARIO] = ControladorFactory
+                ::criarControlador(
+                        Controlador::CTRL_FUNCIONARIO
+                        , $this->dao->getEntityManager());
+        $this->controladores[Controlador::CTRL_HOME] = ControladorFactory
+                ::criarControlador(
+                        Controlador::CTRL_HOME
+                        , $this->dao->getEntityManager());
         $redirecionamento = new Redirecionamento();
         $redirecionamento->setDestino(Controlador::CTRL_HOME);
         $redirecionamento->setCtrl($this->controladores[Controlador::CTRL_HOME]);
+        $this->dao = null;
         return $redirecionamento;
     }
 
@@ -102,7 +121,7 @@ class AutenticacaoCtrl extends Controlador {
 
     private function gerarUsuario() {
         if (isset($this->post['campo_login'])) {
-            $this->entidade->setLogin($this->post['campo_login']);
+            $this->entidade->setLogin(trim($this->post['campo_login']));
         }
         if (isset($this->post['campo_password'])) {
             $this->entidade->setSenha($this->post['campo_password']);
@@ -115,6 +134,7 @@ class AutenticacaoCtrl extends Controlador {
 
     public function resetar() {
         $this->post = null;
+        $this->dao = null;
     }
 
     public function contemAutorizacao($a) {

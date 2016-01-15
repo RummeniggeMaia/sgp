@@ -25,6 +25,7 @@ class HomeCtrl extends Controlador {
 
     public function resetar() {
         $this->mensagem = null;
+        $this->dao = null;
     }
 
     public function iniciar() {

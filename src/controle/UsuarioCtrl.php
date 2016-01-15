@@ -138,7 +138,7 @@ class UsuarioCtrl extends Controlador {
         $this->modeloTabela->getPaginador()->setContagem(
                 $this->dao->contar($this->entidade));
         $this->modeloTabela->getPaginador()->setPesquisa(
-                clone $this->entidade);
+                $this->entidade->clonar());
         $this->pesquisar();
     }
 
@@ -148,16 +148,16 @@ class UsuarioCtrl extends Controlador {
 
     private function gerarUsuario() {
         if (isset($this->post['campo_nome'])) {
-            $this->entidade->setNome($this->post['campo_nome']);
+            $this->entidade->setNome(trim($this->post['campo_nome']));
         }
         if (isset($this->post['campo_email'])) {
-            $this->entidade->setEmail($this->post['campo_email']);
+            $this->entidade->setEmail(trim($this->post['campo_email']));
         }
         if (isset($this->post['campo_login'])) {
-            $this->entidade->setLogin($this->post['campo_login']);
+            $this->entidade->setLogin(trim($this->post['campo_login']));
         }
         if (isset($this->post['campo_senha'])) {
-            $this->entidade->setSenha($this->post['campo_senha']);
+            $this->entidade->setSenha(trim($this->post['campo_senha']));
         }
     }
 
@@ -223,6 +223,7 @@ class UsuarioCtrl extends Controlador {
         if ($log->getTipo() == Log::TIPO_CADASTRO) {
             $log->setDadosAlterados(json_encode($entidade));
         } else if ($log->getTipo() == Log::TIPO_EDICAO) {
+            $this->copiaEntidade = $this->dao->pesquisarPorId($this->entidade);
             if ($this->copiaEntidade->getNome() != $this->entidade->getNome()) {
                 $campos["nome"] = $this->copiaEntidade->getNome();
             }

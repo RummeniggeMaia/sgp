@@ -18,7 +18,7 @@ class ControladorFactory {
             case Controlador::CTRL_ASSUNTO :
                 return new AssuntoCtrl();
             case Controlador::CTRL_AUTENTICACAO :
-                return new AutenticacaoCtrl();
+                return new AutenticacaoCtrl($dao);
             case Controlador::CTRL_DEPARTAMENTO :
                 return new DepartamentoCtrl();
             case Controlador::CTRL_FUNCIONARIO :

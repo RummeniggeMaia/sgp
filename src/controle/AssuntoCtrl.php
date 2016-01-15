@@ -51,7 +51,7 @@ class AssuntoCtrl extends Controlador {
     public function gerarAssunto() {
         if (isset($this->post['campo_descricao'])) {
             $this->entidade->setDescricao(
-                    strtoupper($this->post['campo_descricao']));
+                    strtoupper(trim($this->post['campo_descricao'])));
         }
     }
 
@@ -178,6 +178,7 @@ class AssuntoCtrl extends Controlador {
         $this->mensagem = null;
         $this->validadorAssunto = new ValidadorAssunto();
         $this->post = null;
+        $this->dao = null;
     }
 
     private function gerarLog($tipo) {
@@ -193,6 +194,7 @@ class AssuntoCtrl extends Controlador {
         if ($log->getTipo() == Log::TIPO_CADASTRO) {
             $log->setDadosAlterados(json_encode($entidade));
         } else if ($log->getTipo() == Log::TIPO_EDICAO) {
+            $this->copiaEntidade = $this->dao->pesquisarPorId($this->entidade);
             if ($this->copiaEntidade->getDescricao() != $this->entidade->getDescricao()) {
                 $campos["descricao"] = $this->copiaEntidade->getDescricao();
             }

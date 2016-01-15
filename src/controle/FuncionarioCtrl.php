@@ -51,7 +51,7 @@ class FuncionarioCtrl extends Controlador {
      */
     public function gerarFuncionario() {
         if (isset($this->post['campo_nome'])) {
-            $this->entidade->setNome($this->post['campo_nome']);
+            $this->entidade->setNome(trim($this->post['campo_nome']));
         }
         if (isset($this->post['campo_cpf'])) {
             $this->entidade->setCpf($this->post['campo_cpf']);
@@ -188,7 +188,6 @@ class FuncionarioCtrl extends Controlador {
     }
 
     private function editarFuncionario($index) {
-
         if ($index > 0) {
             $this->entidade = $this->entidades[$index - 1];
             $this->copiaEntidade = $this->entidade->clonar();
@@ -221,6 +220,7 @@ class FuncionarioCtrl extends Controlador {
         $this->mensagem = null;
         $this->validadorFuncionario = new ValidadorFuncionario();
         $this->post = null;
+        $this->dao = null;
     }
 
     private function gerarLog($tipo) {
@@ -237,6 +237,7 @@ class FuncionarioCtrl extends Controlador {
             if ($log->getTipo() == Log::TIPO_CADASTRO) {
                 $log->setDadosAlterados(json_encode($entidade));
             } else if ($log->getTipo() == Log::TIPO_EDICAO) {
+                $this->copiaEntidade = $this->dao->pesquisarPorId($this->entidade);
                 if ($this->copiaEntidade->getNome() != $this->entidade->getNome()) {
                     $campos["nome"] = $this->copiaEntidade->getNome();
                 }
@@ -269,21 +270,21 @@ class FuncionarioCtrl extends Controlador {
     }
 
     private function funcionarioEditado() {
-        $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
-        $func = $processoCtrl->getEntidade()->getFuncionario();
-        if ($func != null && $func->getId() == $this->copiaEntidade->getId()) {
-            $processoCtrl->getEntidade()->setFuncionario(
-                    $this->copiaEntidade->clonar());
-        }
+//        $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
+//        $func = $processoCtrl->getEntidade()->getFuncionario();
+//        if ($func != null && $func->getId() == $this->copiaEntidade->getId()) {
+//            $processoCtrl->getEntidade()->setFuncionario(
+//                    $this->copiaEntidade->clonar());
+//        }
     }
 
     private function funcionarioRemovido() {
-        $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
-        $func = $processoCtrl->getEntidade()->getFuncionario();
-        if ($func != null && $func->getId() == $this->copiaEntidade->getId()) {
-            $processoCtrl->getEntidade()->setFuncionario(
-                    new Funcionario("", "", ""));
-        }
+//        $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
+//        $func = $processoCtrl->getEntidade()->getFuncionario();
+//        if ($func != null && $func->getId() == $this->copiaEntidade->getId()) {
+//            $processoCtrl->getEntidade()->setFuncionario(
+//                    new Funcionario("", "", ""));
+//        }
     }
 
     public function iniciar() {

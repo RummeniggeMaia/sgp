@@ -57,14 +57,23 @@ class Processo extends Entidade {
     }
 
     public function getFuncionario() {
+        if ($this->funcionario == null) {
+            $this->funcionario = new Funcionario("", "", "");
+        }
         return $this->funcionario;
     }
 
     public function getAssunto() {
+        if ($this->assunto == null) {
+            $this->assunto = new Assunto("", false);
+        }
         return $this->assunto;
     }
 
     public function getDepartamento() {
+        if ($this->departamento == null) {
+            $this->departamento = new Departamento("", false);
+        }
         return $this->departamento;
     }
 

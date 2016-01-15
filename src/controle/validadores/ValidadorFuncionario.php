@@ -21,7 +21,8 @@ class ValidadorFuncionario extends Validador {
                 'Dados do funcionário estão inválidos.');
         $submensagens = array();
 
-        if ($this->entidade->getNome() == null) {
+        if ($this->entidade->getNome() == null ||
+                $this->entidade->getNome() == "") {
             $submensagens[] = "Campo Nome obrigatório!\n";
             $this->camposInvalidos[] = "campo_nome";
         } else if (strlen($this->entidade->getNome()) < 4) {

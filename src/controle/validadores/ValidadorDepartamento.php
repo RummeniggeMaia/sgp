@@ -21,7 +21,8 @@ class ValidadorDepartamento extends Validador {
                 , 'Dados do departamento estão inválidos.');
         $submensagens = array();
 
-        if ($this->entidade->getDescricao() == null) {
+        if ($this->entidade->getDescricao() == null ||
+                $this->entidade->getDescricao() == "") {
             $submensagens[] = "Campo Descrição obrigatório!\n";
             $this->camposInvalidos[] = "campo_descricao";
         } else if (!preg_match("/^([ a-zA-Z'\-áéíóúÁÉÍÓÚâêîôûÂÊÎÔÛãõçÇ])+$/i"

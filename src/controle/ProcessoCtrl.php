@@ -90,10 +90,10 @@ class ProcessoCtrl extends Controlador {
             $this->entidade->setFuncionario($funcionarios[0]->clonar());
         }
     }
-   
+
     public function gerarProcesso() {
         if (isset($this->post['campo_numero_processo'])) {
-            $this->entidade->setNumeroProcesso($this->post['campo_numero_processo']);
+            $this->entidade->setNumeroProcesso(trim($this->post['campo_numero_processo']));
         }
         if (isset($this->post['assunto']) &&
                 isset($this->assuntos[$this->post['assunto']])) {
@@ -107,7 +107,7 @@ class ProcessoCtrl extends Controlador {
         }
     }
 
-    public function executarFuncao($post, $funcao,& $controladores) {
+    public function executarFuncao($post, $funcao, & $controladores) {
         $this->post = $post;
         $this->controladores = &$controladores;
 
@@ -188,10 +188,6 @@ class ProcessoCtrl extends Controlador {
                     $log = $this->gerarLog(Log::TIPO_CADASTRO);
                 }
                 $this->dao->editar($log);
-//                $ctrlPM = $this->controladores[Controlador::CTRL_PROCESSO_MOVIMENTACAO];
-//                if ($ctrlPM->getEntidade()->getId() == $this->copiaEntidade->getId()) {
-//                    $ctrlPM->setEntidade(new Processo(""));
-//                }
                 $this->entidade = new Processo("");
                 $this->modoEditar = false;
                 $this->tab = "tab_form";
@@ -211,7 +207,7 @@ class ProcessoCtrl extends Controlador {
                 $this->mensagem = new Mensagem(
                         "Cadastro de processos"
                         , Mensagem::MSG_TIPO_ERRO
-                        , "Erro ao salvar o processos.\n");
+                        , "Erro ao salvar o processos: \n" . $e->getMessage());
             }
         }
     }
@@ -315,6 +311,7 @@ class ProcessoCtrl extends Controlador {
         if ($log->getTipo() == Log::TIPO_CADASTRO) {
             $log->setDadosAlterados(json_encode($entidade));
         } else if ($log->getTipo() == Log::TIPO_EDICAO) {
+            $this->copiaEntidade = $this->dao->pesquisarPorId($this->entidade);
             if ($this->copiaEntidade->getNumeroProcesso() !=
                     $this->entidade->getNumeroProcesso()) {
                 $campos["numeroProcesso"] = $this->copiaEntidade->getNumeroProcesso();
@@ -354,11 +351,11 @@ class ProcessoCtrl extends Controlador {
     }
 
     private function processoEditado() {
-        $proMovCtrl = $this->controladores[Controlador::CTRL_PROCESSO_MOVIMENTACAO];
-        $pro = $proMovCtrl->getEntidade();
-        if ($pro != null && $pro->getId() == $this->copiaEntidade->getId()) {
-            $proMovCtrl->setEntidade(new Processo(""));
-        }
+//        $proMovCtrl = $this->controladores[Controlador::CTRL_PROCESSO_MOVIMENTACAO];
+//        $pro = $proMovCtrl->getEntidade();
+//        if ($pro != null && $pro->getId() == $this->copiaEntidade->getId()) {
+//            $proMovCtrl->setEntidade(new Processo(""));
+//        }
     }
 
     private function processoRemovido() {
@@ -388,6 +385,12 @@ class ProcessoCtrl extends Controlador {
             $aux[$d->getDescricao()] = $d;
         }
         $this->departamentos = $aux;
+        $aux = null;
+        if ($this->entidade->getFuncionario()->getId() != null) {
+            $aux = $this->dao->pesquisarPorId($this->entidade->getFuncionario());
+            $aux = $this->dao->desanexar(array("0" => $aux));
+            $this->entidade->setFuncionario($aux[0]);
+        }
     }
 
 }

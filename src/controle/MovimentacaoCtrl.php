@@ -51,7 +51,7 @@ class MovimentacaoCtrl extends Controlador {
      */
     public function gerarMovimentacao() {
         if (isset($this->post['campo_descricao'])) {
-            $this->entidade->setDescricao(strtoupper($this->post['campo_descricao']));
+            $this->entidade->setDescricao(trim(strtoupper($this->post['campo_descricao'])));
         }
     }
 
@@ -192,6 +192,7 @@ class MovimentacaoCtrl extends Controlador {
         if ($log->getTipo() == Log::TIPO_CADASTRO) {
             $log->setDadosAlterados(json_encode($entidade));
         } else if ($log->getTipo() == Log::TIPO_EDICAO) {
+            $this->copiaEntidade = $this->dao->pesquisarPorId($this->entidade);
             if ($this->copiaEntidade->getDescricao() != $this->entidade->getDescricao()) {
                 $campos["descricao"] = $this->copiaEntidade->getDescricao();
             }

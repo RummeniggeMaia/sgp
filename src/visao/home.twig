@@ -14,15 +14,15 @@
     <div class="ui segment">
         <img class="ui centered medium image" src="../../web/imagens/logo_sgp.jpg">
     </div>
-    <div style="text-align: center">
-        <a class="ui icon massive black button" name="navegador_gerenciar_processo" title="Processos"><i class="legal icon"></i>&nbsp;&nbsp;Processos</a>
+    <div class="segment" style="text-align: center">
+        <a class="ui icon massive black button" style="margin-bottom: 5px" name="navegador_gerenciar_processo" title="Processos"><i class="legal icon"></i>&nbsp;&nbsp;Processos</a>
         {% if autenticacaoCtrl.contemAutorizacao('admin') %}
-            <a class="ui icon massive black button" name="navegador_gerenciar_funcionario" title="Funcionários"><i class="users icon"></i></a>            
-            <a class="ui icon massive black button" name="navegador_gerenciar_assunto" title="Assuntos"><i class="archive icon"></i></a>
-            <a class="ui icon massive black button" name="navegador_gerenciar_departamento" title="Departamentos"><i class="building icon"></i></a>
-            <a class="ui icon massive black button" name="navegador_gerenciar_movimentacao" title="Movimentações"><i class="exchange icon"></i></a>            
-            <a class="ui icon massive black button" name="navegador_gerenciar_usuario" title="Usuários"><i class="privacy icon"></i></a>
-            <a class="ui icon massive black button" name="navegador_gerenciar_processo_movimentacao" title="Movimentação Processual"><i class="refresh icon"></i></a>
+            <a class="ui icon massive black button" style="margin-bottom: 5px" name="navegador_gerenciar_funcionario" title="Funcionários"><i class="users icon"></i>&nbsp;&nbsp;Funcionários</a>            
+            <a class="ui icon massive black button" style="margin-bottom: 5px" name="navegador_gerenciar_assunto" title="Assuntos"><i class="archive icon"></i>&nbsp;&nbsp;Assuntos</a>
+            <a class="ui icon massive black button" style="margin-bottom: 5px" name="navegador_gerenciar_departamento" title="Departamentos"><i class="building icon"></i>&nbsp;&nbsp;Departamentos</a>
+            <a class="ui icon massive black button" style="margin-bottom: 5px" name="navegador_gerenciar_movimentacao" title="Movimentações"><i class="exchange icon"></i>&nbsp;&nbsp;Movimentações</a>            
+            <a class="ui icon massive black button" style="margin-bottom: 5px" name="navegador_gerenciar_usuario" title="Usuários"><i class="privacy icon"></i>&nbsp;&nbsp;Usuários</a>
+            <a class="ui icon massive black button" style="margin-bottom: 5px" name="navegador_gerenciar_processo_movimentacao" title="Movimentação Processual"><i class="refresh icon"></i>&nbsp;&nbsp;Movimentação Processual</a>
             {% endif %}
     </div>
     <div class="ui message">
@@ -53,9 +53,9 @@
             </div>
         </div>
     </div>
-    <button class="ui facebook button">
+    <button class="ui icon massive facebook button">
         <i class="facebook icon"></i>
-        <a href="https://www.facebook.com/prefeituracruzetaouvidoria/?ref=hl" style="color: white">Facebook</a>
+        <a href="https://www.facebook.com/prefeituracruzetaouvidoria/?ref=hl" target="_blank" style="color: white;">Facebook</a>
     </button> 
 
 {% endblock %}

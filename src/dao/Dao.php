@@ -69,9 +69,11 @@ class Dao {
     }
 
     public function pesquisarPorId($entidade) {
-        return $this->entityManager->find(
-                        $entidade->getClassName()
-                        , $entidade->getId());
+        $e = $this->entityManager->find(
+                $entidade->getClassName()
+                , $entidade->getId());
+        $desanexado = $this->desanexar(array("0" => $e));
+        return count($desanexado) > 0 ? $desanexado[0] : $entidade;
     }
 
     /**

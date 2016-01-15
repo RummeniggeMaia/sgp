@@ -387,9 +387,11 @@ class ProcessoCtrl extends Controlador {
         $this->departamentos = $aux;
         $aux = null;
         if ($this->entidade->getFuncionario()->getId() != null) {
-            $aux = $this->dao->pesquisarPorId($this->entidade->getFuncionario());
-            $aux = $this->dao->desanexar(array("0" => $aux));
-            $this->entidade->setFuncionario($aux[0]);
+            $this->entidade->setFuncionario(
+                    $this->dao->pesquisarPorId(
+                            $this->entidade->getFuncionario()
+                    )
+            );
         }
     }
 

@@ -285,20 +285,31 @@ class ProcessoMovimentacaoCtrl extends Controlador {
             $aux[$mov->getDescricao()] = $mov;
         }
         $this->movimentacoes = $aux;
-//        if ($this->entidade->getId() != null) {
-//            $novaMovimentacao = false;
-//            foreach ($this->entidade->getProcessoMovimentacoes() as $pm) {
-//                if ($pm->getId() == null) {
-//                    $novaMovimentacao = true;
-//                    break;
-//                }
-//            }
-//            $this->entidade = $this->dao->desanexar(
-//                    array("0" => $this->dao->pesquisarPorId($this->entidade)))[0];
-//            if ($novaMovimentacao) {
-//                $this->adicionarMovimentacao();
-//            }
-//        }
+        if ($this->entidade->getId() != null) {
+            $novaMovimentacao = false;
+            $pms = $this->entidade->getProcessoMovimentacoes();
+            foreach ($pms as $pm) {
+                if ($pm->getId() == null) {
+                    $novaMovimentacao = true;
+                    break;
+                }
+            }
+            $this->entidade = $this->dao->pesquisarPorId($this->entidade);
+            $pms = $this->entidade->getProcessoMovimentacoes();
+            foreach ($this->pmRemovidos as $pmRemovido) {
+                foreach ($pms as $i => $pm) {
+                    if ($pmRemovido->getId() == $pm->getId()) {
+                        $pms->remove($i);
+                    }
+                }
+            }
+
+            $this->entidade->setProcessoMovimentacoes(
+                    new ArrayCollection(array_values($pms->toArray())));
+            if ($novaMovimentacao) {
+                $this->adicionarMovimentacao();
+            }
+        }
     }
 
 }

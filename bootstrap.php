@@ -17,7 +17,13 @@ $conn = array(
     'user' => 'root',
     'password' => '',
     'host' => 'localhost',
-    'charset' => 'utf8',
+    'charset' => 'utf8'
+//    'driver' => 'pdo_mysql',
+//    'dbname' => 'u617161183_bdsgp',
+//    'user' => 'u617161183_ussgp',
+//    'password' => '4q5Ahqf8cg',
+//    'host' => 'localhost',
+//    'charset' => 'utf8',
 );
 
 // A ideia aqui é importar esse script nas classes no script de controle.

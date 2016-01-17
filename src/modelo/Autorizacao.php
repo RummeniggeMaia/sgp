@@ -13,6 +13,8 @@ use modelo\Entidade;
  */
 class Autorizacao extends Entidade {
 
+    const ADMIN = "admin";
+    
     /** @Column(type="string") */
     protected $descricao;
 

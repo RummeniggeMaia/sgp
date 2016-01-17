@@ -2,6 +2,7 @@
 
 namespace controle;
 
+use modelo\Autorizacao;
 use util\Util;
 
 /**
@@ -158,6 +159,16 @@ abstract class Controlador {
         $this->pesquisar();
     }
 
+    public function verificarPermissao($autenticacaoCtrl) {
+        if (!$autenticacaoCtrl->contemAutorizacao(Autorizacao::ADMIN)) {
+            $this->mensagem = new Mensagem(
+                        "Permissão negada"
+                        , Mensagem::MSG_TIPO_ERRO
+                        , "Usuário não tem permissão para executar tal função.");
+            return false;
+        }
+        return true;
+    }
     /**
      * Todas as funcoes dos controladores sao executadas a partir daqui, 
      * qualquer funcao do sistema q nao esteja dentro desta nao será executada.

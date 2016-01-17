@@ -10,6 +10,7 @@ use controle\Controlador;
 use controle\ControladorFactory;
 use controle\Redirecionamento;
 use dao\Dao;
+use modelo\Autorizacao;
 use util\Util;
 
 //Inicia a sessao 
@@ -85,15 +86,20 @@ foreach ($chaves as $requisicao) {
 
         if (Util::startsWithString($requisicao, "navegador_")) {
             //remove a palavra navegador_
-            $visao = str_replace("navegador_", "", $requisicao);
+            $ctrl = str_replace("navegador_", "", $requisicao);
             //Verifica se essa visao existe no sistema, nesse caso no vetor
             //de visões
-            if (isset($visoes_navegacao[$visao])) {
-                $redirecionamento->setDestino($visoes_navegacao[$visao]);
-                if (!isset($controladores[$visao])) {
-                    $controladores[$visao] = ControladorFactory::criarControlador($visao, $entityManager);
+            if (isset($visoes_navegacao[$ctrl])) {
+                if ($ctrl != Controlador::CTRL_PROCESSO) {
+                    if (!$autenticacaoCtrl->contemAutorizacao(Autorizacao::ADMIN)) {
+                        $ctrl = Controlador::CTRL_HOME;
+                    }
                 }
-                $controlador = $controladores[$visao];
+                $redirecionamento->setDestino($visoes_navegacao[$ctrl]);
+                if (!isset($controladores[$ctrl])) {
+                    $controladores[$ctrl] = ControladorFactory::criarControlador($ctrl, $entityManager);
+                }
+                $controlador = $controladores[$ctrl];
                 $controlador->setDao(new Dao($entityManager));
                 $redirecionamento->setCtrl($controlador);
                 //Gera o template e manda renderizar a visao .twig
@@ -115,10 +121,10 @@ foreach ($chaves as $requisicao) {
                 $redirecionamento->setDestino(
                         $visoes_navegacao[$redirecionamento->getDestino()]);
                 redirecionar($twig, $redirecionamento, $autenticacaoCtrl);
-                if ($controlador->getDao() != null) {
-                    $controlador->getDao()->getEntityManager()->close();
-                    $controlador->getDao()->setEntityManager(null);
-                }
+//                if ($controlador->getDao() != null) {
+//                    $controlador->getDao()->getEntityManager()->close();
+//                    $controlador->getDao()->setEntityManager(null);
+//                }
                 limparControladores($controladores);
                 $_SESSION['controladores'] = serialize($controladores);
                 return;

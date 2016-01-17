@@ -55,7 +55,7 @@ class MovimentacaoCtrl extends Controlador {
         }
     }
 
-    public function executarFuncao($post, $funcao,& $controladores) {
+    public function executarFuncao($post, $funcao, & $controladores) {
         $this->post = $post;
         $this->controladores = &$controladores;
 
@@ -99,6 +99,10 @@ class MovimentacaoCtrl extends Controlador {
     }
 
     private function salvarMovimentacao() {
+        if (!$this->verificarPermissao(
+                        $this->controladores[Controlador::CTRL_AUTENTICACAO])) {
+            return;
+        }
         $this->validadorMovimentacao->validar($this->entidade);
         if (!$this->validadorMovimentacao->getValido()) {
             $this->mensagem = $this->validadorMovimentacao->getMensagem();
@@ -155,7 +159,10 @@ class MovimentacaoCtrl extends Controlador {
     }
 
     private function excluirMovimentacao($index) {
-
+        if (!$this->verificarPermissao(
+                        $this->controladores[Controlador::CTRL_AUTENTICACAO])) {
+            return;
+        }
         if ($index != 0) {
             $this->copiaEntidade = $this->entidades[$index - 1];
             $this->dao->excluir($this->copiaEntidade);

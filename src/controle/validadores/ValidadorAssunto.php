@@ -19,9 +19,12 @@ class ValidadorAssunto extends Validador {
                 'Dados inválidos', Mensagem::MSG_TIPO_ERRO, 'Dados do assunto estão inválidos.');
         $submensagens = array();
 
-        if ($this->entidade->getDescricao() == null || 
+        if ($this->entidade->getDescricao() == null ||
                 $this->entidade->getDescricao() == "") {
             $submensagens[] = "Campo Descrição obrigatório!\n";
+            $this->camposInvalidos[] = "campo_descricao";
+        } else if (strlen($this->entidade->getDescricao()) < 3) {
+            $submensagens[] = "Campo Descrição muito curto!\n";
             $this->camposInvalidos[] = "campo_descricao";
         } else if (!preg_match("/^([ a-zA-Z'\-áéíóúÁÉÍÓÚâêîôûÂÊÎÔÛãõçÇ])+$/i"
                         , $this->entidade->getDescricao())) {

@@ -171,6 +171,10 @@ class ProcessoCtrl extends Controlador {
     }
 
     private function salvarProcesso() {
+        if (!$this->verificarPermissao(
+                        $this->controladores[Controlador::CTRL_AUTENTICACAO])) {
+            return;
+        }
         $this->validadorProcesso->validar($this->entidade);
         if (!$this->validadorProcesso->getValido()) {
             $this->mensagem = $this->validadorProcesso->getMensagem();
@@ -231,6 +235,10 @@ class ProcessoCtrl extends Controlador {
     }
 
     private function excluirProcesso($index) {
+        if (!$this->verificarPermissao(
+                        $this->controladores[Controlador::CTRL_AUTENTICACAO])) {
+            return;
+        }
         if ($index != 0) {
             $this->copiaEntidade = $this->entidades[$index - 1];
             $this->dao->excluir($this->copiaEntidade);

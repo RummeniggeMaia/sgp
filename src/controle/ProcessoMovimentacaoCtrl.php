@@ -162,6 +162,10 @@ class ProcessoMovimentacaoCtrl extends Controlador {
     }
 
     private function salvarProcessoMovimentacao() {
+        if (!$this->verificarPermissao(
+                        $this->controladores[Controlador::CTRL_AUTENTICACAO])) {
+            return;
+        }
         $this->validadorProcessoMovimentacao->validar($this->entidade);
         if (!$this->validadorProcessoMovimentacao->getValido()) {
             $this->mensagem = $this->validadorProcessoMovimentacao->getMensagem();
@@ -202,6 +206,10 @@ class ProcessoMovimentacaoCtrl extends Controlador {
     }
 
     private function adicionarMovimentacao() {
+        if (!$this->verificarPermissao(
+                        $this->controladores[Controlador::CTRL_AUTENTICACAO])) {
+            return;
+        }
         $pm = new ProcessoMovimentacao();
         $pm->setDataMovimentacao(
                 new DateTime("now", new DateTimeZone('America/Sao_Paulo')));
@@ -256,6 +264,10 @@ class ProcessoMovimentacaoCtrl extends Controlador {
     }
 
     private function removerMovimentacao($index) {
+        if (!$this->verificarPermissao(
+                        $this->controladores[Controlador::CTRL_AUTENTICACAO])) {
+            return;
+        }
         $pms = $this->entidade->getProcessoMovimentacoes();
         if ($index > 0 && $index <= count($pms)) {
             //Apos as movimentações serem removidas do processo, 

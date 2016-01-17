@@ -44,11 +44,13 @@ class UsuarioCtrl extends Controlador {
         $this->modeloTabela->setModoBusca(false);
         $this->validadorUsuario = new ValidadorUsuario();
         
-        $auts = $dao->pesquisar(new Autorizacao("admin"), 1, 0);
-        if (count($auts) > 0) {
-            $this->autorizacaoAdmin = $auts[0];
-        }
-        
+//        $auts = $dao->pesquisar(new Autorizacao("admin"), 1, 0);
+//        if (count($auts) > 0) {
+//            $this->autorizacaoAdmin = $auts[0];
+//        }
+        $a = new Autorizacao("");
+        $a->setId(1);
+        $this->autorizacaoAdmin = $dao->pesquisarPorId($a);
         //Depois q esse contrutor for chamado no index.php, esse controlador vai 
         //ser serializado, por isso o objeto dao tem q ser nulado pois o mesmo 
         //nao pode ser serializado
@@ -94,6 +96,10 @@ class UsuarioCtrl extends Controlador {
     }
 
     private function salvarUsuario() {
+        if (!$this->verificarPermissao(
+                        $this->controladores[Controlador::CTRL_AUTENTICACAO])) {
+            return;
+        }
         $this->validadorUsuario->validar($this->entidade);
         if (!$this->validadorUsuario->getValido()) {
             $this->mensagem = $this->validadorUsuario->getMensagem();
@@ -192,6 +198,10 @@ class UsuarioCtrl extends Controlador {
     }
 
     private function excluirUsuario($index) {
+        if (!$this->verificarPermissao(
+                        $this->controladores[Controlador::CTRL_AUTENTICACAO])) {
+            return;
+        }
         if ($index != 0) {
             $this->copiaEntidade = $this->entidades[$index - 1];
             $this->dao->excluir($this->copiaEntidade);

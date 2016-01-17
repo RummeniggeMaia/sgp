@@ -61,7 +61,7 @@ class FuncionarioCtrl extends Controlador {
         }
     }
 
-    public function executarFuncao($post, $funcao,& $controladores) {
+    public function executarFuncao($post, $funcao, & $controladores) {
         $this->post = $post;
         $this->controladores = &$controladores;
 
@@ -109,7 +109,7 @@ class FuncionarioCtrl extends Controlador {
                 $valores[] = $funcionario->getCpf();
             } else {
                 $valores[] = "***.***.***";
-                $valores[] = "***." . substr($funcionario->getCpf(), 4, 12) . "-**"; 
+                $valores[] = "***." . substr($funcionario->getCpf(), 4, 12) . "-**";
             }
             $linha->setValores($valores);
             $linhas[] = $linha;
@@ -118,11 +118,13 @@ class FuncionarioCtrl extends Controlador {
     }
 
     private function salvarFuncionario() {
-
+        if (!$this->verificarPermissao(
+                        $this->controladores[Controlador::CTRL_AUTENTICACAO])) {
+            return;
+        }
         $this->validadorFuncionario->validar($this->entidade);
         if (!$this->validadorFuncionario->getValido()) {
             $this->mensagem = $this->validadorFuncionario->getMensagem();
-            
         } else {
             try {
                 $log = new Log();
@@ -148,7 +150,6 @@ class FuncionarioCtrl extends Controlador {
                         "Dados inválidos"
                         , Mensagem::MSG_TIPO_ERRO
                         , "O CPF ou o RG já existe cadastrado no sistema.\n");
-                
             } catch (Exception $e) {
                 $this->mensagem = new Mensagem(
                         "Cadastro de funcionários"
@@ -192,12 +193,14 @@ class FuncionarioCtrl extends Controlador {
             $this->entidade = $this->entidades[$index - 1];
             $this->copiaEntidade = $this->entidade->clonar();
             $this->modoEditar = true;
-            
         }
     }
 
     private function excluirFuncionario($index) {
-
+        if (!$this->verificarPermissao(
+                        $this->controladores[Controlador::CTRL_AUTENTICACAO])) {
+            return;
+        }
         if ($index != 0) {
             $this->copiaEntidade = $this->entidades[$index - 1];
             $this->dao->excluir($this->copiaEntidade);

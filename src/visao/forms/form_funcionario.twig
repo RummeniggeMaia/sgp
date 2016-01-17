@@ -44,6 +44,14 @@
                            placeholder="___.___.___" value="{{ ctrl.entidade.rg }}">
                 </div>
                 <div class="fields">
+                    {% if ctrl.modoBusca %}
+                        <div class="field">
+                            <div class="ui submit black button" 
+                                 onclick="submeterForm('form_funcionario', 'funcao_{{ constant('controle\\Controlador::CTRL_FUNCIONARIO') }}', 'enviar_funcionarios');">
+                                <i class="reply all icon"></i>Enviar Funcionários
+                            </div>
+                        </div>
+                    {% endif %}
                     {% if autenticacaoCtrl.contemAutorizacao('admin') %}
                         {% if not ctrl.modoBusca %}
                             <div class="field">
@@ -59,14 +67,6 @@
                             <div class="ui submit black button" 
                                  onclick="submeterForm('form_funcionario', 'funcao_{{ constant('controle\\Controlador::CTRL_FUNCIONARIO') }}', 'cancelar_edicao');">
                                 <i class="eraser icon"></i>Limpar Campos
-                            </div>
-                        </div>
-                    {% endif %}
-                    {% if ctrl.modoBusca %}
-                        <div class="field">
-                            <div class="ui submit black button" 
-                                 onclick="submeterForm('form_funcionario', 'funcao_{{ constant('controle\\Controlador::CTRL_FUNCIONARIO') }}', 'enviar_funcionarios');">
-                                <i class="reply all icon"></i>Enviar Funcionários
                             </div>
                         </div>
                     {% endif %}

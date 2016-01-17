@@ -98,6 +98,10 @@ class DepartamentoCtrl extends Controlador {
     }
 
     private function salvarDepartamento() {
+        if (!$this->verificarPermissao(
+                        $this->controladores[Controlador::CTRL_AUTENTICACAO])) {
+            return;
+        }
         $this->validadorDepartamento->validar($this->entidade);
         if (!$this->validadorDepartamento->getValido()) {
             $this->mensagem = $this->validadorDepartamento->getMensagem();
@@ -154,6 +158,10 @@ class DepartamentoCtrl extends Controlador {
     }
 
     private function excluirDepartamento($index) {
+        if (!$this->verificarPermissao(
+                        $this->controladores[Controlador::CTRL_AUTENTICACAO])) {
+            return;
+        }
         if ($index != 0) {
             $this->copiaEntidade = $this->entidades[$index - 1];
             $this->dao->excluir($this->copiaEntidade);

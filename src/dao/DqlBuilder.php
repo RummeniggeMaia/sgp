@@ -72,18 +72,27 @@ class DqlBuilder {
     }
 
     private function gerarClausulaWhereUsuario(Usuario $usuario, QueryBuilder $qb) {
-        if ($usuario->getNome() != null &&
-                preg_match("/\S+/i", $usuario->getNome())) {
-            $qb->andWhere("x.nome like '%" . $usuario->getNome() . "%'");
+        if ($usuario->getAutenticar()) {
+            $this->gerarClausulaAutenticar($usuario, $qb);
+        } else {
+            if ($usuario->getNome() != null &&
+                    preg_match("/\S+/i", $usuario->getNome())) {
+                $qb->andWhere("x.nome like '%" . $usuario->getNome() . "%'");
+            }
+            if ($usuario->getEmail() != null &&
+                    preg_match("/\S+/i", $usuario->getEmail())) {
+                $qb->andWhere("x.email = '" . $usuario->getEmail() . "'");
+            }
+            if ($usuario->getLogin() != null &&
+                    preg_match("/\S+/i", $usuario->getLogin())) {
+                $qb->andWhere("x.login = '" . $usuario->getLogin() . "'");
+            }
         }
-        if ($usuario->getEmail() != null &&
-                preg_match("/\S+/i", $usuario->getEmail())) {
-            $qb->andWhere("x.email = '" . $usuario->getEmail() . "'");
-        }
-        if ($usuario->getLogin() != null &&
-                preg_match("/\S+/i", $usuario->getLogin())) {
-            $qb->andWhere("x.login = '" . $usuario->getLogin() . "'");
-        }
+    }
+
+    private function gerarClausulaAutenticar(Usuario $usuario, QueryBuilder $qb) {
+        $qb->andWhere("x.login = '" . $usuario->getLogin() . "'");
+        $qb->andWhere("x.senha = '" . $usuario->getSenha() . "'");
     }
 
     private function gerarClausulaWhereAssunto(Assunto $assunto, QueryBuilder $qb) {
@@ -106,7 +115,7 @@ class DqlBuilder {
             $qb->andWhere("x.descricao like '%" . $movimentacao->getDescricao() . "%'");
         }
     }
-    
+
     private function gerarClausulaWhereProcesso(Processo $p, QueryBuilder $qb) {
         if ($p->getNumeroProcesso() != null &&
                 preg_match("/\S+/i", $p->getNumeroProcesso())) {

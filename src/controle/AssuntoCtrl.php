@@ -12,6 +12,7 @@ use DateTime;
 use DateTimeZone;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use modelo\Assunto;
+use modelo\Autorizacao;
 use modelo\Log;
 use util\Util;
 
@@ -25,6 +26,7 @@ class AssuntoCtrl extends Controlador {
     private $validadorAssunto;
     private $post;
     private $controladores;
+    private $autenticacaoCtrl;
 
     public function __construct() {
         $this->descricao = Controlador::CTRL_ASSUNTO;
@@ -58,6 +60,7 @@ class AssuntoCtrl extends Controlador {
     public function executarFuncao($post, $funcao,& $controladores) {
         $this->post = $post;
         $this->controladores = &$controladores;
+        $this->autenticacaoCtrl = $controladores[Controlador::CTRL_AUTENTICACAO];
 
         $this->gerarAssunto();
 
@@ -99,6 +102,10 @@ class AssuntoCtrl extends Controlador {
     }
 
     private function salvarAssunto() {
+        if (!$this->verificarPermissao(
+                        $this->controladores[Controlador::CTRL_AUTENTICACAO])) {
+            return;
+        }
         $this->validadorAssunto->validar($this->entidade);
         if (!$this->validadorAssunto->getValido()) {
             $this->mensagem = $this->validadorAssunto->getMensagem();
@@ -157,6 +164,10 @@ class AssuntoCtrl extends Controlador {
     }
 
     public function excluirAssunto($index) {
+        if (!$this->verificarPermissao(
+                        $this->controladores[Controlador::CTRL_AUTENTICACAO])) {
+            return;
+        }
         if ($index != 0) {
             $this->copiaEntidade = $this->entidades[$index - 1];
             $this->dao->excluir($this->copiaEntidade);

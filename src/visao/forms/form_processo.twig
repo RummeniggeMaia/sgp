@@ -88,6 +88,14 @@
                     </div>
                 </div>
                 <div class="fields">
+                    {% if ctrl.modoBusca %}
+                        <div class="field">
+                            <div class="ui submit black button" 
+                                 onclick="submeterForm('form_processo', 'funcao_{{ constant('controle\\Controlador::CTRL_PROCESSO') }}', 'enviar_processos');">
+                                <i class="reply all icon"></i>Enviar Processo
+                            </div>
+                        </div>
+                    {% endif %}
                     {% if autenticacaoCtrl.contemAutorizacao('admin') %}
                         {% if not ctrl.modoBusca %}
                             <div class="field">
@@ -103,14 +111,6 @@
                             <div class="ui submit black button" 
                                  onclick="submeterForm('form_processo', 'funcao_{{ constant('controle\\Controlador::CTRL_PROCESSO') }}', 'cancelar_edicao');">
                                 <i class="eraser icon"></i>Limpar Campos
-                            </div>
-                        </div>
-                    {% endif %}
-                    {% if ctrl.modoBusca %}
-                        <div class="field">
-                            <div class="ui submit black button" 
-                                 onclick="submeterForm('form_processo', 'funcao_{{ constant('controle\\Controlador::CTRL_PROCESSO') }}', 'enviar_processos');">
-                                <i class="reply all icon"></i>Enviar Processo
                             </div>
                         </div>
                     {% endif %}

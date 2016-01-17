@@ -33,6 +33,8 @@ class Usuario extends Entidade {
      *  @JoinTable(name="usuario_autorizacao")
      */
     protected $autorizacoes;
+    
+    private $autenticar;
 
     function __construct($nome, $email, $login, $senha) {
         $this->autorizacoes = new \Doctrine\Common\Collections\ArrayCollection();
@@ -40,6 +42,7 @@ class Usuario extends Entidade {
         $this->email = $email;
         $this->login = $login;
         $this->senha = $senha;
+        $this->autenticar = false;
     }
 
     public function getId() {
@@ -98,7 +101,16 @@ class Usuario extends Entidade {
     public function getAutorizacoes() {
         return $this->autorizacoes;
     }
+    
+    public function getAutenticar() {
+        return $this->autenticar;
+    }
 
+    public function setAutenticar($autenticar) {
+        $this->autenticar = $autenticar;
+    }
+
+    
     public function clonar() {
         $clone = new Usuario("", "", "", "");
 

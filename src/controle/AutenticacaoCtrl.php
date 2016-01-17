@@ -77,6 +77,7 @@ class AutenticacaoCtrl extends Controlador {
 
     private function autenticar() {
         $this->criptografarSenha();
+        $this->entidade->setAutenticar(true);
         $resultado = $this->dao->pesquisar(
                 $this->entidade, self::LIMITE, self::OFFSET);
         if ($resultado != NULL && count($resultado) > 0) {

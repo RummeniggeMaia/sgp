@@ -209,9 +209,9 @@ class ProcessoCtrl extends Controlador {
                 $this->tab = "tab_form";
             } catch (Exception $e) {
                 $this->mensagem = new Mensagem(
-                        "Cadastro de processos"
+                        "Erro ao salvar o processos"
                         , Mensagem::MSG_TIPO_ERRO
-                        , "Erro ao salvar o processos: \n" . $e->getMessage());
+                        , "Erro: " . $e->getCode());
             }
         }
     }

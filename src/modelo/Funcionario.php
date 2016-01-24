@@ -26,7 +26,7 @@ class Funcionario extends Entidade {
     /** @Column(type="string", unique=true) */
     protected $rg;
 
-    /** OneToManyy(targetEntity="Processo", mappedBy="funcionario") */
+    /** @OneToMany(targetEntity="Processo", mappedBy="funcionario") */
     protected $processos;
 
     function __construct($nome, $cpf, $rg) {

@@ -176,6 +176,13 @@ class ProcessoMovimentacaoCtrl extends Controlador {
             $pms = $this->entidade->getProcessoMovimentacoes();
             foreach ($pms as $key => $pm) {
                 $id = $pm->getId();
+                if ($id != null) {
+                    //Verifica se existe esse processo movimentacao. Serve para
+                    // evitar q outra pessoa apague o pm e o processo seja salvo
+                    //  com esse pm inexistente.
+                    $pm = $this->dao->pesquisarPorId($pm);
+                }
+                $id = $pm->getId();
                 if ($id == null) {
                     $salvo = $this->dao->editar($pm);
                     $pms[$key] = $salvo;

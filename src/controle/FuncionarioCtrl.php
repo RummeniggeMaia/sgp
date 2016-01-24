@@ -174,7 +174,9 @@ class FuncionarioCtrl extends Controlador {
         foreach ($this->post as $valor) {
             if (Util::startsWithString($valor, "radio_")) {
                 $index = str_replace("radio_", "", $valor);
-                $selecionados[] = $this->entidades[$index - 1]->clonar();
+                if (isset($this->entidades[$index - 1])) {
+                    $selecionados[] = $this->entidades[$index - 1]->clonar();
+                }
             }
         }
         $ctrl = $this->controladores[$this->ctrlDestino];

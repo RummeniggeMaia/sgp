@@ -72,8 +72,14 @@ class Dao {
         $e = $this->entityManager->find(
                 $entidade->getClassName()
                 , $entidade->getId());
+        if ($e == null) {
+            $entidade->setId(null);
+            return $entidade;
+        }
         $desanexado = $this->desanexar(array("0" => $e));
-        return count($desanexado) > 0 ? $desanexado[0] : $entidade;
+        if (count($desanexado) > 0) {
+            return $desanexado[0];
+        }
     }
 
     /**
@@ -85,7 +91,9 @@ class Dao {
     public function desanexar($lista) {
         $desanexados = array();
         foreach ($lista as $e) {
-            $desanexados[] = $e->clonar();
+            if ($e != null) {
+                $desanexados[] = $e->clonar();
+            }
         }
         return count($desanexados) > 0 ? $desanexados : $lista;
     }

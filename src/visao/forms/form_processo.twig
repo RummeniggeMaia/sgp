@@ -71,11 +71,19 @@
                 <div class="field {{ 'campo_funcionario' in ctrl.validadorProcesso.camposInvalidos ? 'error' : '' }}">
                     <label>Funcionário:</label>
                     <div class="ui action input">
-                        <input type="text" placeholder="Buscar um funcionário" 
-                               value="{{ ctrl.entidade.funcionario.nome }}"
-                               name="campo_funcionario"
-                               data-value="{{ ctrl.entidade.funcionario.id }}"
-                               readonly="true">
+                        {% if autenticacaoCtrl.contemAutorizacao('admin') %}
+                            <input type="text" placeholder="Buscar um funcionário" 
+                                   value="{{ ctrl.entidade.funcionario.nome ~ '\t' ~ ctrl.entidade.funcionario.cpf ~ '\t' ~ ctrl.entidade.funcionario.rg}}"
+                                   name="campo_funcionario"
+                                   data-value="{{ ctrl.entidade.funcionario.id }}"
+                                   readonly="true">
+                        {% else %}
+                            <input type="text" placeholder="Buscar um funcionário" 
+                                   value="{{ ctrl.entidade.funcionario.nome ~ '\t' ~ '***.' ~ (ctrl.entidade.funcionario.cpf|slice(4, 7)) ~ '-**' ~ '\t' ~ '***.***.***'}}"
+                                   name="campo_funcionario"
+                                   data-value="{{ ctrl.entidade.funcionario.id }}"
+                                   readonly="true">
+                        {% endif%}
                         <div class="ui button" 
                              onclick="submeterForm('form_processo', 'funcao_{{ constant('controle\\Controlador::CTRL_PROCESSO') }}', 'buscar_funcionario');">
                             <i class="search icon"></i>

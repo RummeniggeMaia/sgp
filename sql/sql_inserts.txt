@@ -39,7 +39,7 @@ insert into usuario(
     nome, email, login, senha
 ) values(
     "admin", "admin@mail.com", "admin", 
-    "f759864761e3679e26c4362935d6a0d562bef02f026a9670d4e6e46103969a78"
+    "5b911b76dcd2f061e4c0c71f1b364e6c427329099425d806da3908110bef69eb"
 );
 insert into autorizacao (descricao) values ("admin");
 insert into usuario_autorizacao (usuario_id, autorizacao_id) values(1, 1);

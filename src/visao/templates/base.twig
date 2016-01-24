@@ -8,6 +8,7 @@
         <script type="text/javascript" src="../../web/jquery.maskedinput.js"></script>
         <script type="text/javascript" src="../../web/jquery.md5.js"></script>
         <link href="../../web/semantic_ui/semantic.min.css" rel="stylesheet" type="text/css"/>
+        <link rel="icon" sizes="16x16 32x32" type="image/x-icon" href="../../web/imagens/sgp_icon.ico">
 
         <style type="text/css">
             .table-hover tbody tr:hover {
@@ -68,7 +69,7 @@
 
         <div class="ui vertical sidebar inverted menu left" id="menu_principal">
             <div class="item">
-                <img src="../../web/imagens/icon-process-white.png" width="100px" />
+                <img class="ui centered medium image" src="../../web/imagens/sgp_logo.svg" width="150px" height="150px"/>
             </div>
             <a class="item" name="navegador_gerenciar_processo"><i class="legal icon"></i>Processos</a>
             {% if autenticacaoCtrl.contemAutorizacao('admin') %}
@@ -88,7 +89,7 @@
                 <a class="item" name="navegador_gerenciar_home">
                     <i class="home icon"></i> Home
                 </a>
-                <a class="item">
+                <a class="item" onclick="$('#modal_sobre').modal('show');">
                     <i class="info circle icon"></i> Sobre
                 </a>
                 {% if autenticacaoCtrl.entidade.id is null %}
@@ -129,6 +130,29 @@
             {% block body %}
 
             {% endblock %}
+        </div>
+        <div class="ui modal" id="modal_sobre">
+            <i class="close icon"></i>
+            <div class="header">
+                Informações do sistema SGP
+            </div>
+            <div class="image content">
+                <div class="image">
+                    <i class="info circle icon blue"></i>
+                </div>
+                <div class="description">
+                    <h3>Sistema de Gerenciamento de Processos.</h3>
+                    <p>Desenvolvedores:</p>
+                    <ul>
+                        <li>José Rummenigge Pereira Maia</li>
+                        <li>Jaedson Bruno de Oliveira Araújo</li>
+                    </ul>
+                    
+                </div>
+            </div>
+            <div class="actions">
+                <div class="ui positive button"><i class="thumbs outline up icon"></i>Ok</div>
+            </div>
         </div>
     </body>
 </html>

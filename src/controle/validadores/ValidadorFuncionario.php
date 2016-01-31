@@ -28,7 +28,7 @@ class ValidadorFuncionario extends Validador {
         } else if (strlen($this->entidade->getNome()) < 4) {
             $submensagens[] = "Campo Nome tem que ter ao menos 4 letras!\n";
             $this->camposInvalidos[] = "campo_nome";
-        } else if (!preg_match("/^([ a-zA-Z'\-áéíóúÁÉÍÓÚâêîôûÂÊÎÔÛãõçÇ])+$/i", 
+        } else if (!preg_match("/^([ a-zA-Z'\-áéíóúãÃÁÉÍÓÚâêîôûÂÊÎÔÛãõçÇ])+$/i", 
                 $this->entidade->getNome())) {
              $submensagens[] = "Caracteres inválidos no nome!\n";
             $this->camposInvalidos[] = "campo_nome";
@@ -65,7 +65,7 @@ class ValidadorFuncionario extends Validador {
         }
 
         // Elimina possivel mascara
-        $cpf = ereg_replace('[^0-9]', '', $cpf);
+        $cpf = preg_replace('/[^0-9]/i', '', $cpf);
         $cpf = str_pad($cpf, 11, '0', STR_PAD_LEFT);
 
         // Verifica se o numero de digitos informados é igual a 11 

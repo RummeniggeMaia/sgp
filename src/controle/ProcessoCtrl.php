@@ -44,11 +44,8 @@ class ProcessoCtrl extends Controlador {
         $this->modeloTabela = new ModeloDeTabela();
         $this->modeloTabela->setCabecalhos(
                 array("Nº Processo", "Funcionário", "Departamento", "Assunto"));
-        $this->modeloTabela->getPaginador()->setLimit(15);
-        //Como o controle de processos tem apenas um funcinario que é 
-        //buscado na pagina de genrenciamento de funcionarios, entao nao 
-        //há necessidade de indexar essa lista, pois ela nao vai ficar em 
-        //um dropdown.
+        $this->modeloTabela->getPaginador()->setLimit("15");
+        $this->modeloTabela->getPaginador()->setPesquisa(new Processo(""));
         $this->funcionarios = array();
         //Validador utilizado para validar os campos assim como os 
         //relacionamentos do processo
@@ -122,6 +119,9 @@ class ProcessoCtrl extends Controlador {
         if ($funcao == "salvar") {
             $this->salvarProcesso();
         } else if ($funcao == "pesquisar") {
+            $this->modeloTabela->setPaginador(new Paginador());
+            $this->modeloTabela->getPaginador()->
+                    setPesquisa($this->entidade->clonar());
             $this->pesquisarProcessos();
         } else if ($funcao == "cancelar_edicao") {
             $this->modoEditar = false;
@@ -136,6 +136,7 @@ class ProcessoCtrl extends Controlador {
             $this->entidade->setFuncionario(new Funcionario("", "", ""));
             $this->tab = "tab_form";
         } else if (Util::startsWithString($funcao, "editar_")) {
+            $this->tab = "tab_form";
             $index = intval(str_replace("editar_", "", $funcao));
             $this->editarProcesso($index);
         } else if (Util::startsWithString($funcao, "excluir_")) {
@@ -175,6 +176,7 @@ class ProcessoCtrl extends Controlador {
                         $this->controladores[Controlador::CTRL_AUTENTICACAO])) {
             return;
         }
+        $this->validadorProcesso->setDao($this->dao);
         $this->validadorProcesso->validar($this->entidade);
         if (!$this->validadorProcesso->getValido()) {
             $this->mensagem = $this->validadorProcesso->getMensagem();
@@ -183,18 +185,20 @@ class ProcessoCtrl extends Controlador {
             try {
                 $log = new Log();
                 if ($this->modoEditar) {
+                    $this->copiaEntidade = $this->dao->pesquisarPorId($this->entidade);
+                    if ($this->copiaEntidade == null) {
+                        throw new Exception("Entidade inexistente, não é possível editá-la.");
+                    }
                     $log = $this->gerarLog(Log::TIPO_EDICAO);
                     $this->copiaEntidade = $this->dao->editar($this->entidade);
-                    $this->processoEditado();
-                    $this->pesquisarProcessos();
                 } else {
                     $this->copiaEntidade = $this->dao->editar($this->entidade);
                     $log = $this->gerarLog(Log::TIPO_CADASTRO);
                 }
                 $this->dao->editar($log);
                 $this->entidade = new Processo("");
+                $this->copiaEntidade = new Processo("");
                 $this->modoEditar = false;
-                $this->tab = "tab_form";
                 $this->mensagem = new Mensagem(
                         "Cadastro de processos"
                         , Mensagem::MSG_TIPO_OK
@@ -209,51 +213,58 @@ class ProcessoCtrl extends Controlador {
                 $this->tab = "tab_form";
             } catch (Exception $e) {
                 $this->mensagem = new Mensagem(
-                        "Erro ao salvar o processos"
+                        "Erro ao salvar o processo"
                         , Mensagem::MSG_TIPO_ERRO
-                        , "Erro: " . $e->getCode());
+                        , "Erro: " . $e->getMessage());
             }
         }
     }
 
     private function pesquisarProcessos() {
-        $this->modeloTabela->setPaginador(new Paginador());
         $this->modeloTabela->getPaginador()->setContagem(
-                $this->dao->contar($this->entidade));
-        $this->modeloTabela->getPaginador()->setPesquisa(
-                $this->entidade->clonar());
+                $this->dao->contar($this->modeloTabela->
+                                getPaginador()->getPesquisa()));
         $this->pesquisar();
     }
 
     private function editarProcesso($index) {
-        if ($index > 0) {
-            $this->entidade = $this->entidades[$index - 1];
-            $this->copiaEntidade = $this->entidade->clonar();
-            $this->modoEditar = true;
-            $this->tab = "tab_form";
+        if ($index > 0 && $index <= count($this->entidades)) {
+            $aux = $this->dao->pesquisarPorId($this->entidades[$index - 1]);
+            if ($aux == null) {
+                $this->entidade = new Processo("");
+            } else {
+                $this->entidade = $aux;
+                //Quando o usuario seleciona um processo pra editar, é 
+                //necessario armazenar o estado atual em outra variavel para 
+                //depois colocar a mudança ono log.
+                $this->copiaEntidade = $this->entidade->clonar();
+                $this->modoEditar = true;
+            }
         }
     }
 
     private function excluirProcesso($index) {
         if (!$this->verificarPermissao(
                         $this->controladores[Controlador::CTRL_AUTENTICACAO])) {
+            $this->tab = "tab_form";
             return;
         }
         if ($index != 0) {
-            $this->copiaEntidade = $this->entidades[$index - 1];
-            $this->dao->excluir($this->copiaEntidade);
-            $this->processoRemovido();
-            $this->dao->editar($this->gerarLog(Log::TIPO_REMOCAO));
-            $p = $this->modeloTabela->getPaginador();
-            if ($p->getOffset() == $p->getContagem()) {
-                $p->anterior();
+            $this->copiaEntidade = $this->dao->pesquisarPorId(
+                    $this->entidades[$index - 1]);
+            if ($this->copiaEntidade != null) {
+                $this->dao->excluir($this->copiaEntidade);
+                $this->dao->editar($this->gerarLog(Log::TIPO_REMOCAO));
+                $this->mensagem = new Mensagem(
+                        "Remover processo"
+                        , Mensagem::MSG_TIPO_OK
+                        , "Processo removido com sucesso.");
+            } else {
+                $this->mensagem = new Mensagem(
+                        "Remover processo"
+                        , Mensagem::MSG_TIPO_AVISO
+                        , "Processo já foi removido por outro usuário.");
             }
-            $p->setContagem($p->getContagem() - 1);
-            $this->pesquisar();
-            $this->mensagem = new Mensagem(
-                    "Cadastro de processos"
-                    , Mensagem::MSG_TIPO_OK
-                    , "Processo removido com sucesso.");
         }
     }
 
@@ -296,6 +307,42 @@ class ProcessoCtrl extends Controlador {
         return $redirecionamento;
     }
 
+    public function iniciar() {
+        if ($this->entidade->getId() != null) {
+            $aux = $this->dao->pesquisarPorId($this->entidade);
+            if ($aux == null) {
+                $this->entidade = new Processo("");
+            } else {
+                if ($this->entidade->getFuncionario()->getId() != null &&
+                        $this->entidade->getFuncionario()->getId() !=
+                        $aux->getFuncionario()->getId()) {
+                    $aux->setFuncionario($this->entidade->getFuncionario());
+                }
+                $this->entidade = $aux;
+            }
+        }
+        $assunto = new Assunto(null, true);
+        $this->assuntos = $this->dao->pesquisar($assunto, PHP_INT_MAX, 0);
+        $departamento = new Departamento(null, true);
+        $this->departamentos = $this->dao->pesquisar($departamento, PHP_INT_MAX, 0);
+        //Indexa todas os assuntos para serem buscados pela descricao
+        $aux = array();
+        $aux[""] = new Assunto("", "");
+        foreach ($this->assuntos as $a) {
+            $aux[$a->getDescricao()] = $a;
+        }
+        $this->assuntos = $aux;
+        //Indexa todas os departamentos para ser buscada pela descricao
+        $aux = array();
+        $aux[""] = new Departamento("");
+        foreach ($this->departamentos as $d) {
+            $aux[$d->getDescricao()] = $d;
+        }
+        $this->departamentos = $aux;
+        $aux = null;
+        $this->pesquisarProcessos();
+    }
+
     public function resetar() {
         //Depois q esse contrutor for chamado no index.php, esse controlador vai 
         //ser serializado, por isso o objeto dao tem q ser nulado pois o mesmo 
@@ -304,6 +351,7 @@ class ProcessoCtrl extends Controlador {
         $this->mensagem = null;
         $this->validadorProcesso = new ValidadorProcesso();
         $this->post = null;
+        $this->copiaEntidade = new Processo("");
     }
 
     private function gerarLog($tipo) {
@@ -319,7 +367,6 @@ class ProcessoCtrl extends Controlador {
         if ($log->getTipo() == Log::TIPO_CADASTRO) {
             $log->setDadosAlterados(json_encode($entidade));
         } else if ($log->getTipo() == Log::TIPO_EDICAO) {
-            $this->copiaEntidade = $this->dao->pesquisarPorId($this->entidade);
             if ($this->copiaEntidade->getNumeroProcesso() !=
                     $this->entidade->getNumeroProcesso()) {
                 $campos["numeroProcesso"] = $this->copiaEntidade->getNumeroProcesso();
@@ -352,55 +399,6 @@ class ProcessoCtrl extends Controlador {
             $log->setDadosAlterados(json_encode($entidade));
         }
         return $log;
-    }
-
-    private function processoInserido() {
-        
-    }
-
-    private function processoEditado() {
-//        $proMovCtrl = $this->controladores[Controlador::CTRL_PROCESSO_MOVIMENTACAO];
-//        $pro = $proMovCtrl->getEntidade();
-//        if ($pro != null && $pro->getId() == $this->copiaEntidade->getId()) {
-//            $proMovCtrl->setEntidade(new Processo(""));
-//        }
-    }
-
-    private function processoRemovido() {
-//        $proMovCtrl = $this->controladores[Controlador::CTRL_PROCESSO_MOVIMENTACAO];
-//        $pro = $proMovCtrl->getEntidade();
-//        if ($pro != null && $pro->getId() == $this->copiaEntidade->getId()) {
-//            $proMovCtrl->setEntidade(new Processo(""));
-//        }
-    }
-
-    public function iniciar() {
-        $assunto = new Assunto(null, true);
-        $this->assuntos = $this->dao->pesquisar($assunto, PHP_INT_MAX, 0);
-        $departamento = new Departamento(null, true);
-        $this->departamentos = $this->dao->pesquisar($departamento, PHP_INT_MAX, 0);
-        //Indexa todas os assuntos para serem buscados pela descricao
-        $aux = array();
-        $aux[""] = new Assunto("", "");
-        foreach ($this->assuntos as $a) {
-            $aux[$a->getDescricao()] = $a;
-        }
-        $this->assuntos = $aux;
-        //Indexa todas os departamentos para ser buscada pela descricao
-        $aux = array();
-        $aux[""] = new Departamento("");
-        foreach ($this->departamentos as $d) {
-            $aux[$d->getDescricao()] = $d;
-        }
-        $this->departamentos = $aux;
-        $aux = null;
-        if ($this->entidade->getFuncionario()->getId() != null) {
-            $this->entidade->setFuncionario(
-                    $this->dao->pesquisarPorId(
-                            $this->entidade->getFuncionario()
-                    )
-            );
-        }
     }
 
 }

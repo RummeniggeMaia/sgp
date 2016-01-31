@@ -10,6 +10,7 @@ use controle\Controlador;
 use controle\ControladorFactory;
 use controle\Redirecionamento;
 use dao\Dao;
+use Doctrine\ORM\EntityManager;
 use modelo\Autorizacao;
 use util\Util;
 
@@ -44,6 +45,7 @@ if (isset($_SESSION['visoes_navegacao'])) {
 }
 
 $controladores = array();
+//Inicia os controles padrões do sistema que são: HOME, PROCESSO, FUNCIONARIO
 if (isset($_SESSION['controladores'])) {
     $controladores = unserialize($_SESSION['controladores']);
 } else {
@@ -54,6 +56,8 @@ if (isset($_SESSION['controladores'])) {
     $controladores[Controlador::CTRL_FUNCIONARIO] = ControladorFactory::criarControlador(
                     Controlador::CTRL_FUNCIONARIO, $entityManager);
 }
+//O controle de autenticacao sempre é instanciado para verificar o q cada 
+//usuário pode ou nao fazer no sistema
 if (!isset($controladores[Controlador::CTRL_AUTENTICACAO])) {
     $controladores[Controlador::CTRL_AUTENTICACAO] = ControladorFactory::criarControlador(
                     Controlador::CTRL_AUTENTICACAO, $entityManager);
@@ -96,6 +100,8 @@ foreach ($chaves as $requisicao) {
                     }
                 }
                 $redirecionamento->setDestino($visoes_navegacao[$ctrl]);
+                //Quando o usuario loga, os outros controles estao desativados, 
+                //entao essa parte de codigo verifica e instancia o ctrl cajo não exista 
                 if (!isset($controladores[$ctrl])) {
                     $controladores[$ctrl] = ControladorFactory::criarControlador($ctrl, $entityManager);
                 }
@@ -118,13 +124,11 @@ foreach ($chaves as $requisicao) {
                 //comunicao entre eles
                 $redirecionamento = $controlador->executarFuncao(
                         $_POST, $funcao, $controladores);
+                $entityManager = EntityManager::create($conn, $config);
+                $controlador->setDao(new Dao($entityManager));
                 $redirecionamento->setDestino(
                         $visoes_navegacao[$redirecionamento->getDestino()]);
                 redirecionar($twig, $redirecionamento, $autenticacaoCtrl);
-//                if ($controlador->getDao() != null) {
-//                    $controlador->getDao()->getEntityManager()->close();
-//                    $controlador->getDao()->setEntityManager(null);
-//                }
                 limparControladores($controladores);
                 $_SESSION['controladores'] = serialize($controladores);
                 return;

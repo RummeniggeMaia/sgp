@@ -130,7 +130,6 @@ abstract class Controlador {
                     , $this->modeloTabela->getPaginador()->getLimit()
                     , $this->modeloTabela->getPaginador()->getOffset());
             $this->gerarLinhas();
-            $this->tab = "tab_tabela";
         }
     }
 

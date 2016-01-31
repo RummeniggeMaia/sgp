@@ -34,6 +34,7 @@ class MovimentacaoCtrl extends Controlador {
         $this->mensagem = null;
         $this->modeloTabela = new ModeloDeTabela();
         $this->modeloTabela->setCabecalhos(array("Descrição"));
+        $this->modeloTabela->getPaginador()->setPesquisa(new Movimentacao("", false));
         $this->modeloTabela->setModoBusca(false);
         $this->validadorMovimentacao = new ValidadorMovimentacao();
     }
@@ -65,16 +66,21 @@ class MovimentacaoCtrl extends Controlador {
         $redirecionamento->setDestino(Controlador::CTRL_MOVIMENTACAO);
         $redirecionamento->setCtrl($this);
 
-        $this->tab = "tab_form";
+        $this->tab = "tab_tabela";
 
         if ($funcao == "salvar") {
             $this->salvarMovimentacao();
         } else if ($funcao == "pesquisar") {
+            $this->modeloTabela->setPaginador(new Paginador());
+            $this->modeloTabela->getPaginador()->
+                    setPesquisa($this->entidade->clonar());
             $this->pesquisarMovimentacao();
         } else if ($funcao == "cancelar_edicao") {
+            $this->tab = "tab_form";
             $this->modoEditar = false;
-            $this->entidade = new Movimentacao("", "");
+            $this->entidade = new Movimentacao("", false);
         } else if (Util::startsWithString($funcao, "editar_")) {
+            $this->tab = "tab_form";
             $index = intval(str_replace("editar_", "", $funcao));
             $this->editarMovimentacao($index);
         } else if (Util::startsWithString($funcao, "excluir_")) {
@@ -106,25 +112,30 @@ class MovimentacaoCtrl extends Controlador {
         $this->validadorMovimentacao->validar($this->entidade);
         if (!$this->validadorMovimentacao->getValido()) {
             $this->mensagem = $this->validadorMovimentacao->getMensagem();
+            $this->tab = "tab_form";
         } else {
             try {
                 $this->entidade->setConstante(true);
                 $log = new Log();
                 if ($this->modoEditar) {
+                    $this->copiaEntidade = $this->dao->pesquisarPorId($this->entidade);
+                    if ($this->copiaEntidade == null) {
+                        throw new Exception("Entidade inexistente, não é possível editá-la.");
+                    }
                     $log = $this->gerarLog(Log::TIPO_EDICAO);
                     $this->dao->editar($this->entidade);
-                    $this->pesquisarMovimentacao();
                 } else {
                     $this->copiaEntidade = $this->dao->editar($this->entidade);
                     $log = $this->gerarLog(Log::TIPO_CADASTRO);
                 }
                 $this->dao->editar($log);
                 $this->entidade = new Movimentacao("", "");
+                $this->copiaEntidade = new Movimentacao("", "");
                 $this->modoEditar = false;
                 $this->mensagem = new Mensagem(
                         "Cadastro de movimentação"
                         , Mensagem::MSG_TIPO_OK
-                        , "Dados de Movimentação salvo com sucesso.");
+                        , "Dados da Movimentação salvos com sucesso.");
             } catch (UniqueConstraintViolationException $e) {
                 $this->validadorMovimentacao->setValido(false);
                 $this->validadorMovimentacao->setCamposInvalidos(array("campo_descricao"));
@@ -136,25 +147,28 @@ class MovimentacaoCtrl extends Controlador {
                 $this->mensagem = new Mensagem(
                         "Cadastro de movimentação"
                         , Mensagem::MSG_TIPO_ERRO
-                        , "Erro ao salvar a movimentação.");
+                        , "Erro ao salvar a movimentação: " . $e->getMessage());
             }
         }
     }
 
     private function pesquisarMovimentacao() {
-        $this->modeloTabela->setPaginador(new Paginador());
         $this->modeloTabela->getPaginador()->setContagem(
-                $this->dao->contar($this->entidade));
-        $this->modeloTabela->getPaginador()->setPesquisa(
-                clone $this->entidade);
+                $this->dao->contar($this->modeloTabela->
+                                getPaginador()->getPesquisa()));
         $this->pesquisar();
     }
 
-    private function editarMovimentacao($index) {
-        if ($index > 0) {
-            $this->entidade = $this->entidades[$index - 1];
-            $this->copiaEntidade = $this->entidade->clonar();
-            $this->modoEditar = true;
+    public function editarMovimentacao($index) {
+        if ($index > 0 && $index <= count($this->entidades)) {
+            $aux = $this->dao->pesquisarPorId($this->entidades[$index - 1]);
+            if ($aux == null) {
+                $this->entidade = new Movimentacao("", false);
+            } else {
+                $this->entidade = $aux;
+                $this->copiaEntidade = $this->entidade->clonar();
+                $this->modoEditar = true;
+            }
         }
     }
 
@@ -164,26 +178,42 @@ class MovimentacaoCtrl extends Controlador {
             return;
         }
         if ($index != 0) {
-            $this->copiaEntidade = $this->entidades[$index - 1];
-            $this->dao->excluir($this->copiaEntidade);
-            $this->dao->editar($this->gerarLog(Log::TIPO_REMOCAO));
-            $p = $this->modeloTabela->getPaginador();
-            if ($p->getOffset() == $p->getContagem()) {
-                $p->anterior();
+            $this->copiaEntidade = $this->dao->pesquisarPorId(
+                    $this->entidades[$index - 1]);
+            if ($this->copiaEntidade != null) {
+                $this->dao->excluir($this->copiaEntidade);
+                $this->dao->editar($this->gerarLog(Log::TIPO_REMOCAO));
+                $this->mensagem = new Mensagem(
+                        "Remover movimentação"
+                        , Mensagem::MSG_TIPO_OK
+                        , "Movimentação removida com sucesso.");
+            } else {
+                $this->mensagem = new Mensagem(
+                        "Remover movimentação"
+                        , Mensagem::MSG_TIPO_AVISO
+                        , "Movimentação já foi removida por outro usuário.");
             }
-            $p->setContagem($p->getContagem() - 1);
-            $this->pesquisar();
-            $this->mensagem = new Mensagem(
-                    "Cadastro de movimentações"
-                    , Mensagem::MSG_TIPO_OK
-                    , "Movimentação removida com sucesso.");
         }
+    }
+
+    public function iniciar() {
+        if ($this->entidade->getId() != null) {
+            $aux = $this->dao->pesquisarPorId($this->entidade);
+            if ($aux == null) {
+                $this->entidade = new Movimentacao("", false);
+            } else {
+                $this->entidade = $aux;
+            }
+        }
+        $this->pesquisarMovimentacao();
     }
 
     public function resetar() {
         $this->mensagem = null;
         $this->validadorMovimentacao = new ValidadorMovimentacao();
         $this->post = null;
+        $this->dao = null;
+        $this->copiaEntidade = new Movimentacao("", false);
     }
 
     private function gerarLog($tipo) {
@@ -198,8 +228,7 @@ class MovimentacaoCtrl extends Controlador {
         $entidade["id"] = $this->copiaEntidade->getId();
         if ($log->getTipo() == Log::TIPO_CADASTRO) {
             $log->setDadosAlterados(json_encode($entidade));
-        } else if ($log->getTipo() == Log::TIPO_EDICAO) {
-            $this->copiaEntidade = $this->dao->pesquisarPorId($this->entidade);
+        } else if ($log->getTipo() == Log::TIPO_EDICAO) {         
             if ($this->copiaEntidade->getDescricao() != $this->entidade->getDescricao()) {
                 $campos["descricao"] = $this->copiaEntidade->getDescricao();
             }
@@ -212,47 +241,4 @@ class MovimentacaoCtrl extends Controlador {
         }
         return $log;
     }
-
-//    private function movimentacaoInserido() {
-//        $pmCtrl = $this->controladores[Controlador::CTRL_PROCESSO_MOVIMENTACAO];
-//        $movs = $pmCtrl->getMovimentacoes();
-//        $movs[] = $this->copiaEntidade->clonar();
-//        $pmCtrl->setMovimentacoes($movs);
-//    }
-//
-//    private function movimentacaoEditado() {
-//        $pmCtrl = $this->controladores[Controlador::CTRL_PROCESSO_MOVIMENTACAO];
-//        $movs = $pmCtrl->getMovimentacoes();
-//        foreach ($movs as $i => $m) {
-//            if ($m->getId() == $this->copiaEntidade->getId()) {
-//                $movs[$i] = $this->copiaEntidade->clonar();
-//                break;
-//            }
-//        }
-//        $pmCtrl->setMovimentacoes($movs);
-//    }
-//    private function movimentacaoRemovido() {
-//        $pmCtrl = $this->controladores[Controlador::CTRL_PROCESSO_MOVIMENTACAO];
-//        $movs = $pmCtrl->getMovimentacoes();
-//        foreach ($movs as $i => $m) {
-//            if ($m->getId() == $this->copiaEntidade->getId()) {
-//                unset($movs[$i]);
-//                break;
-//            }
-//        }
-//        $pmCtrl->setMovimentacoes($movs);
-//        $pms = $pmCtrl->getEntidade()->getProcessoMovimentacoes();
-//        foreach ($pms as $i => $pm) {
-//            if ($pm->getMovimentacao()->getId() ==
-//                    $this->copiaEntidade->getId()) {
-//                unset($pms[$i]);
-//            }
-//        }
-//        $pmCtrl->getEntidade()->setProcessoMovimentacoes($pms);
-//    }
-
-    public function iniciar() {
-        
-    }
-
 }

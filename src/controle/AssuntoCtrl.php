@@ -15,6 +15,7 @@ use modelo\Assunto;
 use modelo\Autorizacao;
 use modelo\Log;
 use util\Util;
+use Exception;
 
 /**
  * Description of AssuntoCtrl
@@ -35,6 +36,7 @@ class AssuntoCtrl extends Controlador {
         $this->mensagem = null;
         $this->modeloTabela = new ModeloDeTabela;
         $this->modeloTabela->setCabecalhos(array("Descrição"));
+        $this->modeloTabela->getPaginador()->setPesquisa(new Assunto("", false));
         $this->modeloTabela->setModoBusca(false);
         $this->validadorAssunto = new ValidadorAssunto();
     }
@@ -57,7 +59,7 @@ class AssuntoCtrl extends Controlador {
         }
     }
 
-    public function executarFuncao($post, $funcao,& $controladores) {
+    public function executarFuncao($post, $funcao, & $controladores) {
         $this->post = $post;
         $this->controladores = &$controladores;
         $this->autenticacaoCtrl = $controladores[Controlador::CTRL_AUTENTICACAO];
@@ -68,16 +70,21 @@ class AssuntoCtrl extends Controlador {
         $redirecionamento->setDestino(Controlador::CTRL_ASSUNTO);
         $redirecionamento->setCtrl($this);
 
-        $this->tab = "tab_form";
+        $this->tab = "tab_tabela";
 
         if ($funcao == "salvar") {
             $this->salvarAssunto();
         } else if ($funcao == "pesquisar") {
+            $this->modeloTabela->setPaginador(new Paginador());
+            $this->modeloTabela->getPaginador()->
+                    setPesquisa($this->entidade->clonar());
             $this->pesquisarAssunto();
         } else if ($funcao == "cancelar_edicao") {
+            $this->tab = "tab_form";
             $this->modoEditar = false;
             $this->entidade = new Assunto("", "");
         } else if (Util::startsWithString($funcao, "editar_")) {
+            $this->tab = "tab_form";
             $index = intval(str_replace("editar_", "", $funcao));
             $this->editarAssunto($index);
         } else if (Util::startsWithString($funcao, "excluir_")) {
@@ -109,25 +116,32 @@ class AssuntoCtrl extends Controlador {
         $this->validadorAssunto->validar($this->entidade);
         if (!$this->validadorAssunto->getValido()) {
             $this->mensagem = $this->validadorAssunto->getMensagem();
+            $this->tab = "tab_form";
         } else {
             try {
                 $this->entidade->setConstante(true);
                 $log = new Log();
                 if ($this->modoEditar) {
+                    $this->copiaEntidade = $this->dao->pesquisarPorId($this->entidade);
+                    if ($this->copiaEntidade == null) {
+                        throw new Exception("Entidade inexistente, não é possível editá-la.");
+                    }
                     $log = $this->gerarLog(Log::TIPO_EDICAO);
                     $this->copiaEntidade = $this->dao->editar($this->entidade);
-                    $this->pesquisarAssunto();
                 } else {
                     $this->copiaEntidade = $this->dao->editar($this->entidade);
                     $log = $this->gerarLog(Log::TIPO_CADASTRO);
                 }
+//                $this->modeloTabela->getPaginador()->
+//                        setPesquisa($this->copiaEntidade->clonar());
                 $this->dao->editar($log);
                 $this->entidade = new Assunto("", "");
+                $this->copiaEntidade = new Assunto("", "");
                 $this->modoEditar = false;
                 $this->mensagem = new Mensagem(
                         "Cadastro de assuntos"
                         , Mensagem::MSG_TIPO_OK
-                        , "Dados do Assunto salvo com sucesso.");
+                        , "Dados do Assunto salvos com sucesso.");
             } catch (UniqueConstraintViolationException $ex) {
                 $this->validadorAssunto->setValido(false);
                 $this->validadorAssunto->setCamposInvalidos(array("campo_descricao"));
@@ -135,7 +149,6 @@ class AssuntoCtrl extends Controlador {
                         "Dados inválidos"
                         , Mensagem::MSG_TIPO_ERRO
                         , "Já existe um assunto com essa descrição.\n");
-                
             } catch (Exception $ex) {
                 $this->mensagem = new Mensagem(
                         "Cadastro de assuntos"
@@ -146,20 +159,22 @@ class AssuntoCtrl extends Controlador {
     }
 
     public function pesquisarAssunto() {
-        $this->modeloTabela->setPaginador(new Paginador());
         $this->modeloTabela->getPaginador()->setContagem(
-                $this->dao->contar($this->entidade));
-        $this->modeloTabela->getPaginador()->setPesquisa(
-                $this->entidade->clonar());
+                $this->dao->contar($this->modeloTabela->
+                                getPaginador()->getPesquisa()));
         $this->pesquisar();
     }
 
     public function editarAssunto($index) {
-        if ($index > 0) {
-            $this->entidade = $this->entidades[$index - 1];
-            $this->copiaEntidade = $this->entidade->clonar();
-            $this->modoEditar = true;
-            
+        if ($index > 0 && $index <= count($this->entidades)) {
+            $aux = $this->dao->pesquisarPorId($this->entidades[$index - 1]);
+            if ($aux == null) {
+                $this->entidade = new Assunto("", false);
+            } else {
+                $this->entidade = $aux;
+                $this->copiaEntidade = $this->entidade->clonar();
+                $this->modoEditar = true;
+            }
         }
     }
 
@@ -169,20 +184,34 @@ class AssuntoCtrl extends Controlador {
             return;
         }
         if ($index != 0) {
-            $this->copiaEntidade = $this->entidades[$index - 1];
-            $this->dao->excluir($this->copiaEntidade);
-            $this->dao->editar($this->gerarLog(Log::TIPO_REMOCAO));
-            $p = $this->modeloTabela->getPaginador();
-            if ($p->getOffset() == $p->getContagem()) {
-                $p->anterior();
+            $this->copiaEntidade = $this->dao->pesquisarPorId(
+                    $this->entidades[$index - 1]);
+            if ($this->copiaEntidade != null) {
+                $this->dao->excluir($this->copiaEntidade);
+                $this->dao->editar($this->gerarLog(Log::TIPO_REMOCAO));
+                $this->mensagem = new Mensagem(
+                        "Remover assunto"
+                        , Mensagem::MSG_TIPO_OK
+                        , "Assunto removido com sucesso.");
+            } else {
+                $this->mensagem = new Mensagem(
+                        "Remover assunto"
+                        , Mensagem::MSG_TIPO_AVISO
+                        , "Assunto já foi removido por outro usuário.");
             }
-            $p->setContagem($p->getContagem() - 1);
-            $this->pesquisar();
-            $this->mensagem = new Mensagem(
-                    "Cadastro de assuntos"
-                    , Mensagem::MSG_TIPO_OK
-                    , "Assunto removido com sucesso.");
         }
+    }
+
+    public function iniciar() {
+        if ($this->entidade->getId() != null) {
+            $aux = $this->dao->pesquisarPorId($this->entidade);
+            if ($aux == null) {
+                $this->entidade = new Assunto("", false);
+            } else {
+                $this->entidade = $aux;
+            }
+        }
+        $this->pesquisarAssunto();
     }
 
     public function resetar() {
@@ -190,6 +219,7 @@ class AssuntoCtrl extends Controlador {
         $this->validadorAssunto = new ValidadorAssunto();
         $this->post = null;
         $this->dao = null;
+        $this->copiaEntidade = new Assunto("", false);
     }
 
     private function gerarLog($tipo) {
@@ -205,7 +235,6 @@ class AssuntoCtrl extends Controlador {
         if ($log->getTipo() == Log::TIPO_CADASTRO) {
             $log->setDadosAlterados(json_encode($entidade));
         } else if ($log->getTipo() == Log::TIPO_EDICAO) {
-            $this->copiaEntidade = $this->dao->pesquisarPorId($this->entidade);
             if ($this->copiaEntidade->getDescricao() != $this->entidade->getDescricao()) {
                 $campos["descricao"] = $this->copiaEntidade->getDescricao();
             }
@@ -217,41 +246,6 @@ class AssuntoCtrl extends Controlador {
             $log->setDadosAlterados(json_encode($entidade));
         }
         return $log;
-    }
-//
-//    private function assuntoInserido() {
-////        $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
-////        $assuntos = $processoCtrl->getAssuntos();
-////        $assuntos[] = $this->copiaEntidade->clonar();
-////        $processoCtrl->setAssuntos($assuntos);
-//    }
-//
-//    private function assuntoEditado() {
-//        $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
-//        $assuntos = $processoCtrl->getAssuntos();
-//        foreach ($assuntos as $i => $a) {
-//            if ($a->getId() == $this->copiaEntidade->getId()) {
-//                $assuntos[$i] = $this->copiaEntidade->clonar();
-//                break;
-//            }
-//        }
-//        $processoCtrl->setAssuntos($assuntos);
-//    }
-//
-//    private function assuntoRemovido() {
-//        $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
-//        $assuntos = $processoCtrl->getAssuntos();
-//        foreach ($assuntos as $i => $a) {
-//            if ($a->getId() == $this->copiaEntidade->getId()) {
-//                unset($assuntos[$i]);
-//                break;
-//            }
-//        }
-//        $processoCtrl->setAssuntos($assuntos);
-//    }
-
-    public function iniciar() {
-        
     }
 
 }

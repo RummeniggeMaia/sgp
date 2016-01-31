@@ -28,7 +28,7 @@ class ValidadorDepartamento extends Validador {
         } else if (strlen($this->entidade->getDescricao()) < 3) {
             $submensagens[] = "Campo Descrição muito curto!\n";
             $this->camposInvalidos[] = "campo_descricao";
-        } else if (!preg_match("/^([ a-zA-Z'\-áéíóúÁÉÍÓÚâêîôûÂÊÎÔÛãõçÇ])+$/i"
+        } else if (!preg_match("/^([ a-zA-Z'\-áéíóúãÃÁÉÍÓÚâêîôûÂÊÎÔÛãõçÇ])+$/i"
                         , $this->entidade->getDescricao())) {
             $submensagens[] = "Caracteres inválidos na descrição!\n";
             $this->camposInvalidos[] = "campo_descricao";

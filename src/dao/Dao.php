@@ -73,8 +73,7 @@ class Dao {
                 $entidade->getClassName()
                 , $entidade->getId());
         if ($e == null) {
-            $entidade->setId(null);
-            return $entidade;
+            return null;
         }
         $desanexado = $this->desanexar(array("0" => $e));
         if (count($desanexado) > 0) {

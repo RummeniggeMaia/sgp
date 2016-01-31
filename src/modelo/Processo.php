@@ -26,17 +26,17 @@ class Processo extends Entidade {
     /** @Column(type="string", unique=true) */
     protected $numeroProcesso;
 
-    /** @ManyToOne(targetEntity="Funcionario", inversedBy="processos") 
+    /** @ManyToOne(targetEntity="Funcionario", inversedBy="processos", fetch="EAGER") 
      *  @JoinColumn(name="funcionario_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $funcionario;
 
-    /** @ManyToOne(targetEntity="Assunto", inversedBy="processos") 
+    /** @ManyToOne(targetEntity="Assunto", inversedBy="processos", fetch="EAGER") 
      *  @JoinColumn(name="assunto_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $assunto;
 
-    /** @ManyToOne(targetEntity="Departamento", inversedBy="processos") 
+    /** @ManyToOne(targetEntity="Departamento", inversedBy="processos", fetch="EAGER") 
      *  @JoinColumn(name="departamento_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $departamento;
@@ -116,15 +116,15 @@ class Processo extends Entidade {
         $clone->setFuncionario(
                 $this->funcionario == null ?
                         new Funcionario("", "", "") :
-                        $this->funcionario->clonar());
+                        $this->getFuncionario()->clonar());
         $clone->setAssunto(
                 $this->assunto == null ?
                         new Assunto("", false) :
-                        $this->assunto->clonar());
+                        $this->getAssunto()->clonar());
         $clone->setDepartamento(
                 $this->departamento == null ?
                         new Departamento("", false) :
-                        $this->departamento->clonar());
+                        $this->getDepartamento()->clonar());
 
         $pms = new ArrayCollection();
         foreach ($this->processoMovimentacoes->toArray() as $pm) {

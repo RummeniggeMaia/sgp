@@ -14,6 +14,7 @@ use modelo\Departamento;
 use modelo\Log;
 use util\Util;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Exception;
 
 /**
  * Description of DepartamentoCtrl
@@ -33,6 +34,7 @@ class DepartamentoCtrl extends Controlador {
         $this->mensagem = null;
         $this->modeloTabela = new ModeloDeTabela();
         $this->modeloTabela->setCabecalhos(array("Descrição"));
+        $this->modeloTabela->getPaginador()->setPesquisa(new Departamento(""));
         $this->modeloTabela->setModoBusca(false);
         $this->validadorDepartamento = new ValidadorDepartamento();
     }
@@ -55,7 +57,7 @@ class DepartamentoCtrl extends Controlador {
         }
     }
 
-    public function executarFuncao($post, $funcao,& $controladores) {
+    public function executarFuncao($post, $funcao, & $controladores) {
         $this->post = $post;
         $this->controladores = &$controladores;
 
@@ -64,16 +66,22 @@ class DepartamentoCtrl extends Controlador {
         $redirecionamento = new Redirecionamento();
         $redirecionamento->setDestino(Controlador::CTRL_DEPARTAMENTO);
         $redirecionamento->setCtrl($this);
-        $this->tab = "tab_form";
+        
+        $this->tab = "tab_tabela";
 
         if ($funcao == "salvar") {
             $this->salvarDepartamento();
         } else if ($funcao == "pesquisar") {
+            $this->modeloTabela->setPaginador(new Paginador());
+            $this->modeloTabela->getPaginador()->
+                    setPesquisa($this->entidade->clonar());
             $this->pesquisarDepartamento();
         } else if ($funcao == "cancelar_edicao") {
+            $this->tab = "tab_form";
             $this->modoEditar = false;
             $this->entidade = new Departamento("");
         } else if (Util::startsWithString($funcao, "editar_")) {
+            $this->tab = "tab_form";
             $index = intval(str_replace("editar_", "", $funcao));
             $this->editarDepartamento($index);
         } else if (Util::startsWithString($funcao, "excluir_")) {
@@ -105,20 +113,25 @@ class DepartamentoCtrl extends Controlador {
         $this->validadorDepartamento->validar($this->entidade);
         if (!$this->validadorDepartamento->getValido()) {
             $this->mensagem = $this->validadorDepartamento->getMensagem();
+            $this->tab = "tab_form";
         } else {
             try {
                 $this->entidade->setConstante(true);
                 $log = new Log();
                 if ($this->modoEditar) {
+                    $this->copiaEntidade = $this->dao->pesquisarPorId($this->entidade);
+                    if ($this->copiaEntidade == null) {
+                        throw new Exception("Entidade inexistente, não é possível editá-la.");
+                    }
                     $log = $this->gerarLog(Log::TIPO_EDICAO);
                     $this->dao->editar($this->entidade);
-                    $this->pesquisarDepartamento();
                 } else {
                     $this->copiaEntidade = $this->dao->editar($this->entidade);
                     $log = $this->gerarLog(Log::TIPO_CADASTRO);
                 }
                 $this->dao->editar($log);
                 $this->entidade = new Departamento("", "");
+                $this->copiaEntidade = new Departamento("");
                 $this->modoEditar = false;
                 $this->mensagem = new Mensagem(
                         "Cadastro de departamento"
@@ -141,19 +154,22 @@ class DepartamentoCtrl extends Controlador {
     }
 
     private function pesquisarDepartamento() {
-        $this->modeloTabela->setPaginador(new Paginador());
         $this->modeloTabela->getPaginador()->setContagem(
-                $this->dao->contar($this->entidade));
-        $this->modeloTabela->getPaginador()->setPesquisa(
-                clone $this->entidade);
+                $this->dao->contar($this->modeloTabela->
+                                getPaginador()->getPesquisa()));
         $this->pesquisar();
     }
 
-    private function editarDepartamento($index) {
-        if ($index > 0) {
-            $this->entidade = $this->entidades[$index - 1];
-            $this->copiaEntidade = $this->entidade->clonar();
-            $this->modoEditar = true;
+    public function editarDepartamento($index) {
+        if ($index > 0 && $index <= count($this->entidades)) {
+            $aux = $this->dao->pesquisarPorId($this->entidades[$index - 1]);
+            if ($aux == null) {
+                $this->entidade = new Departamento("");
+            } else {
+                $this->entidade = $aux;
+                $this->copiaEntidade = $this->entidade->clonar();
+                $this->modoEditar = true;
+            }
         }
     }
 
@@ -163,20 +179,34 @@ class DepartamentoCtrl extends Controlador {
             return;
         }
         if ($index != 0) {
-            $this->copiaEntidade = $this->entidades[$index - 1];
-            $this->dao->excluir($this->copiaEntidade);
-            $this->dao->editar($this->gerarLog(Log::TIPO_REMOCAO));
-            $p = $this->modeloTabela->getPaginador();
-            if ($p->getOffset() == $p->getContagem()) {
-                $p->anterior();
+            $this->copiaEntidade = $this->dao->pesquisarPorId(
+                    $this->entidades[$index - 1]);
+            if ($this->copiaEntidade != null) {
+                $this->dao->excluir($this->copiaEntidade);
+                $this->dao->editar($this->gerarLog(Log::TIPO_REMOCAO));
+                $this->mensagem = new Mensagem(
+                        "Remover departamento"
+                        , Mensagem::MSG_TIPO_OK
+                        , "Departamento removido com sucesso.");
+            } else {
+                $this->mensagem = new Mensagem(
+                        "Remover departamento"
+                        , Mensagem::MSG_TIPO_AVISO
+                        , "Departamento já foi removido por outro usuário.");
             }
-            $p->setContagem($p->getContagem() - 1);
-            $this->pesquisar();
-            $this->mensagem = new Mensagem(
-                    "Cadastro de departamento"
-                    , Mensagem::MSG_TIPO_OK
-                    , "Departamento removido com sucesso.");
         }
+    }
+
+    public function iniciar() {
+        if ($this->entidade->getId() != null) {
+            $aux = $this->dao->pesquisarPorId($this->entidade);
+            if ($aux == null) {
+                $this->entidade = new Departamento("");
+            } else {
+                $this->entidade = $aux;
+            }
+        }
+        $this->pesquisarDepartamento();
     }
 
     public function resetar() {
@@ -184,6 +214,7 @@ class DepartamentoCtrl extends Controlador {
         $this->validadorDepartamento = new ValidadorDepartamento();
         $this->post = null;
         $this->dao = null;
+        $this->copiaEntidade = new Departamento("");
     }
 
     private function gerarLog($tipo) {
@@ -199,7 +230,6 @@ class DepartamentoCtrl extends Controlador {
         if ($log->getTipo() == Log::TIPO_CADASTRO) {
             $log->setDadosAlterados(json_encode($entidade));
         } else if ($log->getTipo() == Log::TIPO_EDICAO) {
-            $this->copiaEntidade = $this->dao->pesquisarPorId($this->entidade);
             if ($this->copiaEntidade->getDescricao() !=
                     $this->entidade->getDescricao()) {
                 $campos["descricao"] = $this->copiaEntidade->getDescricao();
@@ -212,41 +242,6 @@ class DepartamentoCtrl extends Controlador {
             $log->setDadosAlterados(json_encode($entidade));
         }
         return $log;
-    }
-
-//    private function departamentoInserido() {
-//        $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
-//        $deps = $processoCtrl->getDepartamentos();
-//        $deps[] = $this->copiaEntidade->clonar();
-//        $processoCtrl->setDepartamentos($deps);
-//    }
-//
-//    private function departamentoEditado() {
-//        $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
-//        $deps = $processoCtrl->getDepartamentos();
-//        foreach ($deps as $i => $d) {
-//            if ($d->getId() == $this->copiaEntidade->getId()) {
-//                $deps[$i] = $this->copiaEntidade->clonar();
-//                break;
-//            }
-//        }
-//        $processoCtrl->setDepartamentos($deps);
-//    }
-//
-//    private function departamentoRemovido() {
-//        $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
-//        $deps = $processoCtrl->getDepartamentos();
-//        foreach ($deps as $i => $d) {
-//            if ($d->getId() == $this->copiaEntidade->getId()) {
-//                unset($deps[$i]);
-//                break;
-//            }
-//        }
-//        $processoCtrl->setDepartamentos($deps);
-//    }
-
-    public function iniciar() {
-        
     }
 
 }

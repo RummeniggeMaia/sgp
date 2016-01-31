@@ -34,6 +34,7 @@ class FuncionarioCtrl extends Controlador {
         $this->mensagem = null;
         $this->modeloTabela = new ModeloDeTabela();
         $this->modeloTabela->setCabecalhos(array("Nome", "RG", "CPF"));
+        $this->modeloTabela->getPaginador()->setPesquisa(new Funcionario("", "", ""));
         $this->modeloTabela->setModoBusca(false);
         $this->validadorFuncionario = new ValidadorFuncionario();
     }
@@ -70,13 +71,17 @@ class FuncionarioCtrl extends Controlador {
         $redirecionamento = new Redirecionamento();
         $redirecionamento->setDestino(Controlador::CTRL_FUNCIONARIO);
         $redirecionamento->setCtrl($this);
-        $this->tab = "tab_form";
+        $this->tab = "tab_tabela";
 
         if ($funcao == "salvar") {
             $this->salvarFuncionario();
         } else if ($funcao == "pesquisar") {
+            $this->modeloTabela->setPaginador(new Paginador());
+            $this->modeloTabela->getPaginador()->
+                    setPesquisa($this->entidade->clonar());
             $this->pesquisarFuncionario();
         } else if ($funcao == "cancelar_edicao") {
+            $this->tab = "tab_form";
             $this->modoEditar = false;
             $this->entidade = new Funcionario("", "", "");
         } else if ($funcao == 'enviar_funcionarios') {
@@ -85,6 +90,7 @@ class FuncionarioCtrl extends Controlador {
             $this->setCtrlDestino("");
             $this->setModoBusca(false);
         } else if (Util::startsWithString($funcao, "editar_")) {
+            $this->tab = "tab_form";
             $index = intval(str_replace("editar_", "", $funcao));
             $this->editarFuncionario($index);
         } else if (Util::startsWithString($funcao, "excluir_")) {
@@ -125,19 +131,24 @@ class FuncionarioCtrl extends Controlador {
         $this->validadorFuncionario->validar($this->entidade);
         if (!$this->validadorFuncionario->getValido()) {
             $this->mensagem = $this->validadorFuncionario->getMensagem();
+            $this->tab = "tab_form";
         } else {
             try {
                 $log = new Log();
                 if ($this->modoEditar) {
+                    $this->copiaEntidade = $this->dao->pesquisarPorId($this->entidade);
+                    if ($this->copiaEntidade == null) {
+                        throw new Exception("Entidade inexistente, não é possível editá-la.");
+                    }
                     $log = $this->gerarLog(Log::TIPO_EDICAO);
                     $this->copiaEntidade = $this->dao->editar($this->entidade);
-                    $this->funcionarioEditado();
                 } else {
                     $this->copiaEntidade = $this->dao->editar($this->entidade);
                     $log = $this->gerarLog(Log::TIPO_CADASTRO);
                 }
                 $this->dao->editar($log);
                 $this->entidade = new Funcionario("", "", "");
+                $this->copiaEntidade = new Funcionario("", "", "");
                 $this->modoEditar = false;
                 $this->mensagem = new Mensagem(
                         "Cadastro de funcionários"
@@ -160,11 +171,9 @@ class FuncionarioCtrl extends Controlador {
     }
 
     private function pesquisarFuncionario() {
-        $this->modeloTabela->setPaginador(new Paginador());
         $this->modeloTabela->getPaginador()->setContagem(
-                $this->dao->contar($this->entidade));
-        $this->modeloTabela->getPaginador()->setPesquisa(
-                clone $this->entidade);
+                $this->dao->contar($this->modeloTabela->
+                                getPaginador()->getPesquisa()));
         $this->pesquisar();
     }
 
@@ -191,10 +200,15 @@ class FuncionarioCtrl extends Controlador {
     }
 
     private function editarFuncionario($index) {
-        if ($index > 0) {
-            $this->entidade = $this->entidades[$index - 1];
-            $this->copiaEntidade = $this->entidade->clonar();
-            $this->modoEditar = true;
+        if ($index > 0 && $index <= count($this->entidades)) {
+            $aux = $this->dao->pesquisarPorId($this->entidades[$index - 1]);
+            if ($aux == null) {
+                $this->entidade = new Funcionario("", "", "");
+            } else {
+                $this->entidade = $aux;
+                $this->copiaEntidade = $this->entidade->clonar();
+                $this->modoEditar = true;
+            }
         }
     }
 
@@ -204,21 +218,34 @@ class FuncionarioCtrl extends Controlador {
             return;
         }
         if ($index != 0) {
-            $this->copiaEntidade = $this->entidades[$index - 1];
-            $this->dao->excluir($this->copiaEntidade);
-            $this->funcionarioRemovido();
-            $this->dao->editar($this->gerarLog(Log::TIPO_REMOCAO));
-            $p = $this->modeloTabela->getPaginador();
-            if ($p->getOffset() == $p->getContagem()) {
-                $p->anterior();
+            $this->copiaEntidade = $this->dao->pesquisarPorId(
+                    $this->entidades[$index - 1]);
+            if ($this->copiaEntidade != null) {
+                $this->dao->excluir($this->copiaEntidade);
+                $this->dao->editar($this->gerarLog(Log::TIPO_REMOCAO));
+                $this->mensagem = new Mensagem(
+                        "Remover funcionário"
+                        , Mensagem::MSG_TIPO_OK
+                        , "Funcionário removido com sucesso.");
+            } else {
+                $this->mensagem = new Mensagem(
+                        "Remover funcionário"
+                        , Mensagem::MSG_TIPO_AVISO
+                        , "Funcionário já foi removido por outro usuário.");
             }
-            $p->setContagem($p->getContagem() - 1);
-            $this->pesquisar();
-            $this->mensagem = new Mensagem(
-                    "Cadastro de funcionários"
-                    , Mensagem::MSG_TIPO_OK
-                    , "Funcionário removido com sucesso.");
         }
+    }
+    
+    public function iniciar() {
+        if ($this->entidade->getId() != null) {
+            $aux = $this->dao->pesquisarPorId($this->entidade);
+            if ($aux == null) {
+                $this->entidade = new Funcionario("", "", "");
+            } else {
+                $this->entidade = $aux;
+            }
+        }
+        $this->pesquisarFuncionario();
     }
 
     public function resetar() {
@@ -226,6 +253,7 @@ class FuncionarioCtrl extends Controlador {
         $this->validadorFuncionario = new ValidadorFuncionario();
         $this->post = null;
         $this->dao = null;
+        $this->copiaEntidade = new Funcionario("", "", "");
     }
 
     private function gerarLog($tipo) {
@@ -242,7 +270,6 @@ class FuncionarioCtrl extends Controlador {
             if ($log->getTipo() == Log::TIPO_CADASTRO) {
                 $log->setDadosAlterados(json_encode($entidade));
             } else if ($log->getTipo() == Log::TIPO_EDICAO) {
-                $this->copiaEntidade = $this->dao->pesquisarPorId($this->entidade);
                 if ($this->copiaEntidade->getNome() != $this->entidade->getNome()) {
                     $campos["nome"] = $this->copiaEntidade->getNome();
                 }
@@ -269,31 +296,4 @@ class FuncionarioCtrl extends Controlador {
                     , "Erro durante a geração do Log.");
         }
     }
-
-    private function funcionarioInserido() {
-        
-    }
-
-    private function funcionarioEditado() {
-//        $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
-//        $func = $processoCtrl->getEntidade()->getFuncionario();
-//        if ($func != null && $func->getId() == $this->copiaEntidade->getId()) {
-//            $processoCtrl->getEntidade()->setFuncionario(
-//                    $this->copiaEntidade->clonar());
-//        }
-    }
-
-    private function funcionarioRemovido() {
-//        $processoCtrl = $this->controladores[Controlador::CTRL_PROCESSO];
-//        $func = $processoCtrl->getEntidade()->getFuncionario();
-//        if ($func != null && $func->getId() == $this->copiaEntidade->getId()) {
-//            $processoCtrl->getEntidade()->setFuncionario(
-//                    new Funcionario("", "", ""));
-//        }
-    }
-
-    public function iniciar() {
-        
-    }
-
 }

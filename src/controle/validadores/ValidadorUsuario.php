@@ -27,7 +27,7 @@ class ValidadorUsuario extends Validador {
         } else if (strlen($this->entidade->getNome()) < 4) {
             $submensagens[] = "Campo Nome tem que ter ao menos 4 letras!\n";
             $this->camposInvalidos[] = "campo_nome";
-        } else if (!preg_match("/^([ a-zA-Z'\-áéíóúÁÉÍÓÚâêîôûÂÊÎÔÛãõçÇ])+$/i"
+        } else if (!preg_match("/^([ a-zA-Z'\-áéíóúãÃÁÍÓÚâêîôûÂÊÎÔÛãõçÇ])+$/i"
                         , $this->entidade->getNome())) {
             $submensagens[] = "Caracteres inválidos no nome!\n";
             $this->camposInvalidos[] = "campo_nome";

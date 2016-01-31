@@ -40,6 +40,9 @@ class Paginador {
 
     public function setContagem($contagem) {
         $this->contagem = $contagem;
+        if ($this->contagem == $this->limit) {
+            $this->offset = 0;
+        }
     }
 
     public function setOffset($offset) {

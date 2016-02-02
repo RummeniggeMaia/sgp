@@ -15,7 +15,7 @@ class HomeCtrl extends Controlador {
         $this->descricao = Controlador::CTRL_HOME;
     }
 
-    public function executarFuncao($post, $funcao,& $controladores) {
+    public function executarFuncao($funcao) {
         
     }
 
@@ -24,8 +24,7 @@ class HomeCtrl extends Controlador {
     }
 
     public function resetar() {
-        $this->mensagem = null;
-        $this->dao = null;
+        parent::resetar();
     }
 
     public function iniciar() {

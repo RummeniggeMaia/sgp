@@ -28,10 +28,7 @@ use util\Util;
  */
 class UsuarioCtrl extends Controlador {
 
-    //protected $dao;
     private $validadorUsuario;
-    private $post;
-    private $controladores;
     private $autorizacaoAdmin;
     
     public function __construct($dao) {
@@ -42,6 +39,7 @@ class UsuarioCtrl extends Controlador {
         $this->modeloTabela = new ModeloDeTabela();
         $this->modeloTabela->setCabecalhos(array("Nome", "Email", "Login", "Senha"));
         $this->modeloTabela->setModoBusca(false);
+        $this->modeloTabela->getPaginador()->setPesquisa(new Departamento(""));
         $this->validadorUsuario = new ValidadorUsuario();
         
 //        $auts = $dao->pesquisar(new Autorizacao("admin"), 1, 0);
@@ -65,25 +63,31 @@ class UsuarioCtrl extends Controlador {
         $this->validadorUsuario = $validadorUsuario;
     }
 
-    public function executarFuncao($post, $funcao,& $controladores) {
-        $this->post = $post;
-        $this->controladores = &$controladores;
+    public function executarFuncao($funcao) {
+//        $this->post = $post;
+//        $this->controladores = &$controladores;
 
         $this->gerarUsuario();
 
         $redirecionamento = new Redirecionamento();
         $redirecionamento->setDestino(Controlador::CTRL_USUARIO);
         $redirecionamento->setCtrl($this);
-        $this->tab = "tab_form";
+        
+        $this->tab = "tab_tabela";
 
         if ($funcao == "salvar") {
             $this->salvarUsuario();
         } else if ($funcao == "pesquisar") {
+            $this->modeloTabela->setPaginador(new Paginador());
+            $this->modeloTabela->getPaginador()->
+                    setPesquisa($this->entidade->clonar());
             $this->pesquisarUsuario();
         }  else if ($funcao == "cancelar_edicao") {
+            $this->tab = "tab_form";
             $this->modoEditar = false;
             $this->entidade = new Usuario("", "", "", "");
         } else if (Util::startsWithString($funcao, "editar_")) {
+            $this->tab = "tab_form";
             $index = intval(str_replace("editar_", "", $funcao));
             $this->editarUsuario($index);
         } else if (Util::startsWithString($funcao, "excluir_")) {
@@ -103,21 +107,26 @@ class UsuarioCtrl extends Controlador {
         $this->validadorUsuario->validar($this->entidade);
         if (!$this->validadorUsuario->getValido()) {
             $this->mensagem = $this->validadorUsuario->getMensagem();
+            $this->tab = "tab_form";
         } else {
             try {
                 $this->criptografarSenha();
                 $this->atribuirAdmin();
                 $log = new Log();
                 if ($this->modoEditar) {
+                    $this->copiaEntidade = $this->dao->pesquisarPorId($this->entidade);
+                    if ($this->copiaEntidade == null) {
+                        throw new Exception("Entidade inexistente, não é possível editá-la.");
+                    }
                     $log = $this->gerarLog(Log::TIPO_EDICAO);
                     $this->dao->editar($this->entidade);
-                    $this->pesquisarUsuario();
                 } else {
                     $this->copiaEntidade = $this->dao->editar($this->entidade);
                     $log = $this->gerarLog(Log::TIPO_CADASTRO);
                 }
                 $this->dao->editar($log);
                 $this->entidade = new Usuario("", "", "", "");
+                $this->copiaEntidade = new Usuario("", "", "", "");
                 $this->modoEditar = false;
                 $this->mensagem = new Mensagem(
                         "Cadastro de usuários"
@@ -140,11 +149,11 @@ class UsuarioCtrl extends Controlador {
     }
 
     private function pesquisarUsuario() {
-        $this->modeloTabela->setPaginador(new Paginador());
-        $this->modeloTabela->getPaginador()->setContagem(
-                $this->dao->contar($this->entidade));
-        $this->modeloTabela->getPaginador()->setPesquisa(
-                $this->entidade->clonar());
+//        $this->modeloTabela->setPaginador(new Paginador());
+//        $this->modeloTabela->getPaginador()->setContagem(
+//                $this->dao->contar($this->entidade));
+//        $this->modeloTabela->getPaginador()->setPesquisa(
+//                $this->entidade->clonar());
         $this->pesquisar();
     }
 
@@ -168,9 +177,8 @@ class UsuarioCtrl extends Controlador {
     }
 
     public function resetar() {
-        $this->dao = null;
-        $this->mensagem = null;
-        $this->post = null;
+        parent::resetar();
+        $this->copiaEntidade = new Usuario("", "", "", "");
         $this->validadorUsuario = new ValidadorUsuario();
     }
 
@@ -189,34 +197,40 @@ class UsuarioCtrl extends Controlador {
         $this->modeloTabela->setLinhas($linhas);
     }
 
-    private function editarUsuario($index) {
-        if ($index != 0) {
-            $this->entidade = $this->entidades[$index - 1];
-            $this->copiaEntidade = $this->entidade->clonar();
-            $this->modoEditar = true;
+    public function editarDepartamento($index) {
+        if ($index > 0 && $index <= count($this->entidades)) {
+            $aux = $this->dao->pesquisarPorId($this->entidades[$index - 1]);
+            if ($aux == null) {
+                $this->entidade = new Usuario("", "", "", "");
+            } else {
+                $this->entidade = $aux;
+                $this->copiaEntidade = $this->entidade->clonar();
+                $this->modoEditar = true;
+            }
         }
     }
 
-    private function excluirUsuario($index) {
+    private function excluirDepartamento($index) {
         if (!$this->verificarPermissao(
                         $this->controladores[Controlador::CTRL_AUTENTICACAO])) {
             return;
         }
         if ($index != 0) {
-            $this->copiaEntidade = $this->entidades[$index - 1];
-            $this->dao->excluir($this->copiaEntidade);
-            $this->usuarioRemovido();
-            $this->dao->editar($this->gerarLog(Log::TIPO_REMOCAO));
-            $p = $this->modeloTabela->getPaginador();
-            if ($p->getOffset() == $p->getContagem()) {
-                $p->anterior();
+            $this->copiaEntidade = $this->dao->pesquisarPorId(
+                    $this->entidades[$index - 1]);
+            if ($this->copiaEntidade != null) {
+                $this->dao->excluir($this->copiaEntidade);
+                $this->dao->editar($this->gerarLog(Log::TIPO_REMOCAO));
+                $this->mensagem = new Mensagem(
+                        "Remover usuário"
+                        , Mensagem::MSG_TIPO_OK
+                        , "Usuário removido com sucesso.");
+            } else {
+                $this->mensagem = new Mensagem(
+                        "Remover usuário"
+                        , Mensagem::MSG_TIPO_AVISO
+                        , "Usuário já foi removido por outro usuário.");
             }
-            $p->setContagem($p->getContagem() - 1);
-            $this->pesquisar();
-            $this->mensagem = new Mensagem(
-                    "Cadastro de usuários"
-                    , Mensagem::MSG_TIPO_OK
-                    , "Usuário removido com sucesso.");
         }
     }
 
@@ -233,7 +247,6 @@ class UsuarioCtrl extends Controlador {
         if ($log->getTipo() == Log::TIPO_CADASTRO) {
             $log->setDadosAlterados(json_encode($entidade));
         } else if ($log->getTipo() == Log::TIPO_EDICAO) {
-            $this->copiaEntidade = $this->dao->pesquisarPorId($this->entidade);
             if ($this->copiaEntidade->getNome() != $this->entidade->getNome()) {
                 $campos["nome"] = $this->copiaEntidade->getNome();
             }
@@ -259,14 +272,6 @@ class UsuarioCtrl extends Controlador {
         return $log;
     }
 
-    private function usuarioRemovido() {
-        $autCtrl = $this->controladores[Controlador::CTRL_AUTENTICACAO];
-        $usu = $autCtrl->getEntidade();
-        if ($usu != null && $usu->getId() == $this->copiaEntidade->getId()) {
-            $autCtrl->setEntidade(new Usuario("", "", "", ""));
-        }
-    }
-
     private function atribuirAdmin() {
         $auts = $this->entidade->getAutorizacoes();
         if (count($auts) == 0) {
@@ -276,7 +281,15 @@ class UsuarioCtrl extends Controlador {
     }
 
     public function iniciar() {
-        
+        if ($this->entidade->getId() != null) {
+            $aux = $this->dao->pesquisarPorId($this->entidade);
+            if ($aux == null) {
+                $this->entidade = new Usuario("", "", "", "");
+            } else {
+                $this->entidade = $aux;
+            }
+        }
+        $this->pesquisarUsuario();
     }
 
     /* private function enviarEmail() {

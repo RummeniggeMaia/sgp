@@ -31,8 +31,9 @@ class ProcessoCtrl extends Controlador {
     private $departamentos;
     private $funcionarios;
     private $validadorProcesso;
-    private $post;
-    private $controladores;
+
+//    private $post;
+//    private $controladores;
 
     function __construct($dao) {
         $this->descricao = Controlador::CTRL_PROCESSO;
@@ -44,7 +45,7 @@ class ProcessoCtrl extends Controlador {
         $this->modeloTabela = new ModeloDeTabela();
         $this->modeloTabela->setCabecalhos(
                 array("Nº Processo", "Funcionário", "Departamento", "Assunto"));
-        $this->modeloTabela->getPaginador()->setLimit("15");
+        $this->modeloTabela->getPaginador()->setLimit(15);
         $this->modeloTabela->getPaginador()->setPesquisa(new Processo(""));
         $this->funcionarios = array();
         //Validador utilizado para validar os campos assim como os 
@@ -104,9 +105,9 @@ class ProcessoCtrl extends Controlador {
         }
     }
 
-    public function executarFuncao($post, $funcao, & $controladores) {
-        $this->post = $post;
-        $this->controladores = &$controladores;
+    public function executarFuncao($funcao) {
+//        $this->post = $post;
+//        $this->controladores = &$controladores;
 
         $this->gerarProcesso();
 
@@ -119,7 +120,7 @@ class ProcessoCtrl extends Controlador {
         if ($funcao == "salvar") {
             $this->salvarProcesso();
         } else if ($funcao == "pesquisar") {
-            $this->modeloTabela->setPaginador(new Paginador());
+            //$this->modeloTabela->setPaginador(new Paginador());
             $this->modeloTabela->getPaginador()->
                     setPesquisa($this->entidade->clonar());
             $this->pesquisarProcessos();
@@ -221,9 +222,9 @@ class ProcessoCtrl extends Controlador {
     }
 
     private function pesquisarProcessos() {
-        $this->modeloTabela->getPaginador()->setContagem(
-                $this->dao->contar($this->modeloTabela->
-                                getPaginador()->getPesquisa()));
+//        $this->modeloTabela->getPaginador()->setContagem(
+//                $this->dao->contar($this->modeloTabela->
+//                                getPaginador()->getPesquisa()));
         $this->pesquisar();
     }
 
@@ -275,7 +276,9 @@ class ProcessoCtrl extends Controlador {
         foreach ($this->post as $valor) {
             if (Util::startsWithString($valor, "radio_")) {
                 $index = str_replace("radio_", "", $valor);
-                $selecionados[] = $this->entidades[$index - 1]->clonar();
+                if (isset($this->entidades[$index - 1])) {
+                    $selecionados[] = $this->entidades[$index - 1]->clonar();
+                }
             }
         }
         $ctrl = $this->controladores[$this->ctrlDestino];
@@ -347,10 +350,11 @@ class ProcessoCtrl extends Controlador {
         //Depois q esse contrutor for chamado no index.php, esse controlador vai 
         //ser serializado, por isso o objeto dao tem q ser nulado pois o mesmo 
         //nao pode ser serializado
-        $this->dao = null;
-        $this->mensagem = null;
+//        $this->dao = null;
+//        $this->mensagem = null;
+        parent::resetar();
         $this->validadorProcesso = new ValidadorProcesso();
-        $this->post = null;
+//        $this->post = null;
         $this->copiaEntidade = new Processo("");
     }
 

@@ -17,8 +17,8 @@ class AutenticacaoCtrl extends Controlador {
     const LIMITE = 1;
 
     private $visaoAtual;
-    private $post;
-    private $controladores;
+//    private $post;
+//    private $controladores;
 
     public function __construct($dao) {
         $this->dao = $dao;
@@ -35,9 +35,9 @@ class AutenticacaoCtrl extends Controlador {
         $this->visaoAtual = $visaoAtual;
     }
 
-    public function executarFuncao($post, $funcao, & $controladores) {
-        $this->post = $post;
-        $this->controladores = &$controladores;
+    public function executarFuncao($funcao) {
+//        $this->post = $post;
+//        $this->controladores = &$controladores;
 
         $this->gerarUsuario();
 
@@ -49,7 +49,7 @@ class AutenticacaoCtrl extends Controlador {
 //                            $this->visaoAtual
 //                            , $this->dao->getEntityManager());
 //        }
-        $ctrl = $controladores[$this->visaoAtual];
+        $ctrl = $this->controladores[$this->visaoAtual];
         $ctrl->setDao($this->dao);
         $redirecionamento->setCtrl($ctrl);
 
@@ -134,8 +134,7 @@ class AutenticacaoCtrl extends Controlador {
     }
 
     public function resetar() {
-        $this->post = null;
-        $this->dao = null;
+        parent::resetar();
     }
 
     public function contemAutorizacao($a) {

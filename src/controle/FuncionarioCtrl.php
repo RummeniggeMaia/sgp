@@ -24,8 +24,8 @@ use util\Util;
 class FuncionarioCtrl extends Controlador {
 
     private $validadorFuncionario;
-    private $controladores;
-    private $post;
+//    private $controladores;
+//    private $post;
 
     public function __construct() {
         $this->descricao = Controlador::CTRL_FUNCIONARIO;
@@ -62,9 +62,9 @@ class FuncionarioCtrl extends Controlador {
         }
     }
 
-    public function executarFuncao($post, $funcao, & $controladores) {
-        $this->post = $post;
-        $this->controladores = &$controladores;
+    public function executarFuncao($funcao) {
+//        $this->post = $post;
+//        $this->controladores = &$controladores;
 
         $this->gerarFuncionario();
 
@@ -171,9 +171,9 @@ class FuncionarioCtrl extends Controlador {
     }
 
     private function pesquisarFuncionario() {
-        $this->modeloTabela->getPaginador()->setContagem(
-                $this->dao->contar($this->modeloTabela->
-                                getPaginador()->getPesquisa()));
+//        $this->modeloTabela->getPaginador()->setContagem(
+//                $this->dao->contar($this->modeloTabela->
+//                                getPaginador()->getPesquisa()));
         $this->pesquisar();
     }
 
@@ -249,11 +249,9 @@ class FuncionarioCtrl extends Controlador {
     }
 
     public function resetar() {
-        $this->mensagem = null;
-        $this->validadorFuncionario = new ValidadorFuncionario();
-        $this->post = null;
-        $this->dao = null;
+        parent::resetar();
         $this->copiaEntidade = new Funcionario("", "", "");
+        $this->validadorFuncionario = new ValidadorFuncionario();
     }
 
     private function gerarLog($tipo) {

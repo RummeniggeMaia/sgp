@@ -24,8 +24,8 @@ use Exception;
 class DepartamentoCtrl extends Controlador {
 
     private $validadorDepartamento;
-    private $post;
-    private $controladores;
+//    private $post;
+//    private $controladores;
 
     public function __construct() {
         $this->descricao = Controlador::CTRL_DEPARTAMENTO;
@@ -57,9 +57,9 @@ class DepartamentoCtrl extends Controlador {
         }
     }
 
-    public function executarFuncao($post, $funcao, & $controladores) {
-        $this->post = $post;
-        $this->controladores = &$controladores;
+    public function executarFuncao($funcao) {
+//        $this->post = $post;
+//        $this->controladores = &$controladores;
 
         $this->gerarDepartamento();
 
@@ -154,9 +154,9 @@ class DepartamentoCtrl extends Controlador {
     }
 
     private function pesquisarDepartamento() {
-        $this->modeloTabela->getPaginador()->setContagem(
-                $this->dao->contar($this->modeloTabela->
-                                getPaginador()->getPesquisa()));
+//        $this->modeloTabela->getPaginador()->setContagem(
+//                $this->dao->contar($this->modeloTabela->
+//                                getPaginador()->getPesquisa()));
         $this->pesquisar();
     }
 
@@ -210,11 +210,9 @@ class DepartamentoCtrl extends Controlador {
     }
 
     public function resetar() {
-        $this->mensagem = null;
-        $this->validadorDepartamento = new ValidadorDepartamento();
-        $this->post = null;
-        $this->dao = null;
+        parent::resetar();
         $this->copiaEntidade = new Departamento("");
+        $this->validadorDepartamento = new ValidadorDepartamento();
     }
 
     private function gerarLog($tipo) {

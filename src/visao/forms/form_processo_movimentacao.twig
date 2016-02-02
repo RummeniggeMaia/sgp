@@ -77,7 +77,7 @@
                 <table class="ui very basic table">
                     <tr>
                         <td style="width: 15%">
-                            <div class="ui fluid label">
+                            <div class="ui fluid label {{ 'label_funcionario' in ctrl.validadorProcessoMovimentacao.camposInvalidos ? 'red' : ''}}">
                                 <i class="user icon"></i>
                                 Funcionário: 
                             </div>
@@ -88,7 +88,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <div class="ui fluid label">
+                            <div class="ui fluid label {{ 'label_assunto' in ctrl.validadorProcessoMovimentacao.camposInvalidos ? 'red' : ''}}">
                                 <i class="archive icon"></i>
                                 Assunto: 
                             </div>
@@ -99,7 +99,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <div class="ui fluid label">
+                            <div class="ui fluid label {{ 'label_departamento' in ctrl.validadorProcessoMovimentacao.camposInvalidos ? 'red' : ''}}">
                                 <i class="building icon"></i>
                                 Departamento: 
                             </div>

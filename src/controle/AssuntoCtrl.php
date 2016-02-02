@@ -12,7 +12,6 @@ use DateTime;
 use DateTimeZone;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use modelo\Assunto;
-use modelo\Autorizacao;
 use modelo\Log;
 use util\Util;
 use Exception;
@@ -25,9 +24,9 @@ use Exception;
 class AssuntoCtrl extends Controlador {
 
     private $validadorAssunto;
-    private $post;
-    private $controladores;
-    private $autenticacaoCtrl;
+//    private $post;
+//    private $controladores;
+//    private $autenticacaoCtrl;
 
     public function __construct() {
         $this->descricao = Controlador::CTRL_ASSUNTO;
@@ -59,10 +58,10 @@ class AssuntoCtrl extends Controlador {
         }
     }
 
-    public function executarFuncao($post, $funcao, & $controladores) {
-        $this->post = $post;
-        $this->controladores = &$controladores;
-        $this->autenticacaoCtrl = $controladores[Controlador::CTRL_AUTENTICACAO];
+    public function executarFuncao($funcao) {
+//        $this->post = $post;
+//        $this->controladores = &$controladores;
+//        $this->autenticacaoCtrl = $controladores[Controlador::CTRL_AUTENTICACAO];
 
         $this->gerarAssunto();
 
@@ -159,9 +158,9 @@ class AssuntoCtrl extends Controlador {
     }
 
     public function pesquisarAssunto() {
-        $this->modeloTabela->getPaginador()->setContagem(
-                $this->dao->contar($this->modeloTabela->
-                                getPaginador()->getPesquisa()));
+//        $this->modeloTabela->getPaginador()->setContagem(
+//                $this->dao->contar($this->modeloTabela->
+//                                getPaginador()->getPesquisa()));
         $this->pesquisar();
     }
 
@@ -215,11 +214,9 @@ class AssuntoCtrl extends Controlador {
     }
 
     public function resetar() {
-        $this->mensagem = null;
-        $this->validadorAssunto = new ValidadorAssunto();
-        $this->post = null;
-        $this->dao = null;
+        parent::resetar();
         $this->copiaEntidade = new Assunto("", false);
+        $this->validadorAssunto = new ValidadorAssunto();
     }
 
     private function gerarLog($tipo) {

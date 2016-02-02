@@ -46,6 +46,21 @@ class ValidadorProcessoMovimentacao extends Validador {
             }
         }
 
+        if ($entidade->getAssunto()->getId() == null) {
+            $submensagens[] = "Processo não contém um Assunto!\n";
+            $this->camposInvalidos[] = "label_assunto";
+        }
+        
+        if ($entidade->getDepartamento()->getId() == null) {
+            $submensagens[] = "Processo não contém um Departamento!\n";
+            $this->camposInvalidos[] = "label_departamento";
+        }
+        
+        if ($entidade->getFuncionario()->getId() == null) {
+            $submensagens[] = "Processo não contém um Funcionário!\n";
+            $this->camposInvalidos[] = "label_funcionario";
+        }
+        
         $this->mensagem->setSubmensagens($submensagens);
         if (empty($this->camposInvalidos)) {
             $this->valido = true;

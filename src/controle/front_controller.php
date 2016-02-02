@@ -107,6 +107,7 @@ foreach ($chaves as $requisicao) {
                 }
                 $controlador = $controladores[$ctrl];
                 $controlador->setDao(new Dao($entityManager));
+                $controlador->setControladores($controladores);
                 $redirecionamento->setCtrl($controlador);
                 //Gera o template e manda renderizar a visao .twig
                 redirecionar($twig, $redirecionamento, $autenticacaoCtrl);
@@ -120,10 +121,11 @@ foreach ($chaves as $requisicao) {
             if (isset($controladores[$ctrl])) {
                 $controlador = $controladores[$ctrl];
                 $controlador->setDao(new Dao($entityManager));
+                $controlador->setControladores($controladores);
+                $controlador->setPost($_POST);
                 //passando os controladores pela funcao executar funcao para 
                 //comunicao entre eles
-                $redirecionamento = $controlador->executarFuncao(
-                        $_POST, $funcao, $controladores);
+                $redirecionamento = $controlador->executarFuncao($funcao);
                 $entityManager = EntityManager::create($conn, $config);
                 $controlador->setDao(new Dao($entityManager));
                 $redirecionamento->setDestino(

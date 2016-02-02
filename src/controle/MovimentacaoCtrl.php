@@ -24,8 +24,8 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 class MovimentacaoCtrl extends Controlador {
 
     private $validadorMovimentacao;
-    private $post;
-    private $controladores;
+//    private $post;
+//    private $controladores;
 
     public function __construct() {
         $this->descricao = Controlador::CTRL_MOVIMENTACAO;
@@ -56,9 +56,9 @@ class MovimentacaoCtrl extends Controlador {
         }
     }
 
-    public function executarFuncao($post, $funcao, & $controladores) {
-        $this->post = $post;
-        $this->controladores = &$controladores;
+    public function executarFuncao($funcao) {
+//        $this->post = $post;
+//        $this->controladores = &$controladores;
 
         $this->gerarMovimentacao();
 
@@ -153,9 +153,9 @@ class MovimentacaoCtrl extends Controlador {
     }
 
     private function pesquisarMovimentacao() {
-        $this->modeloTabela->getPaginador()->setContagem(
-                $this->dao->contar($this->modeloTabela->
-                                getPaginador()->getPesquisa()));
+//        $this->modeloTabela->getPaginador()->setContagem(
+//                $this->dao->contar($this->modeloTabela->
+//                                getPaginador()->getPesquisa()));
         $this->pesquisar();
     }
 
@@ -209,11 +209,9 @@ class MovimentacaoCtrl extends Controlador {
     }
 
     public function resetar() {
-        $this->mensagem = null;
-        $this->validadorMovimentacao = new ValidadorMovimentacao();
-        $this->post = null;
-        $this->dao = null;
+        parent::resetar();
         $this->copiaEntidade = new Movimentacao("", false);
+        $this->validadorMovimentacao = new ValidadorMovimentacao();
     }
 
     private function gerarLog($tipo) {

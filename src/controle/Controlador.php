@@ -28,6 +28,8 @@ abstract class Controlador {
     //quando o usuario clica em editar entao a tab de form tem q aparecer em vez
     // da tab que contem a tabela
     protected $tab = "tab_form";
+    protected $controladores;
+    protected $post;
 
     const CTRL_USUARIO = "gerenciar_usuario";
     const CTRL_FUNCIONARIO = "gerenciar_funcionario";
@@ -123,8 +125,27 @@ abstract class Controlador {
         $this->tab = $tab;
     }
 
+    function getControladores() {
+        return $this->controladores;
+    }
+
+    function setControladores(& $controladores) {
+        $this->controladores = & $controladores;
+    }
+
+    function getPost() {
+        return $this->post;
+    }
+
+    function setPost($post) {
+        $this->post = $post;
+    }
+
     public function pesquisar() {
         if ($this->modeloTabela->getPaginador()->getPesquisa() != null) {
+            $this->modeloTabela->getPaginador()->setContagem(
+                    $this->dao->contar($this->modeloTabela->
+                                    getPaginador()->getPesquisa()));
             $this->entidades = $this->dao->pesquisar(
                     $this->modeloTabela->getPaginador()->getPesquisa()
                     , $this->modeloTabela->getPaginador()->getLimit()
@@ -161,18 +182,20 @@ abstract class Controlador {
     public function verificarPermissao($autenticacaoCtrl) {
         if (!$autenticacaoCtrl->contemAutorizacao(Autorizacao::ADMIN)) {
             $this->mensagem = new Mensagem(
-                        "Permissão negada"
-                        , Mensagem::MSG_TIPO_ERRO
-                        , "Usuário não tem permissão para executar tal função.");
+                    "Permissão negada"
+                    , Mensagem::MSG_TIPO_ERRO
+                    , "Usuário não tem permissão para executar tal função.");
             return false;
         }
         return true;
     }
+
     /**
      * Todas as funcoes dos controladores sao executadas a partir daqui, 
      * qualquer funcao do sistema q nao esteja dentro desta nao será executada.
      */
-    public abstract function executarFuncao($post, $funcao,& $controladores);
+    //public abstract function executarFuncao($post, $funcao, & $controladores);
+    public abstract function executarFuncao($funcao);
 
     /**
      * Cada entidade tem seus campos, entao essa funcao é utilizada para gerar 
@@ -187,7 +210,11 @@ abstract class Controlador {
      * controladores, etc. Essas informacoes nao podem ser armazenadas na 
      * sessao, por isso sao apagadas no reset.
      */
-    public abstract function resetar();
-    
+    public function resetar() {
+        $this->mensagem = null;     
+        $this->post = null;
+        $this->dao = null;
+    }
+
     public abstract function iniciar();
 }

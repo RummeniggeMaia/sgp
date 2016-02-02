@@ -23,8 +23,6 @@ class ProcessoMovimentacaoCtrl extends Controlador {
 
     private $validadorProcessoMovimentacao;
     private $movimentacoes;
-    private $controladores;
-    private $post;
     private $pmRemovidos;
 
     /**
@@ -71,13 +69,13 @@ class ProcessoMovimentacaoCtrl extends Controlador {
      * a entidade na qual aquele campo de texto pertence.
      */
 
-    public function gerarProcessoMovimentacao($post) {
+    public function gerarProcessoMovimentacao() {
         /*
          * Caso o usuario tenha modificado o valor de alguma movimentacao no 
          * form, entao essa modificacao deve ser atribuida ao modelo para que 
          * haja sincronia entre a pagina e o controle.
          */
-        foreach ($post as $k => $v) {
+        foreach ($this->post as $k => $v) {
             //Verifica se existe algum alteracao nas movimentacoes. Caso haja 
             //algum valor de $post que comece com movimentacao_ entao a 
             //movimentacao daquele processoMovimentacao foi atualizado.
@@ -111,11 +109,11 @@ class ProcessoMovimentacaoCtrl extends Controlador {
      * @return Redirecionamento O controle a quem esse vai se 
      * direcionar apos executar as funcoes.
      */
-    public function executarFuncao($post, $funcao, & $controladores) {
-        $this->controladores = &$controladores;
-        $this->post = $post;
+    public function executarFuncao($funcao) {
+//        $this->controladores = &$controladores;
+//        $this->post = $post;
         //Verifica o que mudou na pagina de gerenciarMovimentacao
-        $this->gerarProcessoMovimentacao($post);
+        $this->gerarProcessoMovimentacao();
 
         //O redirecionamento padrao sempre retorna para a pagina atual, nesse 
         //caso a pagina desse controlador.
@@ -243,9 +241,7 @@ class ProcessoMovimentacaoCtrl extends Controlador {
         //Depois q esse contrutor for chamado no index.php, esse controlador vai 
         //ser serializado, por isso o objeto dao tem q ser nulado pois o mesmo 
         //nao pode ser serializado
-        $this->dao = null;
-        $this->mensagem = null;
-        $this->post = null;
+        parent::resetar();
         $this->validadorProcessoMovimentacao = new ValidadorProcessoMovimentacao();
     }
 
@@ -313,7 +309,12 @@ class ProcessoMovimentacaoCtrl extends Controlador {
                     break;
                 }
             }
-            $this->entidade = $this->dao->pesquisarPorId($this->entidade);
+            $aux = $this->dao->pesquisarPorId($this->entidade);
+            if ($aux == null) {
+                $this->entidade = new Processo("");
+            } else {
+                $this->entidade = $aux;
+            }
             $pms = $this->entidade->getProcessoMovimentacoes();
             foreach ($this->pmRemovidos as $pmRemovido) {
                 foreach ($pms as $i => $pm) {

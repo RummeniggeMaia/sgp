@@ -39,7 +39,7 @@ class UsuarioCtrl extends Controlador {
         $this->modeloTabela = new ModeloDeTabela();
         $this->modeloTabela->setCabecalhos(array("Nome", "Email", "Login", "Senha"));
         $this->modeloTabela->setModoBusca(false);
-        $this->modeloTabela->getPaginador()->setPesquisa(new Departamento(""));
+        $this->modeloTabela->getPaginador()->setPesquisa(new Usuario("", "", "", ""));
         $this->validadorUsuario = new ValidadorUsuario();
         
 //        $auts = $dao->pesquisar(new Autorizacao("admin"), 1, 0);
@@ -141,9 +141,9 @@ class UsuarioCtrl extends Controlador {
                         , "Já existe um usuário com este login.\n");
             } catch (Exception $e) {
                 $this->mensagem = new Mensagem(
-                        "Cadastro de movimentação"
+                        "Cadastro de usuário"
                         , Mensagem::MSG_TIPO_ERRO
-                        , "Erro ao salvar a movimentação.");
+                        , "Erro: " . $e->getMessage());
             }
         }
     }
@@ -197,7 +197,7 @@ class UsuarioCtrl extends Controlador {
         $this->modeloTabela->setLinhas($linhas);
     }
 
-    public function editarDepartamento($index) {
+    public function editarUsuario($index) {
         if ($index > 0 && $index <= count($this->entidades)) {
             $aux = $this->dao->pesquisarPorId($this->entidades[$index - 1]);
             if ($aux == null) {
@@ -210,7 +210,7 @@ class UsuarioCtrl extends Controlador {
         }
     }
 
-    private function excluirDepartamento($index) {
+    private function excluirUsuario($index) {
         if (!$this->verificarPermissao(
                         $this->controladores[Controlador::CTRL_AUTENTICACAO])) {
             return;

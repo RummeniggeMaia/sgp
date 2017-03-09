@@ -18,7 +18,6 @@ class Autorizacao extends Entidade {
     /** @Column(type="string") */
     protected $descricao;
 
-    /** @ManyToMany(targetEntity="Usuario", mappedBy="autorizacoes") */
     protected $usuarios;
 
     function __construct($descricao) {

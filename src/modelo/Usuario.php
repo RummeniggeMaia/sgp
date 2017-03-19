@@ -4,6 +4,7 @@ namespace modelo;
 
 use modelo\Entidade;
 use modelo\Log;
+use modelo\Processo;
 
 /**
  * Description of Usuario
@@ -34,6 +35,9 @@ class Usuario extends Entidade {
      */
     protected $autorizacoes;
     
+    /** @OneToMany(targetEntity="Processo", mappedBy="usuario") */
+    protected $processos;
+    
     private $autenticar;
 
     function __construct($nome, $email, $login, $senha) {
@@ -43,6 +47,7 @@ class Usuario extends Entidade {
         $this->login = $login;
         $this->senha = $senha;
         $this->autenticar = false;
+        $this->processos = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     public function getId() {
@@ -109,8 +114,14 @@ class Usuario extends Entidade {
     public function setAutenticar($autenticar) {
         $this->autenticar = $autenticar;
     }
+    function getProcessos() {
+        return $this->processos;
+    }
 
-    
+    function setProcessos($processos) {
+        $this->processos = $processos;
+    }
+
     public function clonar() {
         $clone = new Usuario("", "", "", "");
 

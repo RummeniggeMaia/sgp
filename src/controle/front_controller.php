@@ -36,6 +36,7 @@ if (isset($_SESSION['visoes_navegacao'])) {
         Controlador::CTRL_MOVIMENTACAO => 'forms/form_movimentacao.twig',
         Controlador::CTRL_PROCESSO => 'forms/form_processo.twig',
         Controlador::CTRL_PROCESSO_MOVIMENTACAO => 'forms/form_processo_movimentacao.twig',
+        Controlador::CTRL_PROTOCOLO => 'forms/form_autenticar_processo.twig',
         Controlador::CTRL_HOME => 'home.twig'
     );
     //Pra inserir qualquer objeto na sessao é necessario serializa-lo, 

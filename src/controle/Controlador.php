@@ -40,6 +40,7 @@ abstract class Controlador {
     const CTRL_PROCESSO_MOVIMENTACAO = "gerenciar_processo_movimentacao";
     const CTRL_HOME = "gerenciar_home";
     const CTRL_AUTENTICACAO = "gerenciar_autenticacao";
+    const CTRL_PROTOCOLO = "autenticar_processo";
 
     public function getDescricao() {
         return $this->descricao;

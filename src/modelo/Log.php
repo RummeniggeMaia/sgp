@@ -7,7 +7,10 @@ use Doctrine\ORM\Mapping\Table;
 use ReflectionClass;
 
 /**
- *
+ * A tabela Log é usada para armazenar os dados modificados recentementes pelos 
+ * usuarios. Sempre é armazenado o valor anterior ao atual. Ex: Se uma entidade 
+ * tem um campo com valor 1 e editado pra 2, entao o valor 1 é armazenado nessa 
+ * tabela.
  *
  * @Entity 
  * @Table(name="log")

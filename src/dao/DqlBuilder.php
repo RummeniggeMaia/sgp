@@ -9,6 +9,7 @@ use modelo\Entidade;
 use modelo\Funcionario;
 use modelo\Movimentacao;
 use modelo\Processo;
+use modelo\Protocolo;
 use modelo\Usuario;
 
 /**
@@ -51,6 +52,10 @@ class DqlBuilder {
         }
         if ($entidade->getClassName() == "modelo\Processo") {
             $this->gerarClausulaWhereProcesso(
+                    $entidade, $queryBuilder);
+        }
+        if ($entidade->getClassName() == "modelo\Protocolo") {
+            $this->gerarClausulaWhereProtocolo(
                     $entidade, $queryBuilder);
         }
     }
@@ -131,6 +136,10 @@ class DqlBuilder {
         if ($p->getFuncionario()->getId() != null) {
             $qb->andWhere("x.funcionario = " . $p->getFuncionario()->getId());
         }
+    }
+    
+    private function gerarClausulaWhereProtocolo(Protocolo $p, QueryBuilder $qb) {
+        $qb->andWhere("x.numero = '" . $p->getNumero() . "'");
     }
 
 }

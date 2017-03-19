@@ -1,7 +1,8 @@
 {
     "require": {
-        "doctrine/orm": "2.4.*",
-        "twig/twig": "~1.0"
+        "doctrine/orm": "v2.5.*",
+        "twig/twig": "~1.0",
+        "setasign/fpdf": "1.8.1"
     },
     "autoload": {
         "psr-0": {

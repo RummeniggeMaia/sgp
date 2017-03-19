@@ -27,11 +27,17 @@
         <form id="form_processo" class="ui form" method="post" 
               action="front_controller.php">
             <div class="ui bottom attached tab segment {{ ctrl.tab == 'tab_form' ? 'active' : ''}}" data-tab="form">
-
-                <div class="field {{ 'campo_numero_processo' in ctrl.validadorProcesso.camposInvalidos ? 'error' : '' }}">
-                    <label>Nº Processo:</label>
-                    <input type="text" name="campo_numero_processo" placeholder="Número do Processo" 
-                           value="{{ ctrl.entidade.numeroProcesso }}">
+                <div class="two fields">
+                    <div class="field {{ 'campo_numero_processo' in ctrl.validadorProcesso.camposInvalidos ? 'error' : '' }}">
+                        <label>Nº Processo:</label>
+                        <input type="text" name="campo_numero_processo" placeholder="Número do Processo" 
+                               value="{{ ctrl.entidade.numeroProcesso }}">
+                    </div>
+                    <div class="field">
+                        <label>Nº Protocolo:</label>
+                        <input type="text" name="campo_numero_protocolo" readonly="true"
+                               value="{{ ctrl.entidade.protocolo.numero }}">
+                    </div>
                 </div>
                 <div class="two fields">
                     <div class="field {{ 'drop_assunto' in ctrl.validadorProcesso.camposInvalidos ? 'error' : '' }}">
@@ -73,13 +79,13 @@
                     <div class="ui action input">
                         {% if autenticacaoCtrl.contemAutorizacao('admin') %}
                             <input type="text" placeholder="Buscar um funcionário" 
-                                   value="{{ ctrl.entidade.funcionario.nome ~ '\t' ~ ctrl.entidade.funcionario.cpf ~ '\t' ~ ctrl.entidade.funcionario.rg}}"
+                                   value="{{ ctrl.entidade.funcionario.nome ~ '\tCPF: ' ~ ctrl.entidade.funcionario.cpf ~ '\tRG: ' ~ ctrl.entidade.funcionario.rg}}"
                                    name="campo_funcionario"
                                    data-value="{{ ctrl.entidade.funcionario.id }}"
                                    readonly="true">
                         {% else %}
                             <input type="text" placeholder="Buscar um funcionário" 
-                                   value="{{ ctrl.entidade.funcionario.nome ~ '\t' ~ '***.' ~ (ctrl.entidade.funcionario.cpf|slice(4, 7)) ~ '-**' ~ '\t' ~ '***.***.***'}}"
+                                   value="{{ ctrl.entidade.funcionario.nome ~ '\t' ~ 'CPF: ***.' ~ (ctrl.entidade.funcionario.cpf|slice(4, 7)) ~ '-**' ~ '\tRG: ' ~ '***.***.***'}}"
                                    name="campo_funcionario"
                                    data-value="{{ ctrl.entidade.funcionario.id }}"
                                    readonly="true">

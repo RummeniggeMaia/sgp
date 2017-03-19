@@ -33,6 +33,8 @@ class ControladorFactory {
                 return new ProcessoMovimentacaoCtrl($dao);
             case Controlador::CTRL_USUARIO :
                 return new UsuarioCtrl($dao);
+            case Controlador::CTRL_PROTOCOLO:
+                return new ProtocoloCtrl($dao);
         }
     }
 

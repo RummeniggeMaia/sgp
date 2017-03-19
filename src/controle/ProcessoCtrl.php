@@ -18,6 +18,7 @@ use modelo\Departamento;
 use modelo\Funcionario;
 use modelo\Log;
 use modelo\Processo;
+use modelo\Protocolo;
 use util\Util;
 
 /**
@@ -173,8 +174,8 @@ class ProcessoCtrl extends Controlador {
     }
 
     private function salvarProcesso() {
-        if (!$this->verificarPermissao(
-                        $this->controladores[Controlador::CTRL_AUTENTICACAO])) {
+        $authCtrl = $this->controladores[Controlador::CTRL_AUTENTICACAO];
+        if (!$this->verificarPermissao($authCtrl)) {
             return;
         }
         $this->validadorProcesso->setDao($this->dao);
@@ -193,6 +194,9 @@ class ProcessoCtrl extends Controlador {
                     $log = $this->gerarLog(Log::TIPO_EDICAO);
                     $this->copiaEntidade = $this->dao->editar($this->entidade);
                 } else {
+                    $this->entidade->setUsuario($authCtrl->getEntidade());
+                    $prot = $this->gerarProtocolo();
+                    $this->entidade->setProtocolo($prot);
                     $this->copiaEntidade = $this->dao->editar($this->entidade);
                     $log = $this->gerarLog(Log::TIPO_CADASTRO);
                 }
@@ -234,6 +238,10 @@ class ProcessoCtrl extends Controlador {
             if ($aux == null) {
                 $this->entidade = new Processo("");
             } else {
+//                $prot = new Protocolo();
+//                $prot->setProcesso($aux);
+//                $prot = $this->dao->pesquisar($prot, 1, 0)[0];
+//                $aux->setProtocolo($prot);
                 $this->entidade = $aux;
                 //Quando o usuario seleciona um processo pra editar, é 
                 //necessario armazenar o estado atual em outra variavel para 
@@ -293,6 +301,9 @@ class ProcessoCtrl extends Controlador {
     }
 
     private function buscarFuncionario() {
+        //Caso um usuario 'normal' tente fazer pesquisa nos processos passando 
+        //como referencia um funcionario, entao o CtrlProcesso inicia o controle 
+        //de funcionarios já q o mesmo não é iniciado no front_controle
         if (!isset($this->controladores[Controlador::CTRL_FUNCIONARIO])) {
             $this->controladores[Controlador::CTRL_FUNCIONARIO] = ControladorFactory
                     ::criarControlador(
@@ -303,6 +314,7 @@ class ProcessoCtrl extends Controlador {
         $funcCtrl->setModoBusca(true);
         $funcCtrl->setCtrlDestino(Controlador::CTRL_PROCESSO);
         $funcCtrl->setDao(new Dao($this->dao->getEntityManager()));
+        $funcCtrl->setControladores($this->controladores);
         $redirecionamento = new Redirecionamento();
         $redirecionamento->setDestino(Controlador::CTRL_FUNCIONARIO);
         $redirecionamento->setCtrl($funcCtrl);
@@ -316,13 +328,13 @@ class ProcessoCtrl extends Controlador {
             if ($aux == null) {
                 $this->entidade = new Processo("");
             } else {
-                if ($this->entidade->getFuncionario()->getId() != null &&
-                        $this->entidade->getFuncionario()->getId() !=
-                        $aux->getFuncionario()->getId()) {
-                    $aux->setFuncionario($this->entidade->getFuncionario());
-                }
                 $this->entidade = $aux;
             }
+        }
+        $func = $this->entidade->getFuncionario();
+        if ($func->getId() != null) {
+            $this->entidade->setFuncionario(
+                    $this->dao->pesquisarPorId($func));
         }
         $assunto = new Assunto(null, true);
         $this->assuntos = $this->dao->pesquisar($assunto, PHP_INT_MAX, 0);
@@ -371,20 +383,16 @@ class ProcessoCtrl extends Controlador {
         if ($log->getTipo() == Log::TIPO_CADASTRO) {
             $log->setDadosAlterados(json_encode($entidade));
         } else if ($log->getTipo() == Log::TIPO_EDICAO) {
-            if ($this->copiaEntidade->getNumeroProcesso() !=
-                    $this->entidade->getNumeroProcesso()) {
+            if ($this->copiaEntidade->getNumeroProcesso() != $this->entidade->getNumeroProcesso()) {
                 $campos["numeroProcesso"] = $this->copiaEntidade->getNumeroProcesso();
             }
-            if ($this->copiaEntidade->getFuncionario()->getId() !=
-                    $this->entidade->getFuncionario()->getId()) {
+            if ($this->copiaEntidade->getFuncionario()->getId() != $this->entidade->getFuncionario()->getId()) {
                 $campos["funcionario"] = $this->copiaEntidade->getFuncionario()->getId();
             }
-            if ($this->copiaEntidade->getAssunto()->getId() !=
-                    $this->entidade->getAssunto()->getId()) {
+            if ($this->copiaEntidade->getAssunto()->getId() != $this->entidade->getAssunto()->getId()) {
                 $campos["assunto"] = $this->copiaEntidade->getAssunto()->getId();
             }
-            if ($this->copiaEntidade->getDepartamento()->getId() !=
-                    $this->entidade->getDepartamento()->getId()) {
+            if ($this->copiaEntidade->getDepartamento()->getId() != $this->entidade->getDepartamento()->getId()) {
                 $campos["departamento"] = $this->copiaEntidade->getDepartamento()->getId();
             }
             $entidade["campos"] = $campos;
@@ -403,6 +411,12 @@ class ProcessoCtrl extends Controlador {
             $log->setDadosAlterados(json_encode($entidade));
         }
         return $log;
+    }
+
+    private function gerarProtocolo() {
+        $protocolo = new Protocolo();
+        $protocolo->setNumero(strrev(strtoupper(uniqid(''))));
+        return $protocolo;
     }
 
 }

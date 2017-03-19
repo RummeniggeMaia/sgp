@@ -12,6 +12,8 @@ use modelo\Assunto;
 use modelo\Departamento;
 use modelo\Entidade;
 use modelo\Funcionario;
+use modelo\Usuario;
+use modelo\Protocolo;
 use modelo\ProcessoMovimentacao;
 use ReflectionClass;
 
@@ -44,12 +46,25 @@ class Processo extends Entidade {
     /** @OneToMany(targetEntity="ProcessoMovimentacao", mappedBy="processo", fetch="EAGER", cascade={"merge", "remove"}) */
     protected $processoMovimentacoes;
 
+    /** @OneToOne(targetEntity="Protocolo", inversedBy="processo", cascade={"merge", "remove"})
+     *  @JoinColumn(name="protocolo_id", referencedColumnName="id")
+     */
+    protected $protocolo;
+
+    /** @ManyToOne(targetEntity="Usuario", inversedBy="processos", fetch="EAGER") 
+     *  @JoinColumn(name="usuario_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $usuario;
+    private $clonado;
+
     function __construct($numeroProcesso) {
         $this->numeroProcesso = $numeroProcesso;
         $this->processoMovimentacoes = new ArrayCollection();
         $this->funcionario = new Funcionario("", "", "");
         $this->assunto = new Assunto("", false);
         $this->departamento = new Departamento("", false);
+        $this->usuario = new Usuario("", "", "", "");
+        $this->protocolo = new Protocolo();
     }
 
     public function getNumeroProcesso() {
@@ -106,6 +121,30 @@ class Processo extends Entidade {
         return $rc->getName();
     }
 
+    public function getProtocolo() {
+        return $this->protocolo;
+    }
+
+    public function getUsuario() {
+        return $this->usuario;
+    }
+
+    public function setProtocolo($protocolo) {
+        $this->protocolo = $protocolo;
+    }
+
+    public function setUsuario($usuario) {
+        $this->usuario = $usuario;
+    }
+
+    function getClonado() {
+        return $this->clonado;
+    }
+
+    function setClonado($clonado) {
+        $this->clonado = $clonado;
+    }
+
     public function clonar() {
         $clone = new Processo("");
 
@@ -132,7 +171,15 @@ class Processo extends Entidade {
             $clonePm->setProcesso($clone);
             $pms->add($clonePm);
         }
+        $clone->setUsuario($this->usuario == null ?
+                        new Usuario("", "", "", "") :
+                        $this->usuario->clonar());
+        if (!$this->clonado) {
+            $this->protocolo->setClonado(true);
+            $clone->setProtocolo($this->protocolo->clonar());
+        }
         $clone->setProcessoMovimentacoes($pms);
         return $clone;
     }
+
 }

@@ -1,0 +1,102 @@
+{# empty Twig template #}
+{% extends "templates/base.twig"%}
+
+{% block title %}Autenticar processo{% endblock %}
+
+{% block body %}
+    <br/>
+    <div class="html ui top right attached segment">
+        <br/>
+        {% include 'fragmentos/frag_titulo.twig' 
+            with {
+                'titulo' : 'Verificar autenticação dos processos', 
+                'sub_titulo' : 'Verifica a autenticidade dos processos cadastrados no sistema.'
+            }
+        %}
+        {% if ctrl.mensagem != null %}
+            {% include 'fragmentos/frag_mensagem.twig'
+                with {
+                    'mensagem' : ctrl.mensagem
+                }
+            %}
+        {% endif %}
+        <div class="ui top attached tabular menu">
+            <div class="item active" data-tab="form"><i class="browser icon"></i>Formulário</div>
+        </div>
+        <div class="ui bottom attached tab segment active" data-tab="form">
+            <form id="form_autenticar_processo" class="ui form" method="post" 
+                  action="front_controller.php">                
+                <div class="field">
+                    <label>Número do protocolo:</label>
+                    <input type="text" name="campo_numero"
+                           placeholder="numero" value="{{ ctrl.entidade.numero }}">
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        <div class="ui submit black button"
+                             onClick="submeterForm('form_autenticar_processo', 'funcao_{{ constant('controle\\Controlador::CTRL_PROTOCOLO') }}', 'autenticar');">
+                            <i class="search icon"></i>Verificar
+                        </div>
+                    </div>
+                    <div class="field">
+                        {% if ctrl.entidade.id != null %}
+                            <a class="ui submit black button red"
+                               href="emitir_protocolo.php?n={{ ctrl.entidade.numero }}"
+                               target="_new">
+                                <i class="print icon"></i>Emitir protocolo
+                            </a>
+                        {% endif %}
+                    </div>    
+                </div>
+                <table class="ui very basic table">
+                    <tr>
+                        <td style="width: 15%">
+                            <div class="ui fluid label">
+                                <i class="user icon"></i>
+                                Id do protocolo: 
+                            </div>
+                        </td>
+                        <td>
+                            {{ ctrl.entidade.id }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="ui fluid label">
+                                <i class="archive icon"></i>
+                                Nº do protocolo: 
+                            </div>
+                        </td>
+                        <td>
+                            {{ ctrl.entidade.id == null ? '' : ctrl.entidade.numero }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="ui fluid label">
+                                <i class="building icon"></i>
+                                Data do protocolo: 
+                            </div>
+                        </td>
+                        <td>
+                            {{ ctrl.entidade.id == null ? '' : ctrl.entidade.dataHora|date("d/m/Y", "America/Sao_Paulo") }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="ui fluid label">
+                                <i class="building icon"></i>
+                                Hora do protocolo: 
+                            </div>
+                        </td>
+                        <td>
+                            {{ ctrl.entidade.id == null ? '' : ctrl.entidade.dataHora|date("H:i:s", "America/Sao_Paulo") }}
+                        </td>
+                    </tr>
+                </table>
+            </form>
+
+        </div>
+    </div>
+{% endblock %}
+{# empty Twig template #}
